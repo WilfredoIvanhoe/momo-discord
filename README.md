@@ -1,5 +1,5 @@
 # Momo, your new Discord bot
-[![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) ![requirement](https://img.shields.io/badge/java%20req-java%208-green.svg) [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8)
+[![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) ![[requirement](https://img.shields.io/badge/java%20req-java%208-green.svg)(http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)] [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8)
 
 Join the discord server linked above to get support, see upcoming features, or to test the bot!
 
@@ -13,6 +13,8 @@ Send the command `$help` to her. If you need more information on specific comman
 ---
 
 ## Hosting Momo for yourself
+`you need java 8 to run this bot`
+
 * If you want to host your own instance of the bot, feel free to take a look at the Releases tab and download the package. Fill out the configuration in the `resources/Bot.properties` file, then run `java -jar momo-x.x.x.jar` where `x.x.x` is the current version. 
 * To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Then, click to show the bot token, which you can copy and paste into `Bot.properties`
 * Hosting Momo for yourself nets you some benefits. Music functionality, though dependent on your internet speeds, will be better for single servers than a larger cluster. You can also change its username, avatar, and game status to whatever you see fit!
