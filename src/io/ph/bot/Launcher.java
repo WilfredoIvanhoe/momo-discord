@@ -44,7 +44,7 @@ public class Launcher {
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			try (InputStream caInput = new BufferedInputStream(
 					(new FileInputStream
-							(new File("Themes.cer"))))) {
+							(new File("resources/Themes.cer"))))) {
 				Certificate crt = cf.generateCertificate(caInput);
 				LoggerFactory.getLogger(Launcher.class).info("Added Cert for " + ((X509Certificate) crt)
 						.getSubjectDN());
