@@ -54,16 +54,18 @@ public class Util {
 	 * @param guild Guild to check in
 	 * @return User if found, null if not found
 	 */
-	public static IUser resolveUserFromString(String s, IGuild guild) {
+	public static IUser resolveUserFromMessage(IMessage msg, IGuild guild) {
+		if(msg.getMentions().size() > 0)
+			return msg.getMentions().get(0);
 		for(IUser u : guild.getUsers()) {
 			if(u.getNicknameForGuild(guild).isPresent()) {
-				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(s.toLowerCase())) {
+				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(getCommandContents(msg).toLowerCase())) {
 					return u;
 				}
 			}
 		}
 		for(IUser u : guild.getUsers()) {
-			if(u.getName().toLowerCase().startsWith(s.toLowerCase()))
+			if(u.getName().toLowerCase().startsWith(getCommandContents(msg).toLowerCase()))
 				return u;
 		}
 		return null;
@@ -326,7 +328,7 @@ public class Util {
 	 * @return True if user has permission, false if not
 	 */
 	public static boolean userHasPermission(IUser user, IGuild guild, Permission permission) {
-		if (isOwner(user, guild))
+		if (isOwner(user, guild) && !permission.equals(Permission.BOT_OWNER))
 			return true;
 		if(permission.equals(Permission.BOT_OWNER) && user.getID().equals(Bot.getInstance().getBotOwnerId()))
 			return true;

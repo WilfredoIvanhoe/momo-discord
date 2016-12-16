@@ -68,7 +68,6 @@ public class Bot {
 		try {
 			PropertiesConfiguration config = new PropertiesConfiguration("resources/Bot.properties");
 			secret = config.getString("BotToken");
-			username = config.getString("Username");
 			avatar = config.getString("Avatar");
 			botOwnerId = config.getString("BotOwnerId");
 

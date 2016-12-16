@@ -34,9 +34,9 @@ public class CommandStatus implements Command {
 			if(Guild.guildMap.get(msg.getGuild().getID()).validCommandToEdit(msg.getContent())) {
 				em.withColor(Color.RED).withTitle(contents + " is not a valid command");
 			} else {
-				em.withColor(Guild.guildMap.get(msg.getGuild().getID()).commandStatus(contents) == true ? Color.GREEN : Color.RED);
+				em.withColor(Guild.guildMap.get(msg.getGuild().getID()).getCommandStatus(contents) == true ? Color.GREEN : Color.RED);
 				em.withTitle("Status of " + Util.getPrefixForGuildId(msg.getGuild().getID()) + contents);
-				em.withDesc(Guild.guildMap.get(msg.getGuild().getID()).commandStatus(contents) == true ? "Enabled" : "Disabled");
+				em.withDesc(Guild.guildMap.get(msg.getGuild().getID()).getCommandStatus(contents) == true ? "Enabled" : "Disabled");
 			}
 		} else {
 			em.withColor(Color.CYAN).withTitle("Status of all user commands");

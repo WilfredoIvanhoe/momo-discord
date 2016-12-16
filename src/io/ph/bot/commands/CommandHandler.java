@@ -33,7 +33,7 @@ import sx.blah.discord.handle.obj.IMessage;
  *
  */
 public class CommandHandler {
-	
+
 	private static HashMap<String, Command> commandMap = new HashMap<String, Command>();
 
 	public static HashMap<String, String> aliasToDefaultMap = new HashMap<String, String>();
@@ -81,7 +81,7 @@ public class CommandHandler {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if(config != null) {
 			try {
 				config.setProperty("Commands", globalConfigCommands);
@@ -101,24 +101,25 @@ public class CommandHandler {
 	 * @param msg Message to parse
 	 */
 	public static void processCommand(IMessage msg) {
-		String guildId = msg.getGuild().getID();
-		
+		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		if(msg.getContent().contains(" ")) {
-			String cmd = aliasToDefaultMap.get(msg.getContent().substring(Guild.guildMap.get(guildId).getGuildConfig().getCommandPrefix().length(),
+			String cmd = aliasToDefaultMap.get(msg.getContent().substring(g.getGuildConfig().getCommandPrefix().length(),
 					msg.getContent().indexOf(" ")));
-			if(!commandMap.containsKey(cmd))
+			if(cmd == null)
 				return;
-			if(Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK) ||
-					Guild.guildMap.get(guildId).commandStatus(cmd) && commandMap.get(cmd).hasPermissions(msg))
-				commandMap.get(cmd).run(msg);
+			if(getCommand(cmd).hasPermissions(msg)) {
+				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK))
+					getCommand(cmd).run(msg);
+			}
 		} else {
-			String cmd = aliasToDefaultMap.get(msg.getContent().substring(Guild.guildMap.get(guildId).getGuildConfig().getCommandPrefix().length(),
+			String cmd = aliasToDefaultMap.get(msg.getContent().substring(g.getGuildConfig().getCommandPrefix().length(),
 					msg.getContent().length()));
-			if(!commandMap.containsKey(cmd))
+			if(cmd == null)
 				return;
-			if(Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK) || 
-					Guild.guildMap.get(guildId).commandStatus(cmd) && commandMap.get(cmd).hasPermissions(msg))
-				commandMap.get(cmd).run(msg);
+			if(getCommand(cmd).hasPermissions(msg)) {
+				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK))
+					getCommand(cmd).run(msg);
+			}
 		}
 	}
 
@@ -179,13 +180,13 @@ public class CommandHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Command getCommand(String name) {
 		return CommandHandler.commandMap.get(aliasToDefaultMap.get(name));
 	}
-	
+
 	public static Collection<Command> getAllCommands() {
 		return new ArrayList<Command>(CommandHandler.commandMap.values());
 	}
-	
+
 }

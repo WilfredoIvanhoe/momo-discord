@@ -17,8 +17,7 @@ public interface Command {
 	 * @return True if good to go, false if not
 	 */
 	public default boolean hasPermissions(IMessage msg) {
-		Permission perm = this.getClass().getAnnotation(CommandData.class).permission();
-		return Util.userHasPermission(msg.getAuthor(), msg.getGuild(), perm);
+		return Util.userHasPermission(msg.getAuthor(), msg.getGuild(), getPermission());
 	}
 	
 	/**

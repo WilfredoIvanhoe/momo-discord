@@ -21,6 +21,11 @@ import org.slf4j.LoggerFactory;
 
 import io.ph.bot.commands.CommandHandler;
 
+/**
+ * Main entry point
+ * @author Paul
+ * TODO: Refactor code to be more consistent (i.e. pass entire IGuild rather than getID)
+ */
 public class Launcher {
 	public static void main(String[] args) {
 		CommandHandler.initCommands();

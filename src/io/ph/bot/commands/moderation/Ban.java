@@ -44,13 +44,13 @@ public class Ban implements Command {
 			em = MessageUtils.commandErrorMessage(msg, "ban", "[temp] [#w#d#h#m] username", 
 					"*[temp]* - Temporarily ban a user for #w#d#h#m time",
 					"*[#w#d#h#m]* - Can only be used when you enter *temp*\n"
-					+ "\tFor example, `" + Util.getPrefixForGuildId(msg.getGuild().getID()) + "ban temp 1d20m username` lasts 1 day 20 minutes",
+							+ "\tFor example, `" + Util.getPrefixForGuildId(msg.getGuild().getID()) + "ban temp 1d20m username` lasts 1 day 20 minutes",
 					"*username* - Username or user mention to ban");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
-		
-		
+
+
 		try {
 			IUser target;
 			em.withColor(Color.GREEN).withTitle("Success");
@@ -58,7 +58,7 @@ public class Ban implements Command {
 			if(Util.getParam(msg).equalsIgnoreCase("temp")) {
 				now = Util.resolveInstantFromString(Util.getParam(t));
 				String contents = Util.getCommandContents(Util.getCommandContents(t));
-				target = Util.resolveUserFromString(contents, msg.getGuild());
+				target = Util.resolveUserFromMessage(msg, msg.getGuild());
 				if(target == null) {
 					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + contents + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -66,7 +66,7 @@ public class Ban implements Command {
 				}
 				em.withDesc(target.getName() + " has been banned until...").withTimestamp(now.toEpochMilli()).withFooterText("Local time");
 			} else {
-				target = Util.resolveUserFromString(t, msg.getGuild());
+				target = Util.resolveUserFromMessage(msg, msg.getGuild());
 				if(target == null) {
 					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + t + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());

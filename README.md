@@ -13,8 +13,7 @@ Send the command `$help` to her. If you need more information on specific comman
 ---
 
 ## Hosting Momo for yourself
-* If you want to host your own instance of the bot, feel free to take a look at the Releases tab and download the package.
-* In addition to downloading the package, edit the `Bot.properties` file under the `resources` folder as you see fit. The configuration you need to fill out are highlighted in the file - mostly API keys you can get for free for certain Bot functions.
+* If you want to host your own instance of the bot, feel free to take a look at the Releases tab and download the package. Fill out the configuration in the `resources/Bot.properties` file, then run `java -jar momo-x.x.x.jar` where `x.x.x` is the current version. 
 * To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Then, click to show the bot token, which you can copy and paste into `Bot.properties`
 * Hosting Momo for yourself nets you some benefits. Music functionality, though dependent on your internet speeds, will be better for single servers than a larger cluster. You can also change its username, avatar, and game status to whatever you see fit!
 
@@ -25,15 +24,22 @@ Momo uses [Apache Maven](https://maven.apache.org/) for project management. As s
 
 #### Installing Maven
 Linux: `apt-get install maven`
+
 Windows & macOS: [download the package](http://maven.apache.org/download.cgi) and follow the instructions in the previously linked install page
+
 **Windows & macOS alternative**
+
 Windows & macOS users can install [Chocolatey](https://chocolatey.org/) & [Homebrew](http://brew.sh/) respectively to get `apt-get` functionality
+
 chocolatey: `choco install maven`
+
 homebrew: `brew install maven`
 
 #### Building
 Run `mvn install` on the root directory. This will create two builds: a `.jar` of the bot's source & a `.jar` with all the dependencies shaded (all packaged into a single file). This is the file you want - `momo-x.x.x.jar`. On subsequent builds, if you do not run the command with the `clean` parameter, then all `.jar` will be the correct bot.
+
 **NOTE**: `mvn install` *does not* copy the resources folder to the `target/` directory. As a side effect, it *will not* overwrite pre-existing resources, so you are free to copy over `resources/` to `target/`.
+
 **NOTE 2**: If you decide to run `mvn clean install`, *all folders and files in* `target/` *will be deleted*. Just a forewarning before you lose all of your server's data
 
 #### Running
@@ -41,8 +47,11 @@ Once you have built the jar, simply run `java -jar momo-x.x.x.jar` where `x.x.x`
 
 ### Creating a command
 Probably the #1 reason people will run their own bot, and probably the easiest thing to implement with Momo. This example also shows how permissions are setup, so if you want to change the permission level of commands... You're in the right place.
+
 1. Create a new class file. Preferably organized in the `io.ph.bot.commands` package, but that's up to you.
+
 2. Let's say you call your command `Echo`, and it echoes whatever the user says. Make sure to have your file implement `io.ph.bot.commands.Command` and to override `run(IMessage msg)`
+
 3. The meat of your command goes in the aformentioned `run` method. For brevity, our command ignore package and imports.
 ```java
 public class Say implements Command {
@@ -52,7 +61,7 @@ public class Say implements Command {
     }
 }
 ```
-4. To then have the command register through the command handler, annotate the class with `io.ph.commands.CommandMeta`
+To then have the command register through the command handler, annotate the class with `io.ph.commands.CommandMeta`
 ```java
 @CommandData (
 		defaultSyntax = "echo",

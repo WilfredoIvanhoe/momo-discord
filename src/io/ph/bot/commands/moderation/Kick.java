@@ -30,10 +30,9 @@ public class Kick implements Command {
 
 	@Override
 	public void run(IMessage msg) {
-		String t = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		try {
-			IUser target = Util.resolveUserFromString(t, msg.getGuild());
+			IUser target = Util.resolveUserFromMessage(msg, msg.getGuild());
 			if(target == null) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + target + "**");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());

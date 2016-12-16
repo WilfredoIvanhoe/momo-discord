@@ -24,6 +24,7 @@ import com.google.code.chatterbotapi.ChatterBotType;
 
 import io.ph.bot.Bot;
 import io.ph.bot.audio.GetAudio;
+import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
 import net.jodah.expiringmap.ExpirationPolicy;
@@ -164,9 +165,14 @@ public class Guild {
 
 		return true;
 	}
-	public boolean commandStatus(String s) {
+	public boolean getCommandStatus(String input) {
 		try {
-			return this.commandStatus.get(CommandHandler.aliasToDefaultMap.get(s));
+			Command c = CommandHandler.getCommand(input);
+			if(c == null)
+				throw new NullPointerException();
+			if(!c.getPermission().equals(Permission.NONE))
+				return true;
+			return this.commandStatus.get(input);
 		} catch(NullPointerException e) {
 			//NPE if someone uses a random command that doesn't exist or isn't listed in the enabled/disabled
 			return false;
