@@ -1,8 +1,9 @@
 # Momo, your new Discord bot
 [![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) ![requirement](https://img.shields.io/badge/java%20req-java%208-green.svg) [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8)
+
 Join the discord server linked above to get support, see upcoming features, or to test the bot!
 
-Momo is a simple-to-use Discord bot based off of [Discord4J](https://github.com/austinv11/Discord4J).  From sending Twitch.tv notifications to playing music, and from pulling anime theme songs off of [Themes.moe](https://themes.moe) to temporarily muting troublemakers, Momo can do a lot for your server.
+**Momo** is a simple-to-use Discord bot based off of [Discord4J](https://github.com/austinv11/Discord4J).  From sending Twitch.tv notifications to playing music, and from pulling anime theme songs off of [Themes.moe](https://themes.moe) to temporarily muting troublemakers, Momo can do a lot for your server.
 
 ## Adding Momo to your server
 Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want her to join. When she joins, go ahead and run `$info`. It's as easy as that!
@@ -10,11 +11,13 @@ Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351
 Send the command `$help` to her. If you need more information on specific commands, you can try `$help command-name` or just PM her the command name.
 
 ---
+
 ## Hosting Momo for yourself
 * If you want to host your own instance of the bot, feel free to take a look at the Releases tab and download the package.
-* In addition to downloading the package, edit the `Bot.properties` file as you see fit. The configuration you need to fill out are highlighted in the file - mostly API keys you can get for free for certain Bot functions.
-* To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Doing so gives you a long bot token.
+* In addition to downloading the package, edit the `Bot.properties` file under the `resources` folder as you see fit. The configuration you need to fill out are highlighted in the file - mostly API keys you can get for free for certain Bot functions.
+* To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Then, click to show the bot token, which you can copy and paste into `Bot.properties`
 * Hosting Momo for yourself nets you some benefits. Music functionality, though dependent on your internet speeds, will be better for single servers than a larger cluster. You can also change its username, avatar, and game status to whatever you see fit!
+
 ---
 
 ## Pulling from the source & building
