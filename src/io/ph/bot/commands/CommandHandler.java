@@ -44,7 +44,7 @@ public class CommandHandler {
 		PropertiesConfiguration config = null;
 		List<String> globalConfigCommands = null;
 		try {
-			config = new PropertiesConfiguration("resources/GlobalCommands.properties");
+			config = new PropertiesConfiguration("resources/config/GlobalCommands.properties");
 			globalConfigCommands = config.getList("Commands").stream()
 					.map(object -> Objects.toString(object, null))
 					.collect(Collectors.toList());
@@ -124,16 +124,14 @@ public class CommandHandler {
 
 	/**
 	 * Make sure every guild has all the commands
-	 * When a new command is created, it is automatically added to GlobalCommands.properties
-	 * by the static block of this class.
+	 * When a new command is created, it is automatically added to GlobalCommands.properties on init
 	 * 
 	 * This method will update every guild and automatically add any missing commands to their properties
 	 * as well as update template.properties
 	 */
 	private static void normalizeCommands() {
-
 		try {
-			PropertiesConfiguration config = new PropertiesConfiguration("resources/GlobalCommands.properties");
+			PropertiesConfiguration config = new PropertiesConfiguration("resources/config/GlobalCommands.properties");
 			List<String> commands = config.getList("Commands").stream()
 					.map(object -> Objects.toString(object, null))
 					.collect(Collectors.toList());

@@ -22,7 +22,7 @@ public class JobScheduler {
 	
 	public static void initializeScheduler() {
 		try {
-			scheduler = new StdSchedulerFactory("resources/quartz.properties").getScheduler();
+			scheduler = new StdSchedulerFactory("resources/config/quartz.properties").getScheduler();
 			scheduler.start();
 			
 		} catch (SchedulerException e) {

@@ -14,7 +14,7 @@ public class ConnectionPool {
 	public static Connection getGlobalDatabaseConnection() throws SQLException {
 		try {
 			Class.forName("org.sqlite.JDBC");
-			return DriverManager.getConnection("jdbc:sqlite:resources/GlobalDB.db");
+			return DriverManager.getConnection("jdbc:sqlite:resources/database/GlobalDB.db");
 		} catch(SQLTimeoutException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -31,7 +31,7 @@ public class ConnectionPool {
 	public static Connection getTwitchDatabase() throws SQLException {
 		try {
 			Class.forName("org.sqlite.JDBC");
-			return DriverManager.getConnection("jdbc:sqlite:resources/TwitchTV.db");
+			return DriverManager.getConnection("jdbc:sqlite:resources/database/TwitchTV.db");
 		} catch(SQLTimeoutException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
