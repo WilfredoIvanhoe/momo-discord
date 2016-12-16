@@ -30,24 +30,24 @@ public class Bot {
 	private APIKeys apiKeys = new APIKeys();
 
 	private boolean debug = true;
-	
+
 	/*
 	 * Persistent objects that can be cached for lifetime of the bot,
 	 * such as WoW classes/races
 	 */
 	private HashMap<String, Object> cache = new HashMap<String, Object>();
-	
+
 	static {
 		instance = new Bot();
 	}
-	
+
 	void start(String[] args) {
 		if(!loadProperties()) {
 			logger.error("Error loading properties. Make sure Bot.properties exists");
 			System.exit(0);
 		}
 		bot = getClient(secret);
-		
+
 		EventDispatcher dispatcher = bot.getDispatcher();
 		dispatcher.registerListener(new Listeners());
 		dispatcher.registerListener(new AudioListeners());
@@ -66,19 +66,21 @@ public class Bot {
 
 	private boolean loadProperties() {
 		try {
-			PropertiesConfiguration config = new PropertiesConfiguration("Bot.properties");
+			PropertiesConfiguration config = new PropertiesConfiguration("resources/Bot.properties");
 			secret = config.getString("BotToken");
 			username = config.getString("Username");
 			avatar = config.getString("Avatar");
 			botOwnerId = config.getString("BotOwnerId");
-			
+
 			Configuration subset = config.subset("apikey");
 			Iterator<String> iter = subset.getKeys();
 			while(iter.hasNext()) {
 				String key = iter.next();
 				String val = subset.getString(key);
-				this.apiKeys.put(key, val);
-				logger.info("Added API key for: {}", key);
+				if(val.length() > 0) {
+					this.apiKeys.put(key, val);
+					logger.info("Added API key for: {}", key);
+				}
 			}
 			return true;
 		} catch (Exception e) {
@@ -136,7 +138,7 @@ public class Bot {
 				throw new NoAPIKeyException();
 			return keys.get(key);
 		}
-		
+
 		void put(String key, String val) {
 			this.keys.put(key, val);
 		}

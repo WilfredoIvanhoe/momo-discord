@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.MacroObject;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "stats",
 		aliases = {},
 		permission = Permission.MANAGE_SERVER,

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.events.UserUnmutedEvent;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
@@ -27,7 +27,7 @@ import sx.blah.discord.util.RateLimitException;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "unmute",
 		aliases = {},
 		permission = Permission.KICK,

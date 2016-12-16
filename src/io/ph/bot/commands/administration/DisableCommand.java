@@ -3,7 +3,7 @@ package io.ph.bot.commands.administration;
 import java.awt.Color;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.BadCommandNameException;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Disable a command
  * @author Paul
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "disable",
 		aliases = {"disablecommand"},
 		permission = Permission.MANAGE_CHANNELS,

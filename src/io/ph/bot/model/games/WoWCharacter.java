@@ -40,6 +40,7 @@ public class WoWCharacter {
 
 	private String error;
 
+	@SuppressWarnings("unchecked")
 	public WoWCharacter(String server, String name) throws IOException, BadCharacterException, NoAPIKeyException {
 		String apiKey;
 		apiKey = Bot.getInstance().getApiKeys().get("battlenet");

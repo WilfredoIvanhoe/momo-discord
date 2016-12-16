@@ -3,7 +3,7 @@ package io.ph.bot.commands.administration;
 import java.awt.Color;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -22,7 +22,7 @@ import sx.blah.discord.util.RoleBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "joinablerole",
 		aliases = {"optionalrole", "optinrole", "enablerole"},
 		permission = Permission.MANAGE_ROLES,

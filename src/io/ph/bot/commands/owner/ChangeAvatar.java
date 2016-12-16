@@ -6,12 +6,12 @@ import java.net.URL;
 import io.ph.bot.Bot;
 import io.ph.bot.State;
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.Util;
 import sx.blah.discord.handle.obj.IMessage;
 
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "changeavatar",
 		aliases = {"avatar"},
 		permission = Permission.BOT_OWNER,

@@ -1,7 +1,7 @@
 package io.ph.bot.commands.general;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -11,7 +11,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "info",
 		aliases = {"information"},
 		permission = Permission.BOT_OWNER,

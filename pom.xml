@@ -3,6 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>momo</artifactId>
 	<version>1.0.0</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -10,10 +13,24 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
-					<source />
-					<target />
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 	<repositories>
@@ -31,7 +48,6 @@
 			<groupId>com.github.austinv11</groupId>
 			<artifactId>Discord4j</artifactId>
 			<version>websocket-rewrite-SNAPSHOT</version>
-			<classifier>shaded</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>

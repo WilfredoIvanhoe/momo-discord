@@ -3,7 +3,7 @@ package io.ph.bot.commands.moderation;
 import java.awt.Color;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -19,7 +19,7 @@ import sx.blah.discord.util.RateLimitException;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "kick",
 		aliases = {"k"},
 		permission = Permission.KICK,

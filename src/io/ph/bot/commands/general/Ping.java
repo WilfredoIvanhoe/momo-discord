@@ -6,7 +6,7 @@ import java.time.ZoneId;
 import java.util.Random;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
@@ -17,7 +17,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "ping",
 		aliases = {},
 		permission = Permission.NONE,

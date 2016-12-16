@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.apache.commons.lang3.StringUtils;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.NoMacroFoundException;
 import io.ph.bot.model.MacroObject;
 import io.ph.bot.model.Permission;
@@ -23,7 +23,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "macro",
 		aliases = {"m"},
 		permission = Permission.NONE,

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Map.Entry;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -17,7 +17,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "commandstatus",
 		aliases = {"status"},
 		permission = Permission.MANAGE_SERVER,

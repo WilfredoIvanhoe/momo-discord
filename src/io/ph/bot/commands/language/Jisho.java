@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.JishoObject;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "jisho",
 		aliases = {"jisyo", "eewa", "waee", "nihongo"},
 		permission = Permission.NONE,

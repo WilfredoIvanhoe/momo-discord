@@ -17,7 +17,7 @@ public interface Command {
 	 * @return True if good to go, false if not
 	 */
 	public default boolean hasPermissions(IMessage msg) {
-		Permission perm = this.getClass().getAnnotation(CommandSyntax.class).permission();
+		Permission perm = this.getClass().getAnnotation(CommandData.class).permission();
 		return Util.userHasPermission(msg.getAuthor(), msg.getGuild(), perm);
 	}
 	
@@ -26,7 +26,7 @@ public interface Command {
 	 * @return Permission required
 	 */
 	public default Permission getPermission() {
-		return this.getClass().getAnnotation(CommandSyntax.class).permission();
+		return this.getClass().getAnnotation(CommandData.class).permission();
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public interface Command {
 	 * @return Default syntax
 	 */
 	public default String getDefaultCommand() {
-		return this.getClass().getAnnotation(CommandSyntax.class).defaultSyntax();
+		return this.getClass().getAnnotation(CommandData.class).defaultSyntax();
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public interface Command {
 	 * @return Aliases of this command
 	 */
 	public default String[] getAliases() {
-		return this.getClass().getAnnotation(CommandSyntax.class).aliases();
+		return this.getClass().getAnnotation(CommandData.class).aliases();
 	}
 	
 	/**
@@ -50,7 +50,7 @@ public interface Command {
 	 * @return Description of command
 	 */
 	public default String getDescription() {
-		return this.getClass().getAnnotation(CommandSyntax.class).description();
+		return this.getClass().getAnnotation(CommandData.class).description();
 	}
 	
 	/**
@@ -58,6 +58,6 @@ public interface Command {
 	 * @return Example in annotation
 	 */
 	public default String getExample() {
-		return this.getClass().getAnnotation(CommandSyntax.class).example();
+		return this.getClass().getAnnotation(CommandData.class).example();
 	}
 }

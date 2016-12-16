@@ -1,7 +1,7 @@
 package io.ph.bot.commands.general;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -15,7 +15,7 @@ import sx.blah.discord.util.RateLimitException;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "say",
 		aliases = {"echo"},
 		permission = Permission.NONE,
@@ -28,7 +28,7 @@ public class Say implements Command {
 	public void run(IMessage msg) {
 		try {
 			msg.delete();
-			MessageUtils.sendMessage(msg.getChannel(), Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" "))));
+			MessageUtils.sendMessage(msg.getChannel(), Util.getCommandContents(msg));
 		} catch (DiscordException | MissingPermissionsException | RateLimitException e) {
 			e.printStackTrace();
 		}

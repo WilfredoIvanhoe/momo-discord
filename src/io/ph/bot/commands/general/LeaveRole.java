@@ -3,7 +3,7 @@ package io.ph.bot.commands.general;
 import java.awt.Color;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -20,7 +20,7 @@ import sx.blah.discord.util.RateLimitException;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "leaverole",
 		aliases = {},
 		permission = Permission.NONE,

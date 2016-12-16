@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.db.ConnectionPool;
 import io.ph.db.SQLUtils;
@@ -24,7 +24,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "remindme",
 		aliases = {"remind"},
 		permission = Permission.NONE,

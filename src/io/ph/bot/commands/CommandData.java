@@ -13,7 +13,7 @@ import io.ph.bot.model.Permission;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CommandSyntax {
+public @interface CommandData {
 	/**
 	 * Default command usage
 	 * @return

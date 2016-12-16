@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import io.ph.bot.audio.GetAudio;
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Guild.GuildMusic;
 import io.ph.bot.model.Guild.MusicMeta;
@@ -19,7 +19,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Play music in designated channel
  * @author Paul
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "music",
 		aliases = {"play"},
 		permission = Permission.NONE,

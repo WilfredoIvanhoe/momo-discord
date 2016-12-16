@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.BadCharacterException;
 import io.ph.bot.model.Permission;
 import io.ph.bot.model.games.FFXIVCharacter;
@@ -18,7 +18,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "ffxiv",
 		aliases = {"ff14"},
 		permission = Permission.NONE,

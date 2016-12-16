@@ -8,7 +8,7 @@ import java.time.Instant;
 
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.events.UserBanEvent;
 import io.ph.bot.model.Permission;
 import io.ph.db.ConnectionPool;
@@ -27,7 +27,7 @@ import sx.blah.discord.util.RateLimitException;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "ban",
 		aliases = {"b"},
 		permission = Permission.BAN,

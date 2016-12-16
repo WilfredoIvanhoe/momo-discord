@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.BadUsernameException;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.exception.UnspecifiedException;
@@ -23,7 +23,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "twitch",
 		aliases = {"registertwitch"},
 		permission = Permission.NONE,

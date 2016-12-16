@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Random;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -14,7 +14,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Magic eight ball for a response
  * @author Paul
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "eightball",
 		aliases = {"magicball"},
 		permission = Permission.NONE,

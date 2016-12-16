@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.LoggerFactory;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.exception.NoSearchResultException;
 import io.ph.bot.model.Guild;
@@ -23,7 +23,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Search for a theme from the Themes.moe api
  * @author Paul
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "theme",
 		aliases = {"animetheme"},
 		permission = Permission.NONE,

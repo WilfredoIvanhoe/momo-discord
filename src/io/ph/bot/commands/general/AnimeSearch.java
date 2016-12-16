@@ -20,7 +20,7 @@ import com.eclipsesource.json.JsonValue;
 
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.MALAnime;
@@ -35,7 +35,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "anime",
 		aliases = {"mal", "animesearch"},
 		permission = Permission.NONE,

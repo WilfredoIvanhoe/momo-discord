@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.BadCharacterException;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.model.Permission;
@@ -20,7 +20,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "wow",
 		aliases = {},
 		permission = Permission.NONE,

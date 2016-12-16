@@ -59,9 +59,9 @@ public class CommandHandler {
 			try {
 				Command instance = (Command) Class.forName(c.getName()).newInstance();
 				for(Annotation a2 : a) {
-					if(a2 instanceof CommandSyntax) {
-						String defaultCmd = ((CommandSyntax) a2).defaultSyntax();
-						Permission p = ((CommandSyntax) a2).permission();
+					if(a2 instanceof CommandData) {
+						String defaultCmd = ((CommandData) a2).defaultSyntax();
+						Permission p = ((CommandData) a2).permission();
 						// Add any commands that do not exist in GlobalCommands.properties to it
 						if(globalConfigCommands != null && p == Permission.NONE) {
 							if(!globalConfigCommands.contains(defaultCmd)) {
@@ -71,7 +71,7 @@ public class CommandHandler {
 						}
 						commandMap.put(defaultCmd, instance);
 						aliasToDefaultMap.put(defaultCmd, defaultCmd);
-						for(String s : ((CommandSyntax) a2).aliases()) {
+						for(String s : ((CommandData) a2).aliases()) {
 							//commandMap.put(s, instance);
 							aliasToDefaultMap.put(s, defaultCmd);
 						}

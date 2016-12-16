@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.concurrent.ThreadLocalRandom;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  *
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "pick",
 		aliases = {"choose"},
 		permission = Permission.NONE,

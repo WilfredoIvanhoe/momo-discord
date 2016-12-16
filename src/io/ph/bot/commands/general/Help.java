@@ -7,7 +7,7 @@ import java.util.List;
 
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
-import io.ph.bot.commands.CommandSyntax;
+import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -17,7 +17,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Get help with commands
  * @author Paul
  */
-@CommandSyntax (
+@CommandData (
 		defaultSyntax = "help",
 		aliases = {},
 		permission = Permission.NONE,
