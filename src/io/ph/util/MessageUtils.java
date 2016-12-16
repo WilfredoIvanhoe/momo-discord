@@ -3,7 +3,6 @@ package io.ph.util;
 import java.awt.Color;
 
 import io.ph.bot.Bot;
-import io.ph.bot.model.Guild;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -76,9 +75,10 @@ public class MessageUtils {
 	 * @param params String of the parameters you want to represent
 	 * @param paramDescription Variable array of parameters and how you want to describe them
 	 * @return
+	 * TODO: Get rid of this ugly thing
 	 */
 	public static EmbedBuilder commandErrorMessage(IMessage originalCommand, String command, String params, String... paramDescription) {
-		String prefix = Guild.guildMap.get(originalCommand.getGuild().getID()).getGuildConfig().getCommandPrefix();
+		String prefix = Util.getPrefixForGuildId(originalCommand.getGuild().getID());
 		StringBuilder sb = new StringBuilder();
 		for(String s : paramDescription) {
 			sb.append(s+"\n");

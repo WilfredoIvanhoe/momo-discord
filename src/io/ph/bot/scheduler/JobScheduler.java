@@ -55,7 +55,7 @@ public class JobScheduler {
 	public static void punishCheck() {
 		JobDetail job = JobBuilder.newJob(TimedPunishJob.class).withIdentity("punishJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("punishJob", "group1")
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(20).repeatForever()).build();
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(30).repeatForever()).build();
 		try {
 			scheduler.scheduleJob(job, trigger);
 		} catch (SchedulerException e) {
