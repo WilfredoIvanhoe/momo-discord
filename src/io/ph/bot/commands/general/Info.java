@@ -14,7 +14,7 @@ import sx.blah.discord.handle.obj.IMessage;
 @CommandData (
 		defaultSyntax = "info",
 		aliases = {"information"},
-		permission = Permission.BOT_OWNER,
+		permission = Permission.NONE,
 		description = "Information on the bot",
 		example = "(no parameters)"
 		)
