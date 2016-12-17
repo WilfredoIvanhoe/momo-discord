@@ -19,10 +19,14 @@ Send the command `$help` to her. If you need more information on specific comman
 * To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Then, click to show the bot token, which you can copy and paste into `Bot.properties`
 * Hosting Momo for yourself nets you some benefits. Music functionality, though dependent on your internet speeds, will be better for single servers than a larger cluster. You can also change its username, avatar, and game status to whatever you see fit!
 
+Certain functions need a little more help.
+
+* Playing music off of YouTube requires [youtube-dl](https://github.com/rg3/youtube-dl/) - follow the installation instructions there for your system, and put it in your PATH
+* Playing Themes.moe music (notably, the .webm format) requires [ffmpeg](https://ffmpeg.org/download.html) - download it and place load it up in your PATH
 ---
 
 ## Pulling from the source & building
-Momo uses [Apache Maven](https://maven.apache.org/) for project management. As such, it's extremely simple managing dependencies, so building any edits and changes you want into your own bot is easy.
+Momo uses [Apache Maven](https://maven.apache.org/) for project management. As such, it's extremely simple managing Java dependencies, so building any edits and changes you want into your own bot is easy.
 
 #### Installing Maven
 Linux: `apt-get install maven`
@@ -80,6 +84,7 @@ public class Say implements Command {
 }
 ```
 It's as easy as that~ 
+
 note: commands with permission `Permission.NONE` are disableable by admins by using the `disable` command
 
 If you're going to delve deeper into developing with Discord4J, check out the documentation [here](https://jitpack.io/com/github/austinv11/Discord4j/websocket-rewrite-2.6.1-gf6f90c4-157/javadoc/index.html) and join up at the [Discord API server](https://discordapp.com/invite/0SBTUU1wZTWPnGdJ).
