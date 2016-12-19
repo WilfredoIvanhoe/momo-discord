@@ -8,14 +8,21 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import io.ph.bot.Bot;
 import io.ph.bot.model.Guild;
+import io.ph.bot.model.Guild.GuildMusic;
 import io.ph.bot.model.Guild.MusicMeta;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
 import sx.blah.discord.util.audio.events.TrackSkipEvent;
 import sx.blah.discord.util.audio.events.TrackStartEvent;
 
+/**
+ * Event listeners related to the audio functionality of Momo
+ * @author Paul
+ *
+ */
 public class AudioListeners {
 
 	@EventSubscriber
@@ -25,6 +32,17 @@ public class AudioListeners {
 		}
 		if(Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().getMusicMeta().size() == 0)
 			Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().setCurrentSong(null);
+		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
+		IVoiceChannel channel = e.getPlayer().getGuild()
+				.getVoiceChannelByID(g.getSpecialChannels().getVoice());
+		if(channel.getConnectedUsers().size() == 1) {
+			GuildMusic m = g.getMusicManager();
+			m.getAudioPlayer().clear();
+			m.getMusicMeta().clear();
+			m.setSkipVotes(0);
+			m.getSkipVoters().clear();
+			m.setCurrentSong(null);
+		}
 	}
 
 	@EventSubscriber
@@ -51,8 +69,7 @@ public class AudioListeners {
 			}
 		}
 	}
-
-
+	
 	@EventSubscriber
 	public void onTrackSkipEvent(TrackSkipEvent e) {
 		if(e.getTrack().getMetadata().get("file") != null) {
@@ -60,5 +77,16 @@ public class AudioListeners {
 		}
 		if(Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().getMusicMeta().size() == 0)
 			Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().setCurrentSong(null);
+		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
+		IVoiceChannel channel = e.getPlayer().getGuild()
+				.getVoiceChannelByID(g.getSpecialChannels().getVoice());
+		if(channel.getConnectedUsers().size() == 1) {
+			GuildMusic m = g.getMusicManager();
+			m.getAudioPlayer().clear();
+			m.getMusicMeta().clear();
+			m.setSkipVotes(0);
+			m.getSkipVoters().clear();
+			m.setCurrentSong(null);
+		}
 	}
 }

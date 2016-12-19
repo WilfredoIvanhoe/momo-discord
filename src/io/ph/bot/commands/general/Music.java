@@ -67,13 +67,13 @@ public class Music implements Command {
 			}
 			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
 			int current = voice.getConnectedUsers().size();
-			int currentVotes = m.getSkipVotes();
+            int currentVotes = m.getSkipVotes();
 			if(current <= 0)
 				current = 1;
 			int maxVotes = (int) Math.floor(current/2);
 			if(maxVotes > 5)
 				maxVotes = 5;
-			if(++currentVotes >= maxVotes) {
+            if(++currentVotes >= maxVotes) {
 				m.setSkipVotes(0);
 				m.getSkipVoters().clear();
 				m.getAudioPlayer().skip();

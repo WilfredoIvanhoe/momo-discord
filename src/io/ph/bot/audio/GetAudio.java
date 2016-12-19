@@ -107,11 +107,13 @@ public class GetAudio implements Runnable {
 		} else if(url.contains(".webm")) {
 			FFmpeg ffmpeg;
 			try {
-				if((getFileSize(new URL(url)) / (1024*2) > 25)
-						|| getFileSize(new URL(url)) == -1) {
+				URL link = new URL(url);
+				if((getFileSize(link) / (1024*1024) > 25)
+						|| getFileSize(link) == -1) {
 					em.withColor(Color.RED);
 					em.withTitle("Error");
 					em.withDesc("Please keep file size below 25 megabytes");
+					System.out.println(getFileSize(link));
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
@@ -124,7 +126,7 @@ public class GetAudio implements Runnable {
 				.withFooterText("Place in queue: " + (this.guildMusic.getQueueSize() + 1))
 				.withColor(Color.GREEN);
 				MessageUtils.sendMessage(channel, em.build());
-				Util.saveFile(new URL(url), before);
+				Util.saveFile(link, before);
 
 				build.setInput("resources/tempdownloads/" + rand);
 				build.addOutput("resources/tempdownloads/" + rand + "out.mp3").setFormat("mp3").disableVideo().setAudioChannels(1);
@@ -142,11 +144,13 @@ public class GetAudio implements Runnable {
 		} else if(url.endsWith(".mp3") || url.endsWith(".flac")) {
 			this.preparedFile = new File("resources/tempdownloads/" + rand + url.substring(url.lastIndexOf(".")));
 			try {
-				if((getFileSize(new URL(url)) / (1024*2) > 25)
-						|| getFileSize(new URL(url)) == -1) {
+				URL link = new URL(url);
+				if((getFileSize(link) / (1024*1024) > 25)
+						|| getFileSize(link) == -1) {
 					em.withColor(Color.RED);
 					em.withTitle("Error");
 					em.withDesc("Please keep file size below 25 megabytes");
+					System.out.println(getFileSize(link));
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
@@ -156,7 +160,7 @@ public class GetAudio implements Runnable {
 				.withFooterText("Place in queue: " + (this.guildMusic.getQueueSize() + 1))
 				.withColor(Color.GREEN);
 				MessageUtils.sendMessage(channel, em.build());
-				Util.saveFile(new URL(url), preparedFile);
+				Util.saveFile(link, preparedFile);
 			} catch (MalformedURLException e) {
 				em.withTitle("Error").withColor(Color.RED).withDesc("Your URL is invalid!");
 				MessageUtils.sendMessage(channel, em.build());
@@ -188,9 +192,12 @@ public class GetAudio implements Runnable {
 		try {
 			conn = (HttpsURLConnection) url.openConnection();
 			conn.setRequestMethod("HEAD");
+			conn.setRequestProperty("User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			conn.getInputStream();
 			return conn.getContentLength();
 		} catch (IOException e) {
+			e.printStackTrace();
 			return -1;
 		} finally {
 			conn.disconnect();
