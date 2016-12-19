@@ -93,7 +93,7 @@ public class Util {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get command prefix for guild id
 	 * @param s Guild ID
@@ -141,13 +141,13 @@ public class Util {
 			HttpsURLConnection urlConn = (HttpsURLConnection) url.openConnection();
 			urlConn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");			urlConn.connect();
-			in = urlConn.getInputStream();
-			out = new FileOutputStream(destinationFile);
-			int c;
-			byte[] b = new byte[1024];
-			while ((c = in.read(b)) != -1)
-				out.write(b, 0, c);
-			out.flush();
+					in = urlConn.getInputStream();
+					out = new FileOutputStream(destinationFile);
+					int c;
+					byte[] b = new byte[1024];
+					while ((c = in.read(b)) != -1)
+						out.write(b, 0, c);
+					out.flush();
 		} finally {
 			if (in != null)
 				in.close();
@@ -163,11 +163,7 @@ public class Util {
 	 * @return
 	 */
 	public static JsonValue jsonFromUrl(String url, boolean https) throws IOException {
-		if(https) {
-			return Json.parse(stringFromUrl(url, https));
-		} else {
-			return Json.parse(stringFromUrl(url, https));
-		}
+		return Json.parse(stringFromUrl(url, https));
 	}
 
 	/**
@@ -177,36 +173,30 @@ public class Util {
 	 * @return
 	 */
 	public static String stringFromUrl(String url, boolean https) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader rd;
 		if(https) {
 			HttpsURLConnection conn = (HttpsURLConnection) (new URL(url).openConnection());
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			conn.connect();
-
-			StringBuilder stb = new StringBuilder();
-			BufferedReader rd = new BufferedReader(
+			rd = new BufferedReader(
 					new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				stb.append(line);
-			}
-			return stb.toString();
 		} else {
 			HttpURLConnection conn = (HttpURLConnection) (new URL(url).openConnection());
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			conn.connect();
-
-			StringBuilder stb = new StringBuilder();
-			BufferedReader rd = new BufferedReader(
+			rd = new BufferedReader(
 					new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				stb.append(line);
-			}
-			return stb.toString();
 		}
+		String line;
+		while ((line = rd.readLine()) != null) {
+			sb.append(line);
+		}
+		return sb.toString();
 	}
+
 
 	/**
 	 * Regular expression to extract Youtube Video ID from given URL
@@ -362,18 +352,18 @@ public class Util {
 	public static String getCommandContents(IMessage msg) {
 		return getCommandContents(msg.getContent());
 	}
-	
+
 	public static String getCommandContents(String s) {
 		return combineStringArray(removeFirstArrayEntry(s.split(" ")));
 	}
-	
+
 	public static String getParam(IMessage msg) {
 		return getParam(msg.getContent());
 	}
 	public static String getParam(String msg) {
 		return removeFirstArrayEntry(msg.split(" "))[0];
 	}
-	
+
 	/**
 	 * Return a future instant from a string formatted #w#d#h#m
 	 * @param string String to resolve from
@@ -417,22 +407,22 @@ public class Util {
 	 * @return min:sec
 	 */
 	public static String getMp3Duration(File file) throws UnsupportedAudioFileException, IOException {
-	    AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-	    if (fileFormat instanceof TAudioFileFormat) {
-	        Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
-	        String key = "duration";
-	        Long microseconds = (Long) properties.get(key);
-	        int milli = (int) (microseconds / 1000);
-	        int sec = (milli / 1000) % 60;
-	        int min = (milli / 1000) / 60;
-	        if((sec+"").length() == 1)
-	        	return min+":0"+sec;
-	        return min+":"+sec;
-	    } else {
-	        throw new UnsupportedAudioFileException();
-	    }
+		AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+		if (fileFormat instanceof TAudioFileFormat) {
+			Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
+			String key = "duration";
+			Long microseconds = (Long) properties.get(key);
+			int milli = (int) (microseconds / 1000);
+			int sec = (milli / 1000) % 60;
+			int min = (milli / 1000) / 60;
+			if((sec+"").length() == 1)
+				return min+":0"+sec;
+			return min+":"+sec;
+		} else {
+			throw new UnsupportedAudioFileException();
+		}
 	}
-	
+
 	/**
 	 * Convert milliseconds to mm:ss format
 	 * @param milli int of milliseconds (not expecting Long values)
@@ -440,9 +430,9 @@ public class Util {
 	 */
 	public static String formatTime(int milli) {
 		int sec = (milli / 1000) % 60;
-        int min = (milli / 1000) / 60;
-        if((sec+"").length() == 1)
-        	return min+":0"+sec;
-        return min+":"+sec;
+		int min = (milli / 1000) / 60;
+		if((sec+"").length() == 1)
+			return min+":0"+sec;
+		return min+":"+sec;
 	}
 }

@@ -235,6 +235,8 @@ public class Listeners {
 
 	@EventSubscriber
 	public void onMentionEvent(MentionEvent e) {
+		if(e.getMessage().mentionsEveryone() || e.getMessage().mentionsHere())
+			return;
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
 		if(g.getCleverBot() != null) {
 			String msg = e.getMessage().getContent().replaceAll("<@" + Bot.getInstance().getBot().getOurUser().getID() + ">", "");

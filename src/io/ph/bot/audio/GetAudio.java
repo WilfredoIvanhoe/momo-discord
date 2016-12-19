@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
+import javax.net.ssl.HttpsURLConnection;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.eclipsesource.json.JsonObject;
@@ -57,8 +58,17 @@ public class GetAudio implements Runnable {
 		if(url.contains("youtu.be") || url.contains("youtube")) {
 			JsonObject jo;
 			try {
-				jo = Util.jsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="
+				jo = Util.jsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id="
 						+ Util.extractYoutubeId(this.url) + "&key=" + Bot.getInstance().getApiKeys().get("youtube"), true).asObject();
+				Duration d = Duration.parse(jo.get("items").asArray().get(0).asObject()
+						.get("contentDetails").asObject().getString("duration", "PT11M"));
+				if((d.get(ChronoUnit.SECONDS) / 60) > 9) {
+					em.withColor(Color.RED);
+					em.withTitle("Error");
+					em.withDesc("Please keep song length to 10 minutes or below");
+					MessageUtils.sendMessage(channel, em.build());
+					return;
+				}
 				this.title = jo.get("items").asArray().get(0).asObject().get("snippet").asObject().get("title").asString();
 				em.withTitle("Queued: " + this.title)
 				.withDesc(Bot.getInstance().getBot().getUserByID(this.userId).getDisplayName(channel.getGuild())
@@ -97,7 +107,14 @@ public class GetAudio implements Runnable {
 		} else if(url.contains(".webm")) {
 			FFmpeg ffmpeg;
 			try {
-				
+				if((getFileSize(new URL(url)) / (1024*2) > 25)
+						|| getFileSize(new URL(url)) == -1) {
+					em.withColor(Color.RED);
+					em.withTitle("Error");
+					em.withDesc("Please keep file size below 25 megabytes");
+					MessageUtils.sendMessage(channel, em.build());
+					return;
+				}
 				ffmpeg = new FFmpeg();
 				FFmpegBuilder build = new FFmpegBuilder();
 				File before = new File("resources/tempdownloads/" + rand);
@@ -125,6 +142,14 @@ public class GetAudio implements Runnable {
 		} else if(url.endsWith(".mp3") || url.endsWith(".flac")) {
 			this.preparedFile = new File("resources/tempdownloads/" + rand + url.substring(url.lastIndexOf(".")));
 			try {
+				if((getFileSize(new URL(url)) / (1024*2) > 25)
+						|| getFileSize(new URL(url)) == -1) {
+					em.withColor(Color.RED);
+					em.withTitle("Error");
+					em.withDesc("Please keep file size below 25 megabytes");
+					MessageUtils.sendMessage(channel, em.build());
+					return;
+				}
 				em.withTitle("Music queued")
 				.withDesc(Bot.getInstance().getBot().getUserByID(this.userId).getDisplayName(channel.getGuild())
 						+ " queued a track")
@@ -154,22 +179,22 @@ public class GetAudio implements Runnable {
 	}
 
 	/**
-	 * Get input stream
-	 * @return Input stream for file
-	 * @deprecated in favor of directly queueing the prepared file, for deletion
+	 * Return file size of URL based on its content-length header
+	 * @param url URL to connect to
+	 * @return Bytes of content
 	 */
-	@Deprecated
-	public AudioInputStream getAudioStream() {
+	private int getFileSize(URL url) {
+		HttpsURLConnection conn = null;
 		try {
-			AudioInputStream toReturn = AudioSystem.getAudioInputStream(this.preparedFile);
-
-			return toReturn;
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
+			conn = (HttpsURLConnection) url.openConnection();
+			conn.setRequestMethod("HEAD");
+			conn.getInputStream();
+			return conn.getContentLength();
 		} catch (IOException e) {
-			e.printStackTrace();
+			return -1;
+		} finally {
+			conn.disconnect();
 		}
-		return null;
 	}
 
 	public File getPreparedFile() {
