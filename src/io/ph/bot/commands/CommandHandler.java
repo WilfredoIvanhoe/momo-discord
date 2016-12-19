@@ -17,6 +17,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 
+import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.Util;
@@ -108,8 +109,10 @@ public class CommandHandler {
 			if(cmd == null)
 				return;
 			if(getCommand(cmd).hasPermissions(msg)) {
-				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK))
+				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+					WebSyncJob.commandCount++;
 					getCommand(cmd).run(msg);
+				}
 			}
 		} else {
 			String cmd = aliasToDefaultMap.get(msg.getContent().substring(g.getGuildConfig().getCommandPrefix().length(),
@@ -117,8 +120,10 @@ public class CommandHandler {
 			if(cmd == null)
 				return;
 			if(getCommand(cmd).hasPermissions(msg)) {
-				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK))
+				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+					WebSyncJob.commandCount++;
 					getCommand(cmd).run(msg);
+				}
 			}
 		}
 	}

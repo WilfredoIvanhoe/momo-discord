@@ -28,3 +28,6 @@ build.xml
 dependency-reduced-pom.xml
 /deploy/
 /clean_resources/
+
+# temporary #
+/web2/

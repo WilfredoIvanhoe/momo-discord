@@ -67,12 +67,13 @@ public class Music implements Command {
 			}
 			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
 			int current = voice.getConnectedUsers().size();
+			int currentVotes = m.getSkipVotes();
 			if(current <= 0)
 				current = 1;
 			int maxVotes = (int) Math.floor(current/2);
 			if(maxVotes > 5)
 				maxVotes = 5;
-			if(++current >= maxVotes) {
+			if(++currentVotes >= maxVotes) {
 				m.setSkipVotes(0);
 				m.getSkipVoters().clear();
 				m.getAudioPlayer().skip();
@@ -87,7 +88,7 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			} else {
-				m.setSkipVotes(m.getSkipVotes() + 1);
+				m.setSkipVotes(currentVotes);
 				m.getSkipVoters().add(msg.getAuthor().getID());
 				em.withColor(Color.GREEN).withTitle("Voted to skip").withDesc("Votes needed to pass: " + current + "/" + maxVotes);
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
