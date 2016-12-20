@@ -25,44 +25,56 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {},
 		permission = Permission.NONE,
 		description = "Look up a character in the World of Warcraft armory",
-		example = "character-name darkspear"
+		example = "na character-name darkspear"
 		)
 public class WoW implements Command {
 
 	@Override
 	public void run(IMessage msg) {
+		EmbedBuilder em = new EmbedBuilder();
 		String[] split = Util.removeFirstArrayEntry(msg.getContent().split(" "));
-		if(split.length < 2) {
-			EmbedBuilder em = MessageUtils.commandErrorMessage(msg, "wow", "character-name realm-name", 
+		if(split.length < 3) {
+			em = MessageUtils.commandErrorMessage(msg, "wow", "character-name region realm-name", 
 					"*character-name* - Name of your character",
+					"*region* - Region in 2 letter format (i.e. NA or EU)",
 					"*realm-name* - Server name");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
+		if(!split[1].equalsIgnoreCase("na") && !split[1].equalsIgnoreCase("eu") 
+				&& !split[1].equalsIgnoreCase("tw")) {
+			em.withColor(Color.RED);
+			em.withTitle("Error");
+			em.withDesc("Valid regions: NA, EU, TW");
+			return;
+		}
 		String serverName = Util.combineStringArray(Util.removeFirstArrayEntry(split));
-		
+		serverName = Util.combineStringArray(Util.removeFirstArrayEntry(serverName.split(" ")));
+
 		IMessage tempMessage = null;
 		try {
 			tempMessage = MessageUtils.sendMessage(msg.getChannel(), 
 					new EmbedBuilder().withColor(Color.CYAN).withDesc("Searching...").build());
-			WoWCharacter wow = new WoWCharacter(serverName, split[0]);
-			
-			EmbedBuilder em = new EmbedBuilder().withColor(Color.GREEN);
+			WoWCharacter wow = new WoWCharacter(serverName, split[0], split[1].toLowerCase());
+
+			em.withColor(Color.GREEN);
 			em.withTitle(wow.getUsername() + " of " + wow.getRealm());
 			StringBuilder sb = new StringBuilder();
 			sb.append("**Level " + wow.getLevel() + "** " + wow.getGender() + " "  + wow.getRace() + " " + wow.getGameClass() +"\n");
 			sb.append("**Item Level**: " + wow.getItemLevel() + "\n");
-			sb.append("**Guild**: " + wow.getGuild() + " | **Members**: " + wow.getGuildMembers()+"\n");
+			if(wow.getGuild() != null)
+				sb.append("**Guild**: " + wow.getGuild() + " | **Members**: " + wow.getGuildMembers()+"\n");
 			sb.append("**LFR Kills**:        " + wow.getLfrKills() + "\n");
 			sb.append("**Normal Kills**: " + wow.getNormalKills() + "\n");
 			sb.append("**Heroic Kills**:   " + wow.getHeroicKills() + "\n");
 			sb.append("**Mythic Kills**:  " + wow.getMythicKills() + "\n");
-			
+
 			em.withDesc(sb.toString());
 			em.withFooterText("Achievement Points: " + wow.getAchievementPoints());
 			em.withImage(wow.getThumbnail());
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 			MessageUtils.sendErrorEmbed(msg.getChannel(), "Error finding your character", 
 					Util.getPrefixForGuildId(msg.getGuild().getID()) + "wow character-name realm-name");
 		} catch (IOException e) {

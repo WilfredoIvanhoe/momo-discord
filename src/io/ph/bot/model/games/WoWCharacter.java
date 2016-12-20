@@ -12,7 +12,7 @@ import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.util.Util;
 
 public class WoWCharacter {
-	String baseUrl = "https://us.api.battle.net/wow/character/";
+	String baseUrl = "https://%s.api.battle.net/wow/character/";
 
 	private int lfrRaid = 0;
 	private int normalRaid = 0;
@@ -41,11 +41,11 @@ public class WoWCharacter {
 	private String error;
 
 	@SuppressWarnings("unchecked")
-	public WoWCharacter(String server, String name) throws IOException, BadCharacterException, NoAPIKeyException {
+	public WoWCharacter(String server, String name, String region) throws IOException, BadCharacterException, NoAPIKeyException {
 		String apiKey;
+		region = region.replace("na", "us");
 		apiKey = Bot.getInstance().getApiKeys().get("battlenet");
-
-		JsonObject jo = Util.jsonFromUrl((baseUrl
+		JsonObject jo = Util.jsonFromUrl((String.format(baseUrl, region)
 				+ server + "/" + name + "?fields=statistics,progression,guild,items&apikey=" + apiKey)
 				.replaceAll(" ", "%20"),
 				true).asObject();
@@ -80,12 +80,16 @@ public class WoWCharacter {
 		this.achievementPoints = jo.get("achievementPoints").asInt();
 		this.itemLevel = jo.get("items").asObject().get("averageItemLevel").asInt();
 		
-		this.guild = jo.get("guild").asObject().get("name").asString();
-		this.guildMembers = jo.get("guild").asObject().get("members").asInt();
+		if(jo.get("guild") != null) {
+			this.guild = jo.get("guild").asObject().getString("name", null);
+			this.guildMembers = jo.get("guild").asObject().get("members").asInt();
+		} else {
+			this.guild = null;
+		}
 
 		this.thumbnail = jo.get("thumbnail").asString();
 		this.thumbnail = thumbnail.replace("avatar", "profilemain");
-		this.thumbnail = "http://render-api-us.worldofwarcraft.com/static-render/us/" + thumbnail;
+		this.thumbnail = String.format("http://render-%s.worldofwarcraft.com/character/%s", region, thumbnail);
 	}
 
 	public int getLfrRaid() {

@@ -26,7 +26,8 @@ public class Info implements Command {
 				+ "If you want to take a look at my inner workings, "
 				+ "feel free to go to my repository at <https://github.com/paul-io/momo-discord>\n"
 				+ "If you want help or support, join my Discord server here: https://discord.gg/uM3pyW8\n"
-				+ "If you just want to get started, try %ssetup", 
+				+ "If you just want to get started, try %ssetup and %shelp", 
+				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix(),
 				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix());
 		MessageUtils.sendMessage(msg.getChannel(), toSend);
 	}
