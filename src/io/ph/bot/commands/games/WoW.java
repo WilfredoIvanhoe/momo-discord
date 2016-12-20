@@ -25,7 +25,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {},
 		permission = Permission.NONE,
 		description = "Look up a character in the World of Warcraft armory",
-		example = "na character-name darkspear"
+		example = "character-name na darkspear"
 		)
 public class WoW implements Command {
 
