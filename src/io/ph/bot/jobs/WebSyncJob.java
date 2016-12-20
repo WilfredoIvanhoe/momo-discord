@@ -13,6 +13,7 @@ import org.quartz.JobExecutionException;
 import org.slf4j.LoggerFactory;
 
 import io.ph.bot.Bot;
+import io.ph.bot.exception.NoAPIKeyException;
 
 /**
  * Web sync
@@ -31,13 +32,14 @@ public class WebSyncJob implements Job {
 			long free = Runtime.getRuntime().freeMemory();
 			long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
 			URL url = new URL(String.format("http://127.0.0.1:8080/pages/api?"
-					+ "msgCount=%d&cmdCount=%d&userCount=%d&memoryUsage=%d&serverCount=%d&hour=%d&min=%d",
+					+ "msgCount=%d&cmdCount=%d&userCount=%d&memoryUsage=%d&serverCount=%d&hour=%d&min=%d&key=%s",
 						messageCount, commandCount,
 						Bot.getInstance().getBot().getUsers().size(),
 						(int) (((double) total - free) / total * 100), 
 						Bot.getInstance().getBot().getGuilds().size(),
 						TimeUnit.MILLISECONDS.toHours(uptime),
-						TimeUnit.MILLISECONDS.toMinutes(uptime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(uptime))));
+						TimeUnit.MILLISECONDS.toMinutes(uptime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(uptime)),
+						Bot.getInstance().getApiKeys().get("dashboard")));
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("User-Agent", 
@@ -47,7 +49,10 @@ public class WebSyncJob implements Job {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			LoggerFactory.getLogger(WebSyncJob.class).warn("Web sync offline...");
+			if(Bot.getInstance().isDebug())
+				LoggerFactory.getLogger(WebSyncJob.class).warn("Web sync offline...");
+		} catch (NoAPIKeyException e) {
+			//handled before this
 		}
 		messageCount = 0;
 		commandCount = 0;

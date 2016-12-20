@@ -85,6 +85,11 @@ public class JobScheduler {
 		}
 		remindCheck();
 		punishCheck();
-		webSync();
+		try {
+			Bot.getInstance().getApiKeys().get("dashboard");
+			webSync();
+		} catch (NoAPIKeyException e1) { 
+			LoggerFactory.getLogger(JobScheduler.class).warn("You do not have a web dashboard setup. Scheduler will not run dashboard updates");
+		}
 	}
 }
