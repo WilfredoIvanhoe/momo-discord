@@ -115,7 +115,7 @@ public class Macro implements Command {
 			try {
 				MacroObject m = MacroObject.forName(resolved[0], msg.getGuild().getID());
 				if(m.edit(msg.getAuthor().getID(), resolved[1])) {
-					em.withTitle("Success").withColor(Color.GREEN).withDesc("Macro **" + contents + "** edited");
+					em.withTitle("Success").withColor(Color.GREEN).withDesc("Macro **" + resolved[0] + "** edited");
 				} else {
 					em.withTitle("Error").withColor(Color.RED).withDesc("You cannot edit macro **" + contents + "**");
 					em.withFooterText("Users can only edit their own macros");
@@ -222,7 +222,7 @@ public class Macro implements Command {
 			toReturn[1] = s.substring(secondIndexOfQuotes + 2);
 		} else {
 			toReturn[0] = s.split(" ")[0];
-			toReturn[1] = s.split(" ")[1];
+			toReturn[1] = Util.getCommandContents(s);
 		}
 		return toReturn;
 	}

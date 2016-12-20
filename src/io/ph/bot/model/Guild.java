@@ -95,6 +95,8 @@ public class Guild {
 				config.getBoolean("FirstTime"));
 		String[] joinableRolesP = config.getStringArray("JoinableRoles");
 		for(String s : joinableRolesP) {
+			if(s.equals(""))
+				continue;
 			this.joinableRoles.add(s);
 		}
 		this.mutedRoleId = config.getString("MutedRoleId", "");
