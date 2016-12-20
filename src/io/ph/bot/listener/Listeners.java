@@ -83,17 +83,19 @@ public class Listeners {
 						Arrays.toString(aliases).substring(1, Arrays.toString(aliases).length() - 1) + "\n", true);
 			}
 			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false).
-				appendField("Example", c.getDefaultCommand() + " " + c.getExample(), false);
+			appendField("Example", c.getDefaultCommand() + " " + c.getExample(), false);
 			MessageUtils.sendPrivateMessage(e.getMessage().getAuthor(), em.build());
 			return;
 		}
-		if(e.getMessage().getContent().startsWith(Guild.guildMap.get(e.getMessage().getGuild().getID())
-				.getGuildConfig().getCommandPrefix())) {
+		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
+		if(e.getMessage().getContent().startsWith(g.getGuildConfig().getCommandPrefix())) {
 			CommandHandler.processCommand(e.getMessage());
 		}
 		try {
-			if(e.getMessage().getContent().equalsIgnoreCase("shit")) {
-				e.getMessage().addReaction("💩");
+			if(g.getFeatureStatus("reactions")) {
+				if(e.getMessage().getContent().equalsIgnoreCase("shit")) {
+					e.getMessage().addReaction("💩");
+				}
 			}
 		} catch (MissingPermissionsException | RateLimitException | DiscordException e1) {
 			e1.printStackTrace();
@@ -124,6 +126,7 @@ public class Listeners {
 			}
 		}
 		Guild g = new Guild(e.getGuild());
+		
 		if(g.getGuildConfig().isFirstTime()) {
 			//TODO: Better intro
 			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm a bot!\n"
@@ -207,9 +210,9 @@ public class Listeners {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());
 		if(!g.getSpecialChannels().getLog().equals("")) {
 			try {
-			EmbedBuilder em = new EmbedBuilder().withTitle(e.getUser().getName() + " has been unbanned")
-					.withColor(Color.GREEN).withTimestamp(System.currentTimeMillis());
-			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
+				EmbedBuilder em = new EmbedBuilder().withTitle(e.getUser().getName() + " has been unbanned")
+						.withColor(Color.GREEN).withTimestamp(System.currentTimeMillis());
+				MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
 			} catch(NullPointerException e1) {
 				// Throws a NPE when the bot pardons, but still lets the message go through. Weird, D4j bug?
 			}
@@ -228,7 +231,6 @@ public class Listeners {
 				e.getChannel().overrideRolePermissions(target,
 						Permissions.getDeniedPermissionsForNumber(0), Permissions.getAllowedPermissionsForNumber(2048));
 			} catch (Exception e1) {
-				e1.printStackTrace();
 			} 
 		}
 	}
@@ -238,21 +240,23 @@ public class Listeners {
 		if(e.getMessage().mentionsEveryone() || e.getMessage().mentionsHere())
 			return;
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
-		if(g.getCleverBot() != null) {
-			String msg = e.getMessage().getContent().replaceAll("<@" + Bot.getInstance().getBot().getOurUser().getID() + ">", "");
-			if(msg.trim().equals("reset")) {
-				g.resetCleverBot();
-				return;
-			}
-			try {
-				String s = g.getCleverBot().think(msg);
-				MessageUtils.sendMessage(e.getMessage().getChannel(), s);
-			} catch (Exception e1) {
-				e1.printStackTrace();
+		if(g.getFeatureStatus("cleverbot")) {
+			if(g.getCleverBot() != null) {
+				String msg = e.getMessage().getContent().replaceAll("<@" + Bot.getInstance().getBot().getOurUser().getID() + ">", "");
+				if(msg.trim().equals("reset")) {
+					g.resetCleverBot();
+					return;
+				}
+				try {
+					String s = g.getCleverBot().think(msg);
+					MessageUtils.sendMessage(e.getMessage().getChannel(), s);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
-	
+
 	@EventSubscriber
 	public void onUserMutedEvent(UserMutedEvent e) {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());
@@ -263,7 +267,7 @@ public class Listeners {
 			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
 		}
 	}
-	
+
 	@EventSubscriber
 	public void onUserUnmutedEvent(UserUnmutedEvent e) {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());

@@ -45,8 +45,8 @@ public class CommandHandler {
 		PropertiesConfiguration config = null;
 		List<String> globalConfigCommands = null;
 		try {
-			config = new PropertiesConfiguration("resources/config/GlobalCommands.properties");
-			globalConfigCommands = config.getList("Commands").stream()
+			config = new PropertiesConfiguration("resources/config/DefaultGlobalSettings.properties");
+			globalConfigCommands = config.getList("EnabledCommands").stream()
 					.map(object -> Objects.toString(object, null))
 					.collect(Collectors.toList());
 		} catch (ConfigurationException e1) {
@@ -63,7 +63,7 @@ public class CommandHandler {
 					if(a2 instanceof CommandData) {
 						String defaultCmd = ((CommandData) a2).defaultSyntax();
 						Permission p = ((CommandData) a2).permission();
-						// Add any commands that do not exist in GlobalCommands.properties to it
+						// Add any commands that do not exist in DefaultGlobalSettings.properties to it
 						if(globalConfigCommands != null && p == Permission.NONE) {
 							if(!globalConfigCommands.contains(defaultCmd)) {
 								LoggerFactory.getLogger(CommandHandler.class).info("Added " + defaultCmd + " to global command list");
@@ -85,7 +85,7 @@ public class CommandHandler {
 
 		if(config != null) {
 			try {
-				config.setProperty("Commands", globalConfigCommands);
+				config.setProperty("EnabledCommands", globalConfigCommands);
 				config.save();
 			} catch (ConfigurationException e) {
 				e.printStackTrace();
@@ -129,16 +129,25 @@ public class CommandHandler {
 	}
 
 	/**
-	 * Make sure every guild has all the commands
-	 * When a new command is created, it is automatically added to GlobalCommands.properties on init
+	 * Make sure every guild has all the commands/features
+	 * When a new command is created, it is automatically added to DefaultGlobalSettings.properties on init
 	 * 
 	 * This method will update every guild and automatically add any missing commands to their properties
 	 * as well as update template.properties
 	 */
 	private static void normalizeCommands() {
 		try {
-			PropertiesConfiguration config = new PropertiesConfiguration("resources/config/GlobalCommands.properties");
-			List<String> commands = config.getList("Commands").stream()
+			PropertiesConfiguration config = new PropertiesConfiguration("resources/config/DefaultGlobalSettings.properties");
+			List<String> globalEnabledCommands = config.getList("EnabledCommands").stream()
+					.map(object -> Objects.toString(object, null))
+					.collect(Collectors.toList());
+			List<String> globalDisabledCommands = config.getList("DisabledCommands").stream()
+					.map(object -> Objects.toString(object, null))
+					.collect(Collectors.toList());
+			List<String> globalEnabledFeatures = config.getList("EnabledFeatures").stream()
+					.map(object -> Objects.toString(object, null))
+					.collect(Collectors.toList());
+			List<String> globalDisabledFeatures = config.getList("DisabledFeatures").stream()
 					.map(object -> Objects.toString(object, null))
 					.collect(Collectors.toList());
 
@@ -154,30 +163,64 @@ public class CommandHandler {
 					List<String> disabledCommands = config2.getList("DisabledCommands").stream()
 							.map(object -> Objects.toString(object, null))
 							.collect(Collectors.toList());
+					List<String> enabledFeatures = config2.getList("EnabledFeatures").stream()
+							.map(object -> Objects.toString(object, null))
+							.collect(Collectors.toList());
+					List<String> disabledFeatures = config2.getList("DisabledFeatures").stream()
+							.map(object -> Objects.toString(object, null))
+							.collect(Collectors.toList());
 
 					List<String> fullCommands = new ArrayList<String>();
+					List<String> fullFeatures = new ArrayList<String>();
 					fullCommands.addAll(enabledCommands);
 					fullCommands.addAll(disabledCommands);
+					fullFeatures.addAll(enabledFeatures);
+					fullFeatures.addAll(disabledFeatures);
+					//May not be needed anymore...
 					enabledCommands.remove("");
-					for(String s : commands) {
+					disabledCommands.remove("");
+					enabledFeatures.remove("");
+					disabledFeatures.remove("");
+					for(String s : globalEnabledCommands) {
 						if(!fullCommands.contains(s)) {
 							enabledCommands.add(s);
+						}
+					}
+					for(String s : globalDisabledCommands) {
+						if(!fullCommands.contains(s)) {
+							disabledCommands.add(s);
+						}
+					}
+					for(String s : globalEnabledFeatures) {
+						if(!fullFeatures.contains(s)) {
+							enabledFeatures.add(s);
+						}
+					}
+					for(String s : globalDisabledFeatures) {
+						if(!fullFeatures.contains(s)) {
+							disabledFeatures.add(s);
 						}
 					}
 					for(String s : fullCommands) {
 						if(s.equals(""))
 							continue;
-						if(!commands.contains(s)) {
+						if(!globalEnabledCommands.contains(s) && !globalDisabledCommands.contains(s)) {
 							enabledCommands.remove(s);
 							disabledCommands.remove(s);
 						}
 					}
-					if(enabledCommands.size() == 0)
-						enabledCommands.add("");
-					if(disabledCommands.size() == 0)
-						disabledCommands.add("");
+					for(String s : fullFeatures) {
+						if(s.equals(""))
+							continue;
+						if(!globalEnabledFeatures.contains(s) && !globalDisabledFeatures.contains(s)) {
+							enabledFeatures.remove(s);
+							disabledFeatures.remove(s);
+						}
+					}
 					config2.setProperty("EnabledCommands", enabledCommands);
 					config2.setProperty("DisabledCommands", disabledCommands);
+					config2.setProperty("EnabledFeatures", enabledFeatures);
+					config2.setProperty("DisabledFeatures", disabledFeatures);
 					config2.save();
 				}
 			}

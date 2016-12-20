@@ -38,6 +38,7 @@ public class Guild {
 	private SpecialChannels specialChannels;
 	private HashMap<String, String> optIn = new HashMap<String, String>();
 	private HashMap<String, Boolean> commandStatus = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> featureStatus = new HashMap<String, Boolean>();
 	private ServerConfiguration guildConfig;
 	private HashSet<String> joinableRoles = new HashSet<String>();
 	private HistoricalSearches historicalSearches;
@@ -78,13 +79,20 @@ public class Guild {
 		for(String s : disabledCommands) {
 			this.commandStatus.put(s, false);
 		}
+		String[] enabledFeatures = config.getStringArray("EnabledFeatures");
+		String[] disabledFeatures = config.getStringArray("DisabledFeatures");
+		for(String s : enabledFeatures) {
+			this.featureStatus.put(s, true);
+		}
+		for(String s : disabledFeatures) {
+			this.featureStatus.put(s, false);
+		}
 		String welcomeMessage = Arrays.toString(config.getStringArray("NewUserWelcomeMessage"));
 		welcomeMessage = welcomeMessage.substring(1, welcomeMessage.length() - 1);
 		this.guildConfig = new ServerConfiguration(config.getString("ServerCommandPrefix"), config.getInt("MessagesPerFifteenSeconds"),
 				config.getInt("CommandCooldown"), 
 				welcomeMessage,
 				config.getBoolean("FirstTime"));
-
 		String[] joinableRolesP = config.getStringArray("JoinableRoles");
 		for(String s : joinableRolesP) {
 			this.joinableRoles.add(s);
@@ -107,30 +115,7 @@ public class Guild {
 	 * @throws BadCommandNameException Command doesn't exist
 	 */
 	public boolean disableCommand(String s) throws BadCommandNameException {
-		s = CommandHandler.aliasToDefaultMap.get(s);
-		if(!validCommandToEdit(s))
-			throw new BadCommandNameException();
-		if(!this.commandStatus.get(s))
-			return false;
-		this.commandStatus.put(s, false);
-		List<String> enabled = config.getList("EnabledCommands").stream()
-				.map(object -> Objects.toString(object, null))
-				.collect(Collectors.toList());
-		List<String> disabled = config.getList("DisabledCommands").stream()
-				.map(object -> Objects.toString(object, null))
-				.collect(Collectors.toList());
-		enabled.remove(s);
-		disabled.add(s);
-		enabled.remove("");
-		disabled.remove("");
-		/*if(enabled.size() == 0)
-			enabled.add("");
-		if(disabled.size() == 0)
-			disabled.add("");*/
-		config.setProperty("EnabledCommands", enabled);
-		config.setProperty("DisabledCommands", disabled);
-
-		return true;
+		return editCommand(s, false);
 	}
 
 	/**
@@ -140,31 +125,36 @@ public class Guild {
 	 * @throws BadCommandNameException Command doesn't exist
 	 */
 	public boolean enableCommand(String s) throws BadCommandNameException {
+		return editCommand(s, true);
+	}
+
+	private boolean editCommand(String s, boolean toEnable) throws BadCommandNameException {
 		s = CommandHandler.aliasToDefaultMap.get(s);
 		if(!validCommandToEdit(s))
 			throw new BadCommandNameException();
-		if(this.commandStatus.get(s))
+		if(!this.commandStatus.get(s))
 			return false;
-		this.commandStatus.put(s, true);
+		this.commandStatus.put(s, toEnable);
 		List<String> enabled = config.getList("EnabledCommands").stream()
 				.map(object -> Objects.toString(object, null))
 				.collect(Collectors.toList());
 		List<String> disabled = config.getList("DisabledCommands").stream()
 				.map(object -> Objects.toString(object, null))
 				.collect(Collectors.toList());
-		enabled.add(s);
-		disabled.remove(s);
+		if(toEnable) {
+			disabled.remove(s);
+			enabled.add(s);
+		} else {
+			enabled.remove(s);
+			disabled.add(s);
+		}
 		enabled.remove("");
 		disabled.remove("");
-		/*if(enabled.size() == 0)
-			enabled.add("");
-		if(disabled.size() == 0)
-			disabled.add("");*/
 		config.setProperty("EnabledCommands", enabled);
 		config.setProperty("DisabledCommands", disabled);
-
 		return true;
 	}
+	
 	public boolean getCommandStatus(String input) {
 		try {
 			Command c = CommandHandler.getCommand(input);
@@ -185,6 +175,66 @@ public class Guild {
 		}
 		return false;
 	}
+	
+	/**
+	 * Disable a feature in this guild
+	 * @param s name of feature to disable
+	 * @return True if disabled, false if it was already disabled
+	 * @throws BadCommandNameException Feature doesn't exist
+	 */
+	public boolean disableFeature(String s) throws BadCommandNameException {
+		return editFeature(s, false);
+	}
+
+	/**
+	 * Enable a feature on this guild
+	 * @param s name of command to enable
+	 * @return True if enabled, false if it was already enabled
+	 * @throws BadCommandNameException Feature doesn't exist
+	 */
+	public boolean enableFeature(String s) throws BadCommandNameException {
+		return editFeature(s, true);
+	}
+	private boolean editFeature(String s, boolean toEnable) throws BadCommandNameException {
+		if(!featureStatus.containsKey(s))
+			throw new BadCommandNameException();
+		if(!this.featureStatus.get(s))
+			return false;
+		this.featureStatus.put(s, toEnable);
+		List<String> enabled = config.getList("EnabledFeatures").stream()
+				.map(object -> Objects.toString(object, null))
+				.collect(Collectors.toList());
+		List<String> disabled = config.getList("DisabledFeatures").stream()
+				.map(object -> Objects.toString(object, null))
+				.collect(Collectors.toList());
+		if(toEnable) {
+			disabled.remove(s);
+			enabled.add(s);
+		} else {
+			enabled.remove(s);
+			disabled.add(s);
+		}
+		enabled.remove("");
+		disabled.remove("");
+		config.setProperty("EnabledFeatures", enabled);
+		config.setProperty("DisabledFeatures", disabled);
+		return true;
+	}
+	/**
+	 * Get status of a feature
+	 * @param input Feature
+	 * @return True if enabled, false if not
+	 */
+	public boolean getFeatureStatus(String input) {
+		try {
+			if(!featureStatus.containsKey(input))
+				throw new NullPointerException();
+			return this.featureStatus.get(input);
+		} catch(NullPointerException e) {
+			return false;
+		}
+	}
+	
 	public HistoricalSearches getHistoricalSearches() {
 		return historicalSearches;
 	}
@@ -192,7 +242,7 @@ public class Guild {
 	public ChatterBotSession getCleverBot() {
 		return cleverBot;
 	}
-	
+
 	public void resetCleverBot() {
 		try {
 			this.cleverBot = new ChatterBotFactory().create(ChatterBotType.CLEVERBOT).createSession();
@@ -233,6 +283,9 @@ public class Guild {
 	}
 	public HashMap<String, Boolean> getCommandStatus() {
 		return this.commandStatus;
+	}
+	public HashMap<String, Boolean> getFeatureStatus() {
+		return this.featureStatus;
 	}
 	public String getMutedRoleId() {
 		return mutedRoleId;
@@ -417,28 +470,28 @@ public class Guild {
 			config.setProperty("TwitchChannelId", twitch);
 		}
 	}
-	
+
 	public class GuildMusic {
 		private AudioPlayer audioPlayer;
 		private int trueQueueSize;
 		private int skipVotes;
 		private MusicMeta currentSong;
-		
+
 		private ArrayList<String> skipVoters = new ArrayList<String>();
 		private LinkedList<MusicMeta> musicMeta = new LinkedList<MusicMeta>();
 		private LinkedList<GetAudio> overflowQueue = new LinkedList<GetAudio>();
-		
+
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
 			this.audioPlayer.setVolume(0.5f);
 			this.trueQueueSize = 0;
 			this.skipVotes = 0;
 		}
-		
+
 		public AudioPlayer getAudioPlayer() {
 			return this.audioPlayer;
 		}
-		
+
 		/**
 		 * The special method. If the audioPlayer queue size (the true, memory queue) is < 2,
 		 * then automatically queue this meta. Else, it will be "polled" by the TrackStopEvent
@@ -462,17 +515,17 @@ public class Guild {
 			trueQueueSize++;
 			this.currentSong = this.getMusicMeta().get(0);
 		}
-		
+
 		public MusicMeta pollMetaData() {
 			trueQueueSize--;
 			this.currentSong = musicMeta.peek();
 			return musicMeta.poll();
 		}
-		
+
 		public GetAudio pollGetAudio() {
 			return overflowQueue.poll();
 		}
-		
+
 		public int getAudioSize() {
 			return overflowQueue.size();
 		}
@@ -495,11 +548,11 @@ public class Guild {
 		public LinkedList<MusicMeta> getMusicMeta() {
 			return musicMeta;
 		}
-		
+
 		public void setCurrentSong(MusicMeta m) {
 			this.currentSong = m;
 		}
-		
+
 		public MusicMeta getCurrentSong() {
 			return this.currentSong;
 		}
@@ -513,14 +566,14 @@ public class Guild {
 		}*/
 
 	}
-	
+
 	public class MusicMeta {
 		private String userId;
 		private String trackName;
 		private String url;
 		private GetAudio audioSrcInterface;
 		private String songLength;
-		
+
 		public MusicMeta(String userId, String trackName, String url, String songLength, GetAudio get) {
 			this.userId = userId;
 			this.trackName = trackName;
@@ -562,7 +615,7 @@ public class Guild {
 	public GuildMusic getMusicManager() {
 		return musicManager;
 	}
-	
+
 	public void initMusicManager(IGuild guild) {
 		this.musicManager = new GuildMusic(guild);
 	}
