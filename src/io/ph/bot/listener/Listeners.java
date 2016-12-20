@@ -15,6 +15,7 @@ import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.events.UserBanEvent;
 import io.ph.bot.events.UserMutedEvent;
 import io.ph.bot.events.UserUnmutedEvent;
+import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
 import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
@@ -65,6 +66,7 @@ public class Listeners {
 
 	@EventSubscriber
 	public void onMessageRecievedEvent(MessageReceivedEvent e) {
+		WebSyncJob.messageCount++;
 		if(e.getMessage().getGuild() == null) {
 			// Private message
 			EmbedBuilder em = new EmbedBuilder();

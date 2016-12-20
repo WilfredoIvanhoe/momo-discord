@@ -88,7 +88,7 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			} else {
-				m.setSkipVotes(m.getSkipVotes() + 1);
+				m.setSkipVotes(currentVotes);
 				m.getSkipVoters().add(msg.getAuthor().getID());
 				em.withColor(Color.GREEN).withTitle("Voted to skip").withDesc("Votes needed to pass: " + current + "/" + maxVotes);
 				MessageUtils.sendMessage(msg.getChannel(), em.build());

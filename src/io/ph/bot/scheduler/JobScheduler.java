@@ -15,6 +15,7 @@ import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.jobs.ReminderJob;
 import io.ph.bot.jobs.TimedPunishJob;
 import io.ph.bot.jobs.TwitchStreamJob;
+import io.ph.bot.jobs.WebSyncJob;
 
 public class JobScheduler {
 	
@@ -30,7 +31,7 @@ public class JobScheduler {
 		}
 	}
 	
-	public static void twitchStreamCheck() {
+	private static void twitchStreamCheck() {
 		JobDetail job = JobBuilder.newJob(TwitchStreamJob.class).withIdentity("twitchJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("twitchJob", "group1")
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(180).repeatForever()).build();
@@ -41,7 +42,7 @@ public class JobScheduler {
 		}
 	}
 	
-	public static void remindCheck() {
+	private static void remindCheck() {
 		JobDetail job = JobBuilder.newJob(ReminderJob.class).withIdentity("reminderJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("reminderJob", "group1")
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(15).repeatForever()).build();
@@ -52,10 +53,21 @@ public class JobScheduler {
 		}
 	}
 	
-	public static void punishCheck() {
+	private static void punishCheck() {
 		JobDetail job = JobBuilder.newJob(TimedPunishJob.class).withIdentity("punishJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("punishJob", "group1")
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(30).repeatForever()).build();
+		try {
+			scheduler.scheduleJob(job, trigger);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void webSync() {
+		JobDetail job = JobBuilder.newJob(WebSyncJob.class).withIdentity("messageCountsJob", "group1").build();
+		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("messageCountsJob", "group1")
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever()).build();
 		try {
 			scheduler.scheduleJob(job, trigger);
 		} catch (SchedulerException e) {
@@ -73,6 +85,11 @@ public class JobScheduler {
 		}
 		remindCheck();
 		punishCheck();
-		
+		try {
+			Bot.getInstance().getApiKeys().get("dashboard");
+			webSync();
+		} catch (NoAPIKeyException e1) { 
+			LoggerFactory.getLogger(JobScheduler.class).warn("You do not have a web dashboard setup. Scheduler will not run dashboard updates");
+		}
 	}
 }
