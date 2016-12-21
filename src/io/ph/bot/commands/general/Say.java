@@ -25,7 +25,7 @@ import sx.blah.discord.util.RateLimitException;
 public class Say implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		try {
 			msg.delete();
 			MessageUtils.sendMessage(msg.getChannel(), Util.getCommandContents(msg));

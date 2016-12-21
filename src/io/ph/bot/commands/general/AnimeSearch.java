@@ -56,7 +56,7 @@ public class AnimeSearch implements Runnable, Command {
 	}
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Runnable a = new AnimeSearch(msg);
 		new Thread(a).start();
 	}

@@ -9,7 +9,7 @@ public interface Command {
 	 * Execute this command
 	 * @param msg Original IMessage. Can infer guild, user, etc off of this
 	 */
-	public void run(IMessage msg);
+	public void executeCommand(IMessage msg);
 	
 	/**
 	 * Check if user has permissions

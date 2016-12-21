@@ -59,7 +59,7 @@ public class GetAudio implements Runnable {
 			JsonObject jo;
 			try {
 				jo = Util.jsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id="
-						+ Util.extractYoutubeId(this.url) + "&key=" + Bot.getInstance().getApiKeys().get("youtube"), true).asObject();
+						+ Util.extractYoutubeId(this.url) + "&key=" + Bot.getInstance().getApiKeys().get("youtube")).asObject();
 				Duration d = Duration.parse(jo.get("items").asArray().get(0).asObject()
 						.get("contentDetails").asObject().getString("duration", "PT11M"));
 				if((d.get(ChronoUnit.SECONDS) / 60) > 9) {

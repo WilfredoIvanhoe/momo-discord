@@ -40,7 +40,7 @@ public class ThemeSearch implements Runnable, Command {
 		this.msg = msg;
 	}
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Runnable t = new ThemeSearch(msg);
 		new Thread(t).start();
 	}

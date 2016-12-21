@@ -32,7 +32,7 @@ import sx.blah.discord.util.RoleBuilder;
 public class Setup implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		EmbedBuilder em = new EmbedBuilder();
 		if((!g.getMutedRoleId().equals("") || g.getMutedRoleId() != null)

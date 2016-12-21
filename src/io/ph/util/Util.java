@@ -160,31 +160,30 @@ public class Util {
 	/**
 	 * Returns json value for given String url
 	 * @param url url to connect to
-	 * @param https use secured protocal or not
 	 * @return
 	 */
-	public static JsonValue jsonFromUrl(String url, boolean https) throws IOException {
-		return Json.parse(stringFromUrl(url, https));
+	public static JsonValue jsonFromUrl(String url) throws IOException {
+		return Json.parse(stringFromUrl(url));
 	}
 
 	/**
 	 * Returns string for given String url
 	 * @param url url to connect to
-	 * @param https use secured protocal or not
 	 * @return
 	 */
-	public static String stringFromUrl(String url, boolean https) throws IOException {
+	public static String stringFromUrl(String url) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader rd;
-		if(https) {
-			HttpsURLConnection conn = (HttpsURLConnection) (new URL(url).openConnection());
+		URL link = new URL(url);
+		if(link.getProtocol().equals("https")) {
+			HttpsURLConnection conn = (HttpsURLConnection) link.openConnection();
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			conn.connect();
 			rd = new BufferedReader(
 					new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
 		} else {
-			HttpURLConnection conn = (HttpURLConnection) (new URL(url).openConnection());
+			HttpURLConnection conn = (HttpURLConnection) link.openConnection();
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			conn.connect();
@@ -340,6 +339,19 @@ public class Util {
 	public static boolean isInteger(String input) {
 		try {
 			Integer.parseInt(input);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	/**
+	 * Check if String input is a valid double through {@link Double#parseInt(String)}
+	 * @param input String input
+	 * @return True if double, false if not
+	 */
+	public static boolean isDouble(String input) {
+		try {
+			Double.parseDouble(input);
 			return true;
 		} catch(Exception e) {
 			return false;

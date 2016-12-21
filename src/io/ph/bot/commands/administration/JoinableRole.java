@@ -23,8 +23,8 @@ import sx.blah.discord.util.RoleBuilder;
  *
  */
 @CommandData (
-		defaultSyntax = "joinablerole",
-		aliases = {"optionalrole", "optinrole", "enablerole"},
+		defaultSyntax = "enablerole",
+		aliases = {"joinablerole"},
 		permission = Permission.MANAGE_ROLES,
 		description = "Designate a joinable role\n"
 				+ "Create or designate a pre-existing role as joinable. Users can then join it with the joinrole command",
@@ -33,7 +33,7 @@ import sx.blah.discord.util.RoleBuilder;
 public class JoinableRole implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String role = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
 		for(IRole r : msg.getGuild().getRoles()) {

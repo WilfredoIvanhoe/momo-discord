@@ -21,7 +21,7 @@ import sx.blah.discord.handle.obj.IMessage;
 public class ChangeAvatar implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		if(msg.getContent().contains("reset")) {
 			State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 			return;

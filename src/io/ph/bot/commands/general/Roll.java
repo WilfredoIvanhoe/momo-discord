@@ -25,7 +25,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Roll implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Random r = new Random();
 		EmbedBuilder em;
 		if(msg.getContent().split(" ").length == 1) {

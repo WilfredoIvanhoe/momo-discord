@@ -54,7 +54,7 @@ public class KitsuAnime {
 	 */
 	public static ArrayList<KitsuAnime> forName(String search) {
 		try {
-			JsonValue j = Util.jsonFromUrl(kitsuApiLink + "anime?filter[text]=" + search, true);
+			JsonValue j = Util.jsonFromUrl(kitsuApiLink + "anime?filter[text]=" + search);
 			ArrayList<KitsuAnime> toReturn = new ArrayList<KitsuAnime>();
 			for(JsonValue jv : j.asObject().get("data").asArray()) {
 				JsonObject jo = jv.asObject();

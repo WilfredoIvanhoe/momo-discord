@@ -30,7 +30,7 @@ import sx.blah.discord.util.RateLimitException;
 public class JoinRole implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String role = Util.getCommandContents(msg);
 		if(role.equals("")) {

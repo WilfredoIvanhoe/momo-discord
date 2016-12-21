@@ -37,7 +37,7 @@ public class Theme {
 				  .build();
 
 		String searchUrl = baseThemeUrl + "key=" + Bot.getInstance().getApiKeys().get("themes") + "&search=" + search;
-		JsonValue jv = Util.jsonFromUrl(searchUrl, true);
+		JsonValue jv = Util.jsonFromUrl(searchUrl);
 		JsonArray ja = jv.asArray();
 		if(ja.size() == 0) {
 			throw new NoSearchResultException();

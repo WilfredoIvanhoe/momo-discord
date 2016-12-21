@@ -18,7 +18,6 @@ import io.ph.bot.exception.NoAPIKeyException;
 /**
  * Web sync
  * Sync data to the dashboard
- * TODO: Key to prevent fakes
  * @author Paul
  *
  */

@@ -28,12 +28,12 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {},
 		permission = Permission.NONE,
 		description = "Unregister a username from Twitch.tv notifications",
-		example = "TSM_theoddone"
+		example = "TSM_TheOddOne"
 		)
 public class UnregisterTwitch implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		if(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getTwitch().equals("")) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like this server does not have a Twitch.tv announcement channel setup\n"

@@ -29,7 +29,7 @@ public class JishoObject {
 		try {
 			String url = "http://jisho.org/search/"+URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8.toString());
 
-			Document doc = Jsoup.parse(Util.stringFromUrl(url, false));
+			Document doc = Jsoup.parse(Util.stringFromUrl(url));
 			if(doc.select("div#no-matches").hasText())
 				return null;
 

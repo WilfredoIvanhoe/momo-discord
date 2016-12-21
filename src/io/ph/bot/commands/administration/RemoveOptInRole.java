@@ -18,8 +18,8 @@ import sx.blah.discord.util.EmbedBuilder;
  *
  */
 @CommandData (
-		defaultSyntax = "removejoinablerole",
-		aliases = {"removeoptinrole", "disablerole"},
+		defaultSyntax = "disablerole",
+		aliases = {"removejoinablerole"},
 		permission = Permission.MANAGE_ROLES,
 		description = "Disable a joinable role.\n"
 				+ "Designate a role that cannot be joined. Note: This will not remove users who are already in that role, "
@@ -28,7 +28,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		)
 public class RemoveOptInRole implements Command {
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String role = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
 		em.withColor(Color.RED).withTitle("Error").withDesc("**" + role + " is not a joinable role");

@@ -25,7 +25,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class SetMusicChannel implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		String currentChannel = msg.getChannel().getID();
 		EmbedBuilder em = new EmbedBuilder().withTitle("Success");

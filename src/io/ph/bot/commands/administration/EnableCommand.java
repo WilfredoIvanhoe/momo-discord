@@ -19,7 +19,7 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "enable",
 		aliases = {"enablecommand"},
-		permission = Permission.MANAGE_CHANNELS,
+		permission = Permission.MANAGE_ROLES,
 		description = "Enable a command.\n"
 				+ "Only normal user commands can be enabled. You can see the status by using the commandstatus command",
 		example = "macro"
@@ -27,7 +27,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class EnableCommand implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		String content = Util.getCommandContents(msg);

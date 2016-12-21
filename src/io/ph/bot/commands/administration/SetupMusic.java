@@ -29,7 +29,7 @@ import sx.blah.discord.util.RateLimitException;
 public class SetupMusic implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		if((!g.getSpecialChannels().getVoice().equals("") || g.getSpecialChannels().getVoice() != null)

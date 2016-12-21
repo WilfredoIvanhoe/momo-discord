@@ -31,7 +31,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Diagnostics implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		em.withAuthorIcon(Bot.getInstance().getBot().getOurUser().getAvatarURL());
 		em.withAuthorName(Bot.getInstance().getBot().getOurUser().getDisplayName(msg.getGuild()) + " diagnostics");

@@ -28,7 +28,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class FFXIV implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String[] split = Util.removeFirstArrayEntry(msg.getContent().split(" "));
 		if(split.length != 3) {
 			EmbedBuilder em = MessageUtils.commandErrorMessage(msg, "ffxiv", "server first-name last-name", 

@@ -34,7 +34,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class RemindMe implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		if(msg.getContent().split(" ").length < 3) {
 			em = MessageUtils.commandErrorMessage(msg, "remindme", "#w#d#h#m reminder-message", 

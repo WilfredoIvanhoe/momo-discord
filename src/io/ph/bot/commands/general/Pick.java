@@ -26,7 +26,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Pick implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String[] splitMessage = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" "))).split(" or ");
 		if(splitMessage.length < 2) {

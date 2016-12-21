@@ -27,7 +27,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Help implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String command = Util.getCommandContents(msg);
 		EmbedBuilder em = new EmbedBuilder();
 		if(command.length() > 0) {

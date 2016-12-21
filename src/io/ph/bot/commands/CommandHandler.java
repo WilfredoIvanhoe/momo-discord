@@ -53,8 +53,7 @@ public class CommandHandler {
 			e1.printStackTrace();
 		}
 		for(Class<? extends Command> c : classes) {
-			if(c.getName().equals("io.ph.bot.commands.administration.ChangeSpecialChannel") ||
-					c.isInterface())
+			if(c.isInterface())
 				continue;
 			Annotation[] a = c.getAnnotations();
 			try {
@@ -111,7 +110,7 @@ public class CommandHandler {
 			if(getCommand(cmd).hasPermissions(msg)) {
 				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 					WebSyncJob.commandCount++;
-					getCommand(cmd).run(msg);
+					getCommand(cmd).executeCommand(msg);
 				}
 			}
 		} else {
@@ -122,7 +121,7 @@ public class CommandHandler {
 			if(getCommand(cmd).hasPermissions(msg)) {
 				if(g.getCommandStatus(cmd) || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 					WebSyncJob.commandCount++;
-					getCommand(cmd).run(msg);
+					getCommand(cmd).executeCommand(msg);
 				}
 			}
 		}

@@ -26,7 +26,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Jisho implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String word = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
 		ArrayList<JishoObject> jA = JishoObject.searchVocabulary(word);

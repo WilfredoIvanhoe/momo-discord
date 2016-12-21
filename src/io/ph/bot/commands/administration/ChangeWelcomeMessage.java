@@ -27,7 +27,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		)
 public class ChangeWelcomeMessage implements Command {
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
 		Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().setWelcomeMessage(contents);

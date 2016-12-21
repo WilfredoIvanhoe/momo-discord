@@ -25,7 +25,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		)
 public class ChangeCommandPrefix implements Command {
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
 		if(contents.equals("")) {

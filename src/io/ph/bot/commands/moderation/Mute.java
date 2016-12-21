@@ -39,7 +39,7 @@ import sx.blah.discord.util.RateLimitException;
 public class Mute implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		if(Guild.guildMap.get(msg.getGuild().getID()).getMutedRoleId().equals("")) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like this server doesn't have a designated muted role.\n"

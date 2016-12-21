@@ -30,7 +30,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class WoW implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String[] split = Util.removeFirstArrayEntry(msg.getContent().split(" "));
 		if(split.length < 3) {

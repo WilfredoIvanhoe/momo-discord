@@ -37,7 +37,7 @@ import sx.blah.discord.util.RateLimitException;
 public class Unmute implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		String content = Util.getCommandContents(msg);
 		if(Guild.guildMap.get(msg.getGuild().getID()).getMutedRoleId().equals("")) {

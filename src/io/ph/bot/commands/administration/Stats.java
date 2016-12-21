@@ -26,7 +26,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Stats implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		em.withTitle(msg.getGuild().getName());
 		em.appendField("Users", msg.getGuild().getUsers().size() + "", true);

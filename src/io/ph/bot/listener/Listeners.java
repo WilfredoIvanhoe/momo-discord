@@ -17,6 +17,7 @@ import io.ph.bot.events.UserMutedEvent;
 import io.ph.bot.events.UserUnmutedEvent;
 import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
+import io.ph.bot.procedural.ProceduralListener;
 import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -67,7 +68,7 @@ public class Listeners {
 	@EventSubscriber
 	public void onMessageRecievedEvent(MessageReceivedEvent e) {
 		WebSyncJob.messageCount++;
-		if(e.getMessage().getGuild() == null) {
+		if(e.getMessage().getChannel().isPrivate()) {
 			// Private message
 			EmbedBuilder em = new EmbedBuilder();
 			Command c;
@@ -90,6 +91,7 @@ public class Listeners {
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
 		if(e.getMessage().getContent().startsWith(g.getGuildConfig().getCommandPrefix())) {
 			CommandHandler.processCommand(e.getMessage());
+			return;
 		}
 		try {
 			if(g.getFeatureStatus("reactions")) {
@@ -100,7 +102,7 @@ public class Listeners {
 		} catch (MissingPermissionsException | RateLimitException | DiscordException e1) {
 			e1.printStackTrace();
 		}
-
+		ProceduralListener.getInstance().update(e.getMessage());
 	}
 
 	/**

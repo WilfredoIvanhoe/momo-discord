@@ -21,11 +21,11 @@ import sx.blah.discord.handle.obj.IMessage;
 public class Info implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String toSend = String.format("Hi! I'm Momo, a pretty comprehensive open-source Discord bot.\n"
 				+ "If you want to take a look at my inner workings, "
-				+ "feel free to go to my repository at <https://github.com/paul-io/momo-discord>\n"
-				+ "If you want help or support, join my Discord server here: https://discord.gg/uM3pyW8\n"
+				+ "feel free to go to my repository at <http://momobot.io/github>\n"
+				+ "If you want help or support, join my Discord server here: http://momobot.io/join and look for Kagumi\n"
 				+ "If you just want to get started, try %ssetup and %shelp", 
 				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix(),
 				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix());

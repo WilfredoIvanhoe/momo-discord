@@ -29,12 +29,12 @@ import sx.blah.discord.util.EmbedBuilder;
 		permission = Permission.NONE,
 		description = "Register a Twitch channel for notifications, if the Twitch announcement channel is setup\n"
 				+ "Protip: If users are spamming users, disable the command so it is only usable by moderators+",
-		example = "TSM_theoddone"
+		example = "TSM_TheOddOne"
 		)
 public class RegisterTwitch implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		if(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getTwitch().equals("")) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like this server does not have a Twitch.tv announcement channel setup\n"

@@ -47,8 +47,7 @@ public class WoWCharacter {
 		apiKey = Bot.getInstance().getApiKeys().get("battlenet");
 		JsonObject jo = Util.jsonFromUrl((String.format(baseUrl, region)
 				+ server + "/" + name + "?fields=statistics,progression,guild,items&apikey=" + apiKey)
-				.replaceAll(" ", "%20"),
-				true).asObject();
+				.replaceAll(" ", "%20")).asObject();
 		if(!(jo.get("status") == null)) {
 			if(jo.get("status").asString().equals("nok")) {
 				throw new BadCharacterException();
@@ -176,8 +175,7 @@ public class WoWCharacter {
 		JsonObject jo2;
 		try {
 			jo2 = Util.jsonFromUrl("https://us.api.battle.net/wow/data/character/races?locale=en_US&apikey=" 
-					+ Bot.getInstance().getApiKeys().get("battlenet"),
-					true).asObject();
+					+ Bot.getInstance().getApiKeys().get("battlenet")).asObject();
 
 			HashMap<Integer, String> races = new HashMap<Integer, String>();
 			for(JsonValue j : jo2.get("races").asArray()) {
@@ -186,8 +184,7 @@ public class WoWCharacter {
 			Bot.getInstance().getCache().put("wowraces", races);
 
 			jo2 = Util.jsonFromUrl("https://us.api.battle.net/wow/data/character/classes?locale=en_US&apikey="  
-					+ Bot.getInstance().getApiKeys().get("battlenet"),
-					true).asObject();
+					+ Bot.getInstance().getApiKeys().get("battlenet")).asObject();
 			HashMap<Integer, String> classes = new HashMap<Integer, String>();
 			for(JsonValue j : jo2.get("classes").asArray()) {
 				classes.put(j.asObject().get("id").asInt(), j.asObject().get("name").asString());

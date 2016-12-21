@@ -37,7 +37,7 @@ public class Ping implements Command {
 			":^)"
 	};
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		Long l = msg.getTimestamp().atZone(ZoneId.systemDefault()).toEpochSecond();
 		LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 		int r = new Random().nextInt(responses.length);

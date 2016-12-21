@@ -30,7 +30,7 @@ import sx.blah.discord.util.RateLimitException;
 public class LeaveRole implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String role = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
 		if(role.equals("")) {

@@ -21,7 +21,7 @@ import sx.blah.discord.handle.obj.IMessage;
 public class ChangeUsername implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		State.changeBotUsername(Util.getCommandContents(msg));
 	}
 

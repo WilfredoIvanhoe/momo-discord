@@ -30,15 +30,15 @@ import sx.blah.discord.util.EmbedBuilder;
 		description = "Create, delete, edit, search, or get information on a macro\n"
 				+ "A macro is a quick way to bind text or links to a shortcut",
 		example = "create \"test macro\" contents\n"
-				+ "delete test macro\n"
-				+ "edit \"test macro\" new contents\n"
-				+ "info test macro\n"
-				+ "test macro"
+				+ "macro delete test macro\n"
+				+ "macro edit \"test macro\" new contents\n"
+				+ "macro info test macro\n"
+				+ "macro test macro"
 		)
 public class Macro implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
 		if(contents.equals("")) {

@@ -29,7 +29,7 @@ import sx.blah.discord.util.RateLimitException;
 public class Kick implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		try {
 			IUser target = Util.resolveUserFromMessage(msg, msg.getGuild());

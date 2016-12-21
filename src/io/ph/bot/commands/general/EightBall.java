@@ -49,7 +49,7 @@ public class EightBall implements Command {
 			};
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String content = Util.getCommandContents(msg);
 		if(content.equals("")) {
 			EmbedBuilder em = MessageUtils.commandErrorMessage(msg, "8ball", "question", "*question* - your question for the magic 8 ball");

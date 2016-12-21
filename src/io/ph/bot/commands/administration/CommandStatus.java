@@ -20,14 +20,14 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "commandstatus",
 		aliases = {"status"},
-		permission = Permission.MANAGE_SERVER,
+		permission = Permission.MANAGE_ROLES,
 		description = "Check all toggleable commands, listing which are enabled and which are disabled",
 		example = "(no parameters)"
 		)
 public class CommandStatus implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String contents = Util.getCommandContents(msg);
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		if(contents.length() > 0) {

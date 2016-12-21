@@ -24,7 +24,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Rate implements Command {
 
 	@Override
-	public void run(IMessage msg) {
+	public void executeCommand(IMessage msg) {
 		String s = Util.getCommandContents(msg);
 		EmbedBuilder em = new EmbedBuilder();
 		if(s.equals("")) {
