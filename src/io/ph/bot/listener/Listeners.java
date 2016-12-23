@@ -20,6 +20,7 @@ import io.ph.bot.model.Guild;
 import io.ph.bot.procedural.ProceduralListener;
 import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
+import io.ph.util.Util;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ChannelCreateEvent;
 import sx.blah.discord.handle.impl.events.GuildCreateEvent;
@@ -131,7 +132,8 @@ public class Listeners {
 		
 		if(g.getGuildConfig().isFirstTime()) {
 			//TODO: Better intro
-			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm a bot!\n"
+			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm a robot! You are my "
+					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
 					+ "Command prefix: $ | Try $info");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}

@@ -21,7 +21,8 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {"disablecommand"},
 		permission = Permission.MANAGE_ROLES,
 		description = "Disable a command.\n"
-				+ "Only normal user commands can be disabled. You can see the status by using the commandstatus command",
+				+ "Only normal user commands can be disabled. You can see the status by using the commandstatus command. "
+				+ "Use \"disable all\" to disable all user commands",
 		example = " macro"
 		)
 public class DisableCommand implements Command {
@@ -36,6 +37,11 @@ public class DisableCommand implements Command {
 					"*command* - Command you want to disable",
 					"If you need valid options, do " + Util.getPrefixForGuildId(msg.getGuild().getID()) + "commandstatus");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
+		if(content.equals("all")) {
+			g.disableAllCommands();
+			em.withColor(Color.GREEN).withTitle("Success").withDesc("All commands have been disabled");
 			return;
 		}
 		try {

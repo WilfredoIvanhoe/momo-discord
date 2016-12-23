@@ -21,7 +21,8 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {"enablecommand"},
 		permission = Permission.MANAGE_ROLES,
 		description = "Enable a command.\n"
-				+ "Only normal user commands can be enabled. You can see the status by using the commandstatus command",
+				+ "Only normal user commands can be enabled. You can see the status by using the commandstatus command. "
+				+ "Use \"enable all\" to enable all commands",
 		example = "macro"
 		)
 public class EnableCommand implements Command {
@@ -36,6 +37,11 @@ public class EnableCommand implements Command {
 					"*command* - Command you want to enable",
 					"If you need valid options, do " + Util.getPrefixForGuildId(msg.getGuild().getID()) + "commandstatus");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
+		if(content.equals("all")) {
+			g.enableAllCommands();
+			em.withColor(Color.GREEN).withTitle("Success").withDesc("All commands have been disabled");
 			return;
 		}
 		try {

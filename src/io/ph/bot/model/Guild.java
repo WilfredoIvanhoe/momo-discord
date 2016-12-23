@@ -171,11 +171,17 @@ public class Guild {
 		}
 	}
 	public boolean validCommandToEdit(String s) {
-		for (String key : commandStatus.keySet()) {
+		for(String key : commandStatus.keySet()) {
 			if(s.equalsIgnoreCase(key))
 				return true;
 		}
 		return false;
+	}
+	public void enableAllCommands() {
+		commandStatus.replaceAll((key, value) -> true);
+	}
+	public void disableAllCommands() {
+		commandStatus.replaceAll((key, value) -> false);
 	}
 	
 	/**

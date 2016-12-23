@@ -26,7 +26,8 @@ public class Info implements Command {
 				+ "If you want to take a look at my inner workings, "
 				+ "feel free to go to my repository at <http://momobot.io/github>\n"
 				+ "If you want help or support, join my Discord server here: http://momobot.io/join and look for Kagumi\n"
-				+ "If you just want to get started, try %ssetup and %shelp", 
+				+ "If you just want to get started, try %ssetup and %shelp\n"
+				+ "Full command list: <http://momobot.io/public/commands.html>", 
 				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix(),
 				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix());
 		MessageUtils.sendMessage(msg.getChannel(), toSend);
