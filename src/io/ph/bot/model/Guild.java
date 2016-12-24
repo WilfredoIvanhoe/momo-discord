@@ -107,7 +107,7 @@ public class Guild {
 			e.printStackTrace();
 		}
 		Guild.guildMap.put(g.getID(), this);
-		Bot.getInstance().getLogger().info("Guild {} initialized", g.getID());
+		Bot.getInstance().getLogger().info("Guild {} initialized - {}", g.getID(), g.getName());
 	}
 
 	/**

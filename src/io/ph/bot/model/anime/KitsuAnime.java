@@ -1,6 +1,7 @@
-package io.ph.bot.model;
+package io.ph.bot.model.anime;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.eclipsesource.json.JsonObject;
@@ -25,13 +26,13 @@ public class KitsuAnime {
 	private String imageLink;
 	private String malLink;
 	private String type;
-	
+
 	//anime?filter[attr]=
-	private static String kitsuApiLink = "https://kitsu.io/api/edge/";
+	private static final String kitsuApiLink = "https://kitsu.io/api/edge/";
 	public KitsuAnime() {
-		
+
 	}
-	
+
 	public KitsuAnime(String title, int episodeCount, String airingStatus, String startDate, String endDate,
 			double rating, int id, String synopsis, String imageLink, String malLink, String type) {
 		this.title = title;
@@ -50,16 +51,26 @@ public class KitsuAnime {
 	/**
 	 * This might (and will) break soon due to the soon-to-be-added OAuth
 	 * Be warned
-	 * @param search Search slug
+	 * @param search Search term
 	 */
 	public static ArrayList<KitsuAnime> forName(String search) {
 		try {
-			JsonValue j = Util.jsonFromUrl(kitsuApiLink + "anime?filter[text]=" + search);
+			JsonValue j = Util.jsonFromUrl(kitsuApiLink + "anime?filter[text]=" + URLEncoder.encode(search, "UTF-8"));
 			ArrayList<KitsuAnime> toReturn = new ArrayList<KitsuAnime>();
+			int limit = 0;
 			for(JsonValue jv : j.asObject().get("data").asArray()) {
+				if(limit++ >= 10) {
+					// send message
+					break;
+				}
 				JsonObject jo = jv.asObject();
+				System.out.println(jo.getString("id", "-1"));
+				if(jo.get("attributes").asObject().get("titles").asObject().get("en").isNull()) {
+					System.out.println(jo.get("attributes").asObject().get("titles").asObject().getString("en_jp", "en_jp name"));
+				} else {
+					System.out.println(jo.get("attributes").asObject().get("titles").asObject().getString("en", "en name"));
+				}	 
 			}
-			
 			return toReturn;
 		} catch (IOException e) {
 			e.printStackTrace();

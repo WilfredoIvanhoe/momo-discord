@@ -1,4 +1,4 @@
-package io.ph.bot.model;
+package io.ph.bot.model.anime;
 
 import java.io.BufferedReader;
 import java.io.IOException;

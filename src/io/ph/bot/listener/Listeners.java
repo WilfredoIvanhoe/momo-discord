@@ -32,6 +32,7 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.UserPardonEvent;
+import sx.blah.discord.handle.impl.events.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -280,6 +281,17 @@ public class Listeners {
 					.withAuthorName(e.getUser().getName() + " has been unmuted")
 					.withColor(Color.GREEN).withTimestamp(System.currentTimeMillis());
 			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
+		}
+	}
+	
+	@EventSubscriber
+	public void onUserVoiceChannelLeaveEvent(UserVoiceChannelLeaveEvent e) {
+		if(e.getUser().equals(Bot.getInstance().getBot().getOurUser())) {
+			try {
+				Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()).join();
+				LoggerFactory.getLogger(Listeners.class).warn("Auto rejoined voice channel {} in {}",
+						e.getChannel().getName(), e.getChannel().getGuild().getName());
+			} catch (MissingPermissionsException e1) { }
 		}
 	}
 }

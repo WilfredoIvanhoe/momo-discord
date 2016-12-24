@@ -43,7 +43,7 @@ public class Mute implements Command {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		if(Guild.guildMap.get(msg.getGuild().getID()).getMutedRoleId().equals("")) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like this server doesn't have a designated muted role.\n"
-					+ "You can generate one automatically by running `" + Util.getPrefixForGuildId(msg.getGuild().getID()) + "setup` if you have"
+					+ "You can generate one automatically by running `" + Util.getPrefixForGuildId(msg.getGuild().getID()) + "setup` if you have "
 					+ "the Manage Servers permission");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
@@ -67,7 +67,7 @@ public class Mute implements Command {
 			if(Util.getParam(msg).equalsIgnoreCase("temp")) {
 				now = Util.resolveInstantFromString(Util.getParam(t));
 				String targetS = Util.getCommandContents(Util.getCommandContents(t));
-				target = Util.resolveUserFromMessage(msg, msg.getGuild());
+				target = Util.resolveUserFromMessage(targetS, msg.getGuild());
 				if(target == null) {
 					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + targetS + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());

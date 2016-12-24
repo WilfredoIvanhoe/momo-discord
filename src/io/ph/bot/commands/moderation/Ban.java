@@ -49,8 +49,6 @@ public class Ban implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
-
-
 		try {
 			IUser target;
 			em.withColor(Color.GREEN).withTitle("Success");
@@ -58,7 +56,7 @@ public class Ban implements Command {
 			if(Util.getParam(msg).equalsIgnoreCase("temp")) {
 				now = Util.resolveInstantFromString(Util.getParam(t));
 				String contents = Util.getCommandContents(Util.getCommandContents(t));
-				target = Util.resolveUserFromMessage(msg, msg.getGuild());
+				target = Util.resolveUserFromMessage(contents, msg.getGuild());
 				if(target == null) {
 					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + contents + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());

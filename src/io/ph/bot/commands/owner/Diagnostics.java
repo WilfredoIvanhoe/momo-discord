@@ -37,13 +37,15 @@ public class Diagnostics implements Command {
 		em.withAuthorName(Bot.getInstance().getBot().getOurUser().getDisplayName(msg.getGuild()) + " diagnostics");
 		Runtime r = Runtime.getRuntime();
 		NumberFormat format = NumberFormat.getInstance();
+		em.appendField("Total shards", Bot.getInstance().getBot().getShardCount() + "", true);
 		em.appendField("Connected guilds", Bot.getInstance().getBot().getGuilds().size() + "", true);
 		em.appendField("Connected users", Bot.getInstance().getBot().getUsers().size() + "", true);
+		em.appendField("Connected text channels", Bot.getInstance().getBot().getChannels().size() + "", true);
 		em.appendField("Connected music channels", Bot.getInstance().getBot().getConnectedVoiceChannels().size() + "", true);
 		em.appendField("Memory usage", format.format(r.totalMemory() / (1024 * 1024)) + "MB", true);
-		em.appendField("CPU usage", getCpuLoad() + "", true);
+		em.appendField("CPU usage", getCpuLoad() + "%", true);
 		em.appendField("Threads", Thread.activeCount() + "", true);
-		
+		em.appendField("Version", Bot.BOT_VERSION, true);
 		em.withColor(Color.CYAN);
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}

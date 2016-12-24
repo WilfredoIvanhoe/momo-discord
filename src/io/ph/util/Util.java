@@ -43,7 +43,7 @@ import sx.blah.discord.util.RateLimitException;
 
 /**
  * Various utility methods
- *
+ * TODO: Organize these...
  */
 public class Util {
 
@@ -57,15 +57,20 @@ public class Util {
 	public static IUser resolveUserFromMessage(IMessage msg, IGuild guild) {
 		if(msg.getMentions().size() > 0)
 			return msg.getMentions().get(0);
+		return resolveUserFromMessage(getCommandContents(msg.getContent()), guild);
+	}
+	
+	public static IUser resolveUserFromMessage(String msg, IGuild guild) {
 		for(IUser u : guild.getUsers()) {
 			if(u.getNicknameForGuild(guild).isPresent()) {
-				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(getCommandContents(msg).toLowerCase())) {
+				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(msg.toLowerCase())) {
 					return u;
 				}
 			}
 		}
 		for(IUser u : guild.getUsers()) {
-			if(u.getName().toLowerCase().startsWith(getCommandContents(msg).toLowerCase()))
+			System.out.println(u.getName().toLowerCase() + " vs " + msg.toLowerCase());
+			if(u.getName().toLowerCase().startsWith(msg.toLowerCase()))
 				return u;
 		}
 		return null;
@@ -121,17 +126,17 @@ public class Util {
 	 * @return Ordinal String
 	 */
 	public static String ordinal(int i) {
-	    int mod100 = i % 100;
-	    int mod10 = i % 10;
-	    if(mod10 == 1 && mod100 != 11) {
-	        return i + "st";
-	    } else if(mod10 == 2 && mod100 != 12) {
-	        return i + "nd";
-	    } else if(mod10 == 3 && mod100 != 13) {
-	        return i + "rd";
-	    } else {
-	        return i + "th";
-	    }
+		int mod100 = i % 100;
+		int mod10 = i % 10;
+		if(mod10 == 1 && mod100 != 11) {
+			return i + "st";
+		} else if(mod10 == 2 && mod100 != 12) {
+			return i + "nd";
+		} else if(mod10 == 3 && mod100 != 13) {
+			return i + "rd";
+		} else {
+			return i + "th";
+		}
 	}
 	/**
 	 * Remove the first item from a String array
@@ -156,17 +161,25 @@ public class Util {
 		InputStream in = null;
 		FileOutputStream out = null;
 		try {
-			HttpsURLConnection urlConn = (HttpsURLConnection) url.openConnection();
-			urlConn.setRequestProperty("User-Agent",
-					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");			
-			urlConn.connect();
-					in = urlConn.getInputStream();
-					out = new FileOutputStream(destinationFile);
-					int c;
-					byte[] b = new byte[1024];
-					while ((c = in.read(b)) != -1)
-						out.write(b, 0, c);
-					out.flush();
+			if(url.getProtocol().equals("https")) {
+				HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+				conn.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+				conn.connect();
+				in = conn.getInputStream();
+			} else {
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+				conn.connect();
+				in = conn.getInputStream();
+			}
+			out = new FileOutputStream(destinationFile);
+			int c;
+			byte[] b = new byte[1024];
+			while ((c = in.read(b)) != -1)
+				out.write(b, 0, c);
+			out.flush();
 		} finally {
 			if (in != null)
 				in.close();
@@ -466,4 +479,5 @@ public class Util {
 			return min+":0"+sec;
 		return min+":"+sec;
 	}
+
 }
