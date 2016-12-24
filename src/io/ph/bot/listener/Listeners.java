@@ -45,7 +45,10 @@ import sx.blah.discord.util.RateLimitException;
 public class Listeners {
 	@EventSubscriber
 	public void onReadyEvent(ReadyEvent e) {
+		LoggerFactory.getLogger(Listeners.class).info("Connecting to voice channels...");
 		int connectedVoice = 0;
+		JobScheduler.initializeEventSchedule();
+		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 		for(IGuild guild : Bot.getInstance().getBot().getGuilds()) {
 			Guild g = Guild.guildMap.get(guild.getID());
 			if(g.getSpecialChannels().getVoice().length() > 0) {
@@ -62,8 +65,6 @@ public class Listeners {
 			}
 		}
 		LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
-		JobScheduler.initializeEventSchedule();
-		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
 

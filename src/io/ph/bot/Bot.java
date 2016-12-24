@@ -57,7 +57,7 @@ public class Bot {
 
 	private IDiscordClient getClient(String token) {
 		try {
-			return new ClientBuilder().withToken(token).setDaemon(true).login();
+			return new ClientBuilder().withToken(token).withShards(2).setDaemon(true).login();
 		} catch (DiscordException e) {
 			logger.error("Bot could not connect. Is your bot token correct?");
 			System.exit(0);
