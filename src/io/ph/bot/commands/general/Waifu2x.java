@@ -48,7 +48,10 @@ public class Waifu2x implements Command {
 			if(msg.getAttachments().size() == 0) {
 				String contents = Util.getCommandContents(msg);
 				Util.saveFile(new URL(contents), f);
-				filename = contents.substring(contents.lastIndexOf("/") + 1, contents.lastIndexOf("."));
+				if(contents.lastIndexOf(".") < contents.lastIndexOf("/"))
+					filename = contents.substring(contents.lastIndexOf("/") + 1);
+				else
+					filename = contents.substring(contents.lastIndexOf("/") + 1, contents.lastIndexOf("."));
 			} else {
 				String contents = msg.getAttachments().get(0).getFilename();
 				Util.saveFile(new URL(msg.getAttachments().get(0).getUrl()), f);
