@@ -22,6 +22,7 @@ import sx.blah.discord.util.DiscordException;
  * Fill out the properties file (Bot.properties) to setup
  */
 public class Bot {
+	public static final String BOT_VERSION = "v1.0.5";
 	private static final Bot instance;
 	private static IDiscordClient bot;
 	private final Logger logger = LoggerFactory.getLogger(Bot.class);
