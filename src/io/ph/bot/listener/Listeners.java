@@ -23,6 +23,7 @@ import io.ph.util.MessageUtils;
 import io.ph.util.Util;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ChannelCreateEvent;
+import sx.blah.discord.handle.impl.events.ChannelDeleteEvent;
 import sx.blah.discord.handle.impl.events.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.GuildLeaveEvent;
 import sx.blah.discord.handle.impl.events.MentionEvent;
@@ -33,6 +34,7 @@ import sx.blah.discord.handle.impl.events.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.UserPardonEvent;
 import sx.blah.discord.handle.impl.events.UserVoiceChannelLeaveEvent;
+import sx.blah.discord.handle.impl.events.VoiceChannelDeleteEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -47,14 +49,14 @@ public class Listeners {
 	public void onReadyEvent(ReadyEvent e) {
 		LoggerFactory.getLogger(Listeners.class).info("Connecting to voice channels...");
 		int connectedVoice = 0;
-		JobScheduler.initializeEventSchedule();
-		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 		for(IGuild guild : Bot.getInstance().getBot().getGuilds()) {
 			Guild g = Guild.guildMap.get(guild.getID());
 			if(g.getSpecialChannels().getVoice().length() > 0) {
 				IVoiceChannel target = guild.getVoiceChannelByID(g.getSpecialChannels().getVoice());
-				if(target == null)
-					return;
+				if(target == null) {
+					g.getSpecialChannels().setVoice("");
+					continue;
+				}
 				try {
 					target.join();
 					g.initMusicManager(guild);
@@ -64,6 +66,8 @@ public class Listeners {
 				}
 			}
 		}
+		JobScheduler.initializeEventSchedule();
+		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 		LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
@@ -131,7 +135,7 @@ public class Listeners {
 			}
 		}
 		Guild g = new Guild(e.getGuild());
-		
+
 		if(g.getGuildConfig().isFirstTime()) {
 			//TODO: Better intro
 			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm a robot! You are my "
@@ -242,6 +246,32 @@ public class Listeners {
 	}
 
 	@EventSubscriber
+	public void onVoiceChannelDeleteEvent(VoiceChannelDeleteEvent e) {
+		Guild g = Guild.guildMap.get(e.getVoiceChannel().getGuild().getID());
+		if(e.getVoiceChannel().getID().equals(g.getSpecialChannels().getVoice())) {
+			g.getSpecialChannels().setVoice("");
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their music voice channel.",
+					e.getVoiceChannel().getGuild().getID());
+		}
+	}
+
+	@EventSubscriber
+	public void onChannelDeleteEvent(ChannelDeleteEvent e) {
+		Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
+		if(e.getChannel().getID().equals(g.getSpecialChannels().getLog())) {
+			g.getSpecialChannels().setLog("");
+		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getMusic())) {
+			g.getSpecialChannels().setMusic("");
+		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getTwitch())) {
+			g.getSpecialChannels().setTwitch("");
+		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getWelcome())) {
+			g.getSpecialChannels().setWelcome("");
+		}
+		LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+				e.getChannel().getGuild().getID());
+	}
+
+	@EventSubscriber
 	public void onMentionEvent(MentionEvent e) {
 		if(e.getMessage().mentionsEveryone() || e.getMessage().mentionsHere())
 			return;
@@ -284,14 +314,16 @@ public class Listeners {
 			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
 		}
 	}
-	
+
 	@EventSubscriber
 	public void onUserVoiceChannelLeaveEvent(UserVoiceChannelLeaveEvent e) {
 		if(e.getUser().equals(Bot.getInstance().getBot().getOurUser())) {
 			try {
-				Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()).join();
-				LoggerFactory.getLogger(Listeners.class).warn("Auto rejoined voice channel {} in {}",
-						e.getChannel().getName(), e.getChannel().getGuild().getName());
+				if(Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()) != null) {
+					Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()).join();
+					LoggerFactory.getLogger(Listeners.class).warn("Auto rejoined voice channel {} in {}",
+							e.getChannel().getName(), e.getChannel().getGuild().getName());
+				}
 			} catch (MissingPermissionsException e1) { }
 		}
 	}
