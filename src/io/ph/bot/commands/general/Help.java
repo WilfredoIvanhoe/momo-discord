@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import io.ph.bot.commands.Command;
-import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.commands.CommandData;
+import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -47,8 +47,9 @@ public class Help implements Command {
 						Arrays.toString(aliases).substring(1, Arrays.toString(aliases).length() - 1) + "\n", true);
 			}
 			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false);
+			// Pretty up multiple line examples
 			em.appendField("Example", Util.getPrefixForGuildId(msg.getGuild().getID()) + c.getDefaultCommand()
-			+ " " + c.getExample(), false);
+				+ " " + c.getExample().replaceAll("\n", "\n" + Util.getPrefixForGuildId(msg.getGuild().getID()) + c.getDefaultCommand() + " "), false);
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 		} else {			
 			List<Command> coll = (List<Command>) CommandHandler.getAllCommands();

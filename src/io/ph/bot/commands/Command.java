@@ -53,7 +53,8 @@ public interface Command {
 	}
 	
 	/**
-	 * Get example
+	 * Get example. Do not include the default command, as that is automatically appended
+	 * If you have multiple examples, use a \n linebreak to designate. Again, do not include the command itself
 	 * @return Example in annotation
 	 */
 	public default String getExample() {

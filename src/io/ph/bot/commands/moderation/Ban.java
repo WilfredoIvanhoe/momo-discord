@@ -64,7 +64,7 @@ public class Ban implements Command {
 				}
 				em.withDesc(target.getName() + " has been banned until...").withTimestamp(now.toEpochMilli()).withFooterText("Local time");
 			} else {
-				target = Util.resolveUserFromMessage(msg, msg.getGuild());
+				target = Util.resolveUserFromMessage(msg);
 				if(target == null) {
 					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + t + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());

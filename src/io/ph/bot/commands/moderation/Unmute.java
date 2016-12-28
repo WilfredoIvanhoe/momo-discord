@@ -48,7 +48,7 @@ public class Unmute implements Command {
 			return;
 		}
 		IRole role = msg.getGuild().getRoleByID(Guild.guildMap.get(msg.getGuild().getID()).getMutedRoleId());
-		IUser target = Util.resolveUserFromMessage(msg, msg.getGuild());
+		IUser target = Util.resolveUserFromMessage(msg);
 		if(target == null) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + content + "**");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());

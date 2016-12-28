@@ -32,8 +32,5 @@ public class Say implements Command {
 		} catch (DiscordException | MissingPermissionsException | RateLimitException e) {
 			e.printStackTrace();
 		}
-
 	}
-
-
 }

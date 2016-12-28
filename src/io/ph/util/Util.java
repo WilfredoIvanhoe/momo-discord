@@ -48,29 +48,33 @@ import sx.blah.discord.util.RateLimitException;
 public class Util {
 
 	/**
-	 * Resolve a user from their name
+	 * Resolve a user from an IMessage. Username must be the only parameter in the IMessage
 	 * First checks nicknames then usernames
 	 * @param s String to check
-	 * @param guild Guild to check in
 	 * @return User if found, null if not found
 	 */
-	public static IUser resolveUserFromMessage(IMessage msg, IGuild guild) {
+	public static IUser resolveUserFromMessage(IMessage msg) {
 		if(msg.getMentions().size() > 0)
 			return msg.getMentions().get(0);
-		return resolveUserFromMessage(getCommandContents(msg.getContent()), guild);
+		return resolveUserFromMessage(getCommandContents(msg.getContent()), msg.getGuild());
 	}
 	
-	public static IUser resolveUserFromMessage(String msg, IGuild guild) {
+	/**
+	 * Resolve a user from a String - String must be only their username
+	 * First checks nicknames then usernames
+	 * @param s String to check
+	 * @return User if found, null if not found
+	 */
+	public static IUser resolveUserFromMessage(String toCheck, IGuild guild) {
 		for(IUser u : guild.getUsers()) {
 			if(u.getNicknameForGuild(guild).isPresent()) {
-				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(msg.toLowerCase())) {
+				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(toCheck.toLowerCase())) {
 					return u;
 				}
 			}
 		}
 		for(IUser u : guild.getUsers()) {
-			System.out.println(u.getName().toLowerCase() + " vs " + msg.toLowerCase());
-			if(u.getName().toLowerCase().startsWith(msg.toLowerCase()))
+			if(u.getName().toLowerCase().startsWith(toCheck.toLowerCase()))
 				return u;
 		}
 		return null;
@@ -144,9 +148,21 @@ public class Util {
 	 * @return Array without first element
 	 */
 	public static String[] removeFirstArrayEntry(String[] arr) {
-		String[] toReturn = new String[arr.length-1];
+		String[] toReturn = new String[arr.length - 1];
 		for(int i = 1; i < arr.length; i++) {
-			toReturn[i-1] = arr[i];
+			toReturn[i - 1] = arr[i];
+		}
+		return toReturn;
+	}
+	/**
+	 * Remove the first item from a String array
+	 * @param arr String array to manipulate
+	 * @return Array without first element
+	 */
+	public static String[] removeLastArrayEntry(String[] arr) {
+		String[] toReturn = new String[arr.length - 1];
+		for(int i = 0; i < arr.length - 1; i++) {
+			toReturn[i] = arr[i];
 		}
 		return toReturn;
 	}
@@ -390,22 +406,38 @@ public class Util {
 	}
 	/**
 	 * Get the contents of a command, if it has arguments
+	 * Returns everything except the command and its prefix (split among a space)
 	 * @param msg IMessage to parse
 	 * @return String. Empty if there are no arguments
 	 */
 	public static String getCommandContents(IMessage msg) {
 		return getCommandContents(msg.getContent());
 	}
-
+	/**
+	 * Get the contents of a command, if it has arguments
+	 * Returns everything except the first element of a split among a space
+	 * @param s String to parse
+	 * @return String. Empty if there are no arguments
+	 */
 	public static String getCommandContents(String s) {
 		return combineStringArray(removeFirstArrayEntry(s.split(" ")));
 	}
 
+	/**
+	 * Get the first parameter of a command based on a space split
+	 * @param msg {@link IMessage} to parse
+	 * @return String of first parameter based on a space split
+	 */
 	public static String getParam(IMessage msg) {
 		return getParam(msg.getContent());
 	}
-	public static String getParam(String msg) {
-		return removeFirstArrayEntry(msg.split(" "))[0];
+	/**
+	 * Get the first parameter of a command based on a space split
+	 * @param str String to parse
+	 * @return String of first parameter based on a space split
+	 */
+	public static String getParam(String str) {
+		return removeFirstArrayEntry(str.split(" "))[0];
 	}
 
 	/**

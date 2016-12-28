@@ -44,7 +44,8 @@ public class FFXIV implements Command {
 					new EmbedBuilder().withColor(Color.CYAN).withDesc("Searching...").build());
 			FFXIVCharacter xiv = new FFXIVCharacter(split[0], split[1], split[2]);
 			EmbedBuilder em = new EmbedBuilder().withColor(Color.GREEN);
-			em.withTitle(xiv.getFirstName() + " " + xiv.getLastName() + " of " + xiv.getServer());
+			em.withAuthorName(xiv.getFirstName() + " " + xiv.getLastName() + " of " + xiv.getServer());
+			em.withAuthorUrl(xiv.getLodestoneLink());
 			em.withThumbnail(xiv.getJobImageLink());
 			StringBuilder sb = new StringBuilder();
 			sb.append("**" + xiv.getGender() + " " + xiv.getRace() + "** | **" + xiv.getFaction() + "**\n");

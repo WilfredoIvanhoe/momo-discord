@@ -30,10 +30,10 @@ import sx.blah.discord.util.EmbedBuilder;
 		description = "Create, delete, edit, search, or get information on a macro\n"
 				+ "A macro is a quick way to bind text or links to a shortcut",
 		example = "create \"test macro\" contents\n"
-				+ "macro delete test macro\n"
-				+ "macro edit \"test macro\" new contents\n"
-				+ "macro info test macro\n"
-				+ "macro test macro"
+				+ "delete test macro\n"
+				+ "edit \"test macro\" new contents\n"
+				+ "info test macro\n"
+				+ "test macro"
 		)
 public class Macro implements Command {
 

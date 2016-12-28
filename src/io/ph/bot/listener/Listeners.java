@@ -92,6 +92,7 @@ public class Listeners {
 			}
 			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false).
 			appendField("Example", c.getDefaultCommand() + " " + c.getExample(), false);
+			em.appendField("Example", c.getDefaultCommand() + " " + c.getExample().replaceAll("\n", "\n" + c.getDefaultCommand() + " "), false);
 			MessageUtils.sendPrivateMessage(e.getMessage().getAuthor(), em.build());
 			return;
 		}
@@ -137,8 +138,7 @@ public class Listeners {
 		Guild g = new Guild(e.getGuild());
 
 		if(g.getGuildConfig().isFirstTime()) {
-			//TODO: Better intro
-			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm a robot! You are my "
+			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
 					+ "Command prefix: $ | Try $info");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);

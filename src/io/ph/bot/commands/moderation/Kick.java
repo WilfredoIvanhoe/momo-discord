@@ -32,7 +32,7 @@ public class Kick implements Command {
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
 		try {
-			IUser target = Util.resolveUserFromMessage(msg, msg.getGuild());
+			IUser target = Util.resolveUserFromMessage(msg);
 			if(target == null) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + target + "**");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());

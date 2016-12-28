@@ -26,9 +26,9 @@ import sx.blah.discord.util.EmbedBuilder;
 		description = "Play or get information on the music playlist\n"
 				+ "Can only be used if you have setup the music voice channel with the command setupmusic",
 		example = "https://youtu.be/dQw4w9WgXcQ\n"
-				+ "music now\n"
-				+ "music next\n"
-				+ "music skip"
+				+ "now\n"
+				+ "next\n"
+				+ "skip"
 		)
 public class Music implements Command {
 

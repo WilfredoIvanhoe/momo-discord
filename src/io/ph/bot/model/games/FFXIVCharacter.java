@@ -21,6 +21,7 @@ public class FFXIVCharacter {
 	private String firstName;
 	private String lastName;
 
+	private String lodestoneLink;
 	private String imageLink;
 	private String jobImageLink;
 
@@ -41,7 +42,7 @@ public class FFXIVCharacter {
 		this.lastName = StringUtils.capitalize(lastName.toLowerCase());
 
 		try {
-			String lodestoneLink = getCharacterUrl(firstName, lastName, server);
+			lodestoneLink = getCharacterUrl(firstName, lastName, server);
 			if(lodestoneLink == null) {
 				throw new BadCharacterException();
 			}
@@ -108,6 +109,10 @@ public class FFXIVCharacter {
 
 	public String getLastName() {
 		return lastName;
+	}
+
+	public String getLodestoneLink() {
+		return lodestoneLink;
 	}
 
 	public String getImageLink() {

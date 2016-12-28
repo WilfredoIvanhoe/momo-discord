@@ -1,4 +1,4 @@
-package io.ph.bot.commands.administration;
+package io.ph.bot.commands.general;
 
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
@@ -12,14 +12,14 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
 
 /**
- * Manage server roles can get stats
+ * Basic, harmless stats
  * @author Paul
- *
+ * TODO: Expand on this
  */
 @CommandData (
 		defaultSyntax = "stats",
 		aliases = {},
-		permission = Permission.MANAGE_SERVER,
+		permission = Permission.NONE,
 		description = "Display stats for the server",
 		example = "(no parameters)"
 		)
