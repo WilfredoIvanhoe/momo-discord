@@ -16,6 +16,8 @@ import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MessageList;
+import sx.blah.discord.util.MessageList.EfficiencyLevel;
 
 /**
  * Bot singleton instance. The meat of the stuff
@@ -48,7 +50,9 @@ public class Bot {
 			System.exit(0);
 		}
 		bot = getClient(secret);
-
+		// This makes the prune command a bit better on startup, but might mess with memory usage
+		// when server count gets high
+		MessageList.setEfficiency(bot, EfficiencyLevel.NONE);
 		EventDispatcher dispatcher = bot.getDispatcher();
 		dispatcher.registerListener(new Listeners());
 		dispatcher.registerListener(new AudioListeners());
@@ -57,7 +61,7 @@ public class Bot {
 
 	private IDiscordClient getClient(String token) {
 		try {
-			return new ClientBuilder().withToken(token).withShards(2).setDaemon(true).login();
+			return new ClientBuilder().withToken(token).setDaemon(true).login();
 		} catch (DiscordException e) {
 			logger.error("Bot could not connect. Is your bot token correct?");
 			System.exit(0);
