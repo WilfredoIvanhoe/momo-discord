@@ -45,7 +45,7 @@ public class LeaveRole implements Command {
 					MessageUtils.sendErrorEmbed(msg.getChannel(), "Error", "The role **" + role + "** is not a valid role");
 					return;
 				}
-				if(!msg.getAuthor().getRolesForGuild(msg.getGuild()).contains(r)) {
+				if(!msg.getGuild().getRolesForUser(msg.getAuthor()).contains(r)) {
 					em.withColor(Color.CYAN).withTitle("Hmm...").withDesc("Looks like you aren't in this role");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());
 					return;
