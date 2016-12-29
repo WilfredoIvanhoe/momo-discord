@@ -7,9 +7,6 @@ import com.eclipsesource.json.JsonObject;
 import io.ph.bot.exception.NoAPIKeyException;
 
 public class MALAnime {
-	private static String baseHummingbirdUrl = "https://hummingbird.me/api/v1/";
-	private static String baseMalUrl = "https://myanimelist.net/api/";
-
 	private String title;
 	private int episodeCount;
 	private String airingStatus;
