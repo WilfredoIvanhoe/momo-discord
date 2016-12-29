@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import com.eclipsesource.json.JsonObject;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -59,7 +58,6 @@ public class GetAudio implements Runnable {
 		int rand = new Random().nextInt(100000);
 		EmbedBuilder em = new EmbedBuilder();
 		if(url.contains("youtu.be") || url.contains("youtube")) {
-			JsonObject jo;
 			try {
 				YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
 					@Override
