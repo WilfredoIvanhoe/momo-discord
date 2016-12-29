@@ -365,9 +365,9 @@ public class Guild {
 
 	public class HistoricalSearches {
 		private Map<Integer, String> historicalAnime;
-		//This is used to play directly with $music
-		private Map<Integer, String[]> historicalThemes;
-		//This is used to do $theme #
+		// This is used to play Themes.moe or Youtube results directly with $music
+		private Map<Integer, String[]> historicalMusic;
+		// This is used to do $theme #
 		private Map<Integer, ArrayList<Theme>> historicalThemeSearchResults;
 
 		HistoricalSearches() {
@@ -375,7 +375,7 @@ public class Guild {
 					.expiration(15, TimeUnit.MINUTES)
 					.expirationPolicy(ExpirationPolicy.CREATED)
 					.build();
-			this.historicalThemes = ExpiringMap.builder()
+			this.historicalMusic = ExpiringMap.builder()
 					.expiration(15, TimeUnit.MINUTES)
 					.expirationPolicy(ExpirationPolicy.CREATED)
 					.build();
@@ -405,16 +405,16 @@ public class Guild {
 			this.historicalAnime.clear();
 		}
 
-		public Map<Integer, String[]> getHistoricalThemes() {
-			return historicalThemes;
+		public Map<Integer, String[]> getHistoricalMusic() {
+			return historicalMusic;
 		}
 
-		public void addHistoricalTheme(int i, String[] s) {
-			this.historicalThemes.put(i, s);
+		public void addHistoricalMusic(int i, String[] s) {
+			this.historicalMusic.put(i, s);
 		}
 
-		public void clearThemeSearches() {
-			this.historicalThemes.clear();
+		public void clearHistoricalMusic() {
+			this.historicalMusic.clear();
 		}
 	}
 	public class SpecialChannels {

@@ -25,10 +25,10 @@ import sx.blah.discord.util.EmbedBuilder;
 		permission = Permission.NONE,
 		description = "Play or get information on the music playlist\n"
 				+ "Can only be used if you have setup the music voice channel with the command setupmusic",
-		example = "https://youtu.be/dQw4w9WgXcQ\n"
-				+ "now\n"
-				+ "next\n"
-				+ "skip"
+				example = "https://youtu.be/dQw4w9WgXcQ\n"
+						+ "now\n"
+						+ "next\n"
+						+ "skip"
 		)
 public class Music implements Command {
 
@@ -42,7 +42,7 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
-		if(contents.equals("")) {
+		if(contents.equals("") && msg.getAttachments().isEmpty()) {
 			String prefix = Util.getPrefixForGuildId(msg.getGuild().getID());
 			em = MessageUtils.commandErrorMessage(msg, "music", "[Youtube|Soundcloud|" + prefix + "theme-result-#]", 
 					"*[Youtube|Soundcloud|"	+ prefix + "theme-result-#]* - URL of song to play. "
@@ -67,13 +67,13 @@ public class Music implements Command {
 			}
 			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
 			int current = voice.getConnectedUsers().size();
-            int currentVotes = m.getSkipVotes();
+			int currentVotes = m.getSkipVotes();
 			if(current <= 0)
 				current = 1;
 			int maxVotes = (int) Math.floor(current/2);
 			if(maxVotes > 5)
 				maxVotes = 5;
-            if(++currentVotes >= maxVotes) {
+			if(++currentVotes >= maxVotes) {
 				m.setSkipVotes(0);
 				m.getSkipVoters().clear();
 				m.getAudioPlayer().skip();
@@ -152,20 +152,23 @@ public class Music implements Command {
 		} else if(Util.isInteger(contents)) {
 			int index = Integer.parseInt(contents);
 			if((index) > Guild.guildMap.get(msg.getGuild().getID())
-					.getHistoricalSearches().getHistoricalThemes().size() || index < 1) {
+					.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
 				MessageUtils.sendErrorEmbed(msg.getChannel(), "Invalid input",
-						"Giving a number will play music on a previous "
-								+ Util.getPrefixForGuildId(msg.getGuild().getID()) + "theme search. This # is too large");
+						"Giving a number will play music on a previous theme or youtube search. This # is too large");
 				return;
 			}
-			String[] theme = Guild.guildMap.get(msg.getGuild().getID())
-					.getHistoricalSearches().getHistoricalThemes().get(index);
-			Runnable r = new GetAudio(msg.getAuthor().getID(), theme[0], theme[1], msg.getChannel(), m);
+			String[] historicalResult = Guild.guildMap.get(msg.getGuild().getID())
+					.getHistoricalSearches().getHistoricalMusic().get(index);
+			Runnable r = new GetAudio(msg.getAuthor().getID(), historicalResult[0], historicalResult[1], msg.getChannel(), m);
 			new Thread(r).start();
 			return;
 		}
-
-		Runnable r = new GetAudio(msg.getAuthor().getID(), "", contents, msg.getChannel(), m);
+		Runnable r;
+		if(!msg.getAttachments().isEmpty()) {
+			r = new GetAudio(msg.getAuthor().getID(), "", msg.getAttachments().get(0).getUrl(), msg.getChannel(), m);
+		} else {
+			r = new GetAudio(msg.getAuthor().getID(), "", contents, msg.getChannel(), m);
+		}
 		new Thread(r).start();
 	}
 

@@ -92,11 +92,11 @@ public class ThemeSearch implements Runnable, Command {
 				em.withColor(Color.GREEN);
 				StringBuilder sb = new StringBuilder();
 				int i = 0;
-				Guild.guildMap.get(msg.getGuild().getID()).getHistoricalSearches().getHistoricalThemes().clear();
+				Guild.guildMap.get(msg.getGuild().getID()).getHistoricalSearches().getHistoricalMusic().clear();
 				for(Theme t : map.get(key)) {
 					sb.append("**" + (++i) + ") " + t.getType() + "** <" + t.getLink() + ">  \"" + t.getSongTitle() +  "\"\n");
 					Guild.guildMap.get(msg.getGuild().getID())
-						.getHistoricalSearches().getHistoricalThemes().put(i, new String[] {t.getSongTitle(), t.getLink()});
+						.getHistoricalSearches().addHistoricalMusic(i, new String[] {t.getSongTitle(), t.getLink()});
 				}
 				if(Guild.guildMap.get(msg.getGuild().getID()).getMusicManager() != null) {
 					em.withFooterText("Use "+ Util.getPrefixForGuildId(msg.getGuild().getID()) + "music # to play");

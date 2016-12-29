@@ -14,6 +14,11 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.eclipsesource.json.JsonObject;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.Video;
 
 import io.ph.bot.Bot;
 import io.ph.bot.exception.NoAPIKeyException;
@@ -53,15 +58,18 @@ public class GetAudio implements Runnable {
 	private void process() {
 		int rand = new Random().nextInt(100000);
 		EmbedBuilder em = new EmbedBuilder();
-
-
 		if(url.contains("youtu.be") || url.contains("youtube")) {
 			JsonObject jo;
 			try {
-				jo = Util.jsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id="
-						+ Util.extractYoutubeId(this.url) + "&key=" + Bot.getInstance().getApiKeys().get("youtube")).asObject();
-				Duration d = Duration.parse(jo.get("items").asArray().get(0).asObject()
-						.get("contentDetails").asObject().getString("duration", "PT11M"));
+				YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+					@Override
+					public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
+					}
+				}).setApplicationName("momo discord bot").build();
+				YouTube.Videos.List search = youtube.videos().list("snippet,contentDetails")
+						.setKey(Bot.getInstance().getApiKeys().get("youtube")).setId(Util.extractYoutubeId(this.url));
+				Video v = search.execute().getItems().get(0);
+				Duration d = Duration.parse(v.getContentDetails().getDuration());
 				if((d.get(ChronoUnit.SECONDS) / 60) > 9) {
 					em.withColor(Color.RED);
 					em.withTitle("Error");
@@ -69,7 +77,7 @@ public class GetAudio implements Runnable {
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
-				this.title = jo.get("items").asArray().get(0).asObject().get("snippet").asObject().get("title").asString();
+				this.title = v.getSnippet().getTitle();
 				em.withTitle("Queued: " + this.title)
 				.withDesc(Bot.getInstance().getBot().getUserByID(this.userId).getDisplayName(channel.getGuild())
 						+ " queued a track\n"
@@ -108,12 +116,11 @@ public class GetAudio implements Runnable {
 			FFmpeg ffmpeg;
 			try {
 				URL link = new URL(url);
-				if((getFileSize(link) / (1024*1024) > 25)
+				if((getFileSize(link) / (1024*1024) > 40)
 						|| getFileSize(link) == -1) {
 					em.withColor(Color.RED);
 					em.withTitle("Error");
-					em.withDesc("Please keep file size below 25 megabytes");
-					System.out.println(getFileSize(link));
+					em.withDesc("Please keep file size below 40 megabytes");
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
@@ -171,7 +178,11 @@ public class GetAudio implements Runnable {
 				return;
 			}
 		}
-		//this.preparedFile.deleteOnExit();
+		if(this.preparedFile == null) {
+			em.withTitle("Error").withColor(Color.RED).withDesc("Invalid audio source");
+			MessageUtils.sendMessage(channel, em.build());
+			return;
+		}
 		String songLength;
 		try {
 			songLength = Util.getMp3Duration(this.preparedFile);
@@ -185,7 +196,7 @@ public class GetAudio implements Runnable {
 	/**
 	 * Return file size of URL based on its content-length header
 	 * @param url URL to connect to
-	 * @return Bytes of content
+	 * @return Content length
 	 */
 	private int getFileSize(URL url) {
 		HttpsURLConnection conn = null;
