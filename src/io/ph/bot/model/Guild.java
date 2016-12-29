@@ -27,6 +27,7 @@ import io.ph.bot.audio.GetAudio;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
+import io.ph.bot.model.feeds.RedditFeedObject;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import sx.blah.discord.handle.obj.IGuild;
@@ -107,6 +108,8 @@ public class Guild {
 			this.cleverBot = null;
 			e.printStackTrace();
 		}
+		// TODO: Reddit feeds
+		this.feeds = new Feeds();
 		Guild.guildMap.put(g.getID(), this);
 		Bot.getInstance().getLogger().info("Guild {} initialized - {}", g.getID(), g.getName());
 	}
@@ -273,6 +276,10 @@ public class Guild {
 		return specialChannels;
 	}
 
+	public Feeds getFeeds() {
+		return feeds;
+	}
+
 	public boolean addJoinableRole(String roleId) {
 		if(this.joinableRoles.add(roleId)) {
 			this.config.setProperty("JoinableRoles", this.joinableRoles);
@@ -303,6 +310,14 @@ public class Guild {
 	public void setMutedRoleId(String mutedRoleId) {
 		this.mutedRoleId = mutedRoleId;
 		this.config.setProperty("MutedRoleId", mutedRoleId);
+	}
+
+	public GuildMusic getMusicManager() {
+		return musicManager;
+	}
+
+	public void initMusicManager(IGuild guild) {
+		this.musicManager = new GuildMusic(guild);
 	}
 	public class ServerConfiguration {
 		private String commandPrefix;
@@ -622,15 +637,17 @@ public class Guild {
 			this.songLength = songLength;
 		}
 	}
-	public GuildMusic getMusicManager() {
-		return musicManager;
-	}
-
-	public void initMusicManager(IGuild guild) {
-		this.musicManager = new GuildMusic(guild);
-	}
 	
 	public class Feeds {
-		
+		private List<RedditFeedObject> redditFeed = new ArrayList<RedditFeedObject>();
+		//private TwitterFeed twitterFeed;
+
+		public List<RedditFeedObject> getRedditFeed() {
+			return redditFeed;
+		}
+
+		public void setRedditFeed(List<RedditFeedObject> redditFeed) {
+			this.redditFeed = redditFeed;
+		}
 	}
 }

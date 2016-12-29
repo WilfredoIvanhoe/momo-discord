@@ -116,6 +116,9 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 	public void exit() {
 		ProceduralListener.getInstance().removeListener(this.starter.getAuthor());
 	}
+	public IMessage getStarter() {
+		return this.starter;
+	}
 	public void addResponse(Object o) {
 		this.responses.add(o);
 	}

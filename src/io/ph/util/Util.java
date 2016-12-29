@@ -25,6 +25,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.apache.tika.Tika;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 import com.eclipsesource.json.Json;
@@ -202,6 +203,34 @@ public class Util {
 			if (out != null)
 				out.close();
 		}
+	}
+	/**
+	 * Get a MIME type from a URL
+	 * @param url URL to check
+	 * @return String of MIME type
+	 * @throws IOException i/o went bad
+	 */
+	public static String getMIMEFromURL(URL url) {
+		InputStream in;
+		try {
+			if(url.getProtocol().equals("https")) {
+				HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+				conn.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+				conn.connect();
+				in = conn.getInputStream();
+			} else {
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+				conn.connect();
+				in = conn.getInputStream();
+			}
+			return new Tika().detect(in);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

@@ -42,9 +42,13 @@
 		</plugins>
 	</build>
 	<repositories>
-		<repository> <!-- This repo fixes issues with transitive dependencies -->
+		<repository>
 			<id>jcenter</id>
 			<url>http://jcenter.bintray.com</url>
+		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>http://clojars.org/repo</url>
 		</repository>
 		<repository>
 			<id>jitpack.io</id>
@@ -56,6 +60,11 @@
 			<groupId>com.github.austinv11</groupId>
 			<artifactId>Discord4j</artifactId>
 			<version>dev-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pusher</groupId>
+			<artifactId>pusher-java-client</artifactId>
+			<version>1.3.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-youtube -->
 		<dependency>
@@ -98,6 +107,13 @@
 			<artifactId>tika-core</artifactId>
 			<version>1.14</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.rometools/rome -->
+		<dependency>
+			<groupId>com.rometools</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.eclipsesource.minimal-json/minimal-json -->
 		<dependency>
 			<groupId>com.eclipsesource.minimal-json</groupId>
