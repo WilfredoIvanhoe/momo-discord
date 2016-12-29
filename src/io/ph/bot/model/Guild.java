@@ -42,6 +42,7 @@ public class Guild {
 	private ServerConfiguration guildConfig;
 	private HashSet<String> joinableRoles = new HashSet<String>();
 	private HistoricalSearches historicalSearches;
+	private Feeds feeds;
 	private GuildMusic musicManager;
 	private ChatterBotSession cleverBot;
 	private String mutedRoleId;
@@ -364,7 +365,8 @@ public class Guild {
 	}
 
 	public class HistoricalSearches {
-		private Map<Integer, String> historicalAnime;
+		// Historical anime searches. Object is {title, malId}
+		private Map<Integer, Object[]> historicalAnime;
 		// This is used to play Themes.moe or Youtube results directly with $music
 		private Map<Integer, String[]> historicalMusic;
 		// This is used to do $theme #
@@ -393,12 +395,12 @@ public class Guild {
 			this.historicalThemeSearchResults.put(i, a);
 		}
 
-		public Map<Integer, String> getHistoricalAnime() {
+		public Map<Integer, Object[]> getHistoricalAnime() {
 			return historicalAnime;
 		}
 
-		public void addHistoricalAnime(int i, String string) {
-			this.historicalAnime.put(i, string);
+		public void addHistoricalAnime(int i, Object[] o) {
+			this.historicalAnime.put(i, o);
 		}
 
 		public void clearAnimeSearches() {
@@ -626,5 +628,9 @@ public class Guild {
 
 	public void initMusicManager(IGuild guild) {
 		this.musicManager = new GuildMusic(guild);
+	}
+	
+	public class Feeds {
+		
 	}
 }
