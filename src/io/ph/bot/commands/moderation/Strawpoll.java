@@ -47,7 +47,7 @@ public class Strawpoll extends ProceduralCommand implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		Strawpoll instance = new Strawpoll(msg);
-		ProceduralListener.getInstance().addListener(msg.getAuthor(), instance);
+		ProceduralListener.getInstance().addListener(msg, instance);
 		instance.sendMessage(getSteps()[super.getCurrentStep()]);
 	}
 

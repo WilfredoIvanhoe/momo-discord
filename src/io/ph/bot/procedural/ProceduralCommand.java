@@ -69,7 +69,7 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 			if(Util.isInteger(msg.getContent())) {
 				addResponse(Integer.parseInt(msg.getContent()));
 			} else {
-				sendMessage("Error: Not a valid numerical input");
+				sendMessage("Error: Not a valid numerical input\n" + getSteps()[getCurrentStep()]);
 				return;
 			}
 			break;
@@ -77,7 +77,7 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 			if(Util.isDouble(msg.getContent())) {
 				addResponse(Double.parseDouble(msg.getContent()));
 			} else {
-				sendMessage("Error: Not a valid decimal input");
+				sendMessage("Error: Not a valid decimal input\n" + getSteps()[getCurrentStep()]);
 				return;
 			}
 			break;
@@ -92,7 +92,7 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 			} else if(s.equalsIgnoreCase("n") || s.equalsIgnoreCase("no")) {
 				addResponse(false);
 			} else {
-				sendMessage("Invalid yes/no answer: Please use \"y\" or \"n\"");
+				sendMessage("Invalid yes/no answer: Please use \"y\" or \"n\"\n" + getSteps()[getCurrentStep()]);
 				return;
 			}
 			break;
@@ -114,7 +114,7 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 	 * Exit stepping through and remove from listener
 	 */
 	public void exit() {
-		ProceduralListener.getInstance().removeListener(this.starter.getAuthor());
+		ProceduralListener.getInstance().removeListener(this.starter);
 	}
 	public IMessage getStarter() {
 		return this.starter;
