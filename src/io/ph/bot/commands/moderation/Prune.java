@@ -72,7 +72,7 @@ public class Prune implements Command {
 						break;
 					toPrune.add(m);
 				}
-				em.withColor(Color.GREEN).withTitle("Success").withDesc("Pruned " + i + " messages");
+				em.withColor(Color.GREEN).withTitle("Success").withDesc("Pruned " + (i - 2) + " messages");
 			} else {
 				// Target specified, only their messages
 				int targetCounter = 0;

@@ -27,7 +27,6 @@ import io.ph.bot.audio.GetAudio;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
-import io.ph.bot.model.feeds.RedditFeedObject;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import sx.blah.discord.handle.obj.IGuild;
@@ -43,7 +42,6 @@ public class Guild {
 	private ServerConfiguration guildConfig;
 	private HashSet<String> joinableRoles = new HashSet<String>();
 	private HistoricalSearches historicalSearches;
-	private Feeds feeds;
 	private GuildMusic musicManager;
 	private ChatterBotSession cleverBot;
 	private String mutedRoleId;
@@ -108,8 +106,6 @@ public class Guild {
 			this.cleverBot = null;
 			e.printStackTrace();
 		}
-		// TODO: Reddit feeds
-		this.feeds = new Feeds();
 		Guild.guildMap.put(g.getID(), this);
 		Bot.getInstance().getLogger().info("Guild {} initialized - {}", g.getID(), g.getName());
 	}
@@ -274,10 +270,6 @@ public class Guild {
 
 	public SpecialChannels getSpecialChannels() {
 		return specialChannels;
-	}
-
-	public Feeds getFeeds() {
-		return feeds;
 	}
 
 	public boolean addJoinableRole(String roleId) {
@@ -635,19 +627,6 @@ public class Guild {
 		}
 		public void setSongLength(String songLength) {
 			this.songLength = songLength;
-		}
-	}
-	
-	public class Feeds {
-		private List<RedditFeedObject> redditFeed = new ArrayList<RedditFeedObject>();
-		//private TwitterFeed twitterFeed;
-
-		public List<RedditFeedObject> getRedditFeed() {
-			return redditFeed;
-		}
-
-		public void setRedditFeed(List<RedditFeedObject> redditFeed) {
-			this.redditFeed = redditFeed;
 		}
 	}
 }

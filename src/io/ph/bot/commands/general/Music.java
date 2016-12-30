@@ -165,10 +165,9 @@ public class Music implements Command {
 		}
 		Runnable r;
 		if(!msg.getAttachments().isEmpty()) {
-			r = new GetAudio(msg.getAuthor().getID(), "", msg.getAttachments().get(0).getUrl(), msg.getChannel(), m);
-		} else {
-			r = new GetAudio(msg.getAuthor().getID(), "", contents, msg.getChannel(), m);
-		}
+			contents = msg.getAttachments().get(0).getUrl();
+		} 
+		r = new GetAudio(msg.getAuthor().getID(), "", contents, msg.getChannel(), m);
 		new Thread(r).start();
 	}
 
