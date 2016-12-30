@@ -33,6 +33,7 @@ public class Stats implements Command {
 		em.appendField("Creation Date", msg.getGuild().getCreationDate().format(
 				DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 				.toString(), true);
+		em.appendField("Server ID", msg.getGuild().getID(), true);
 		Object[] topMacro = null;
 		if((topMacro = MacroObject.topMacro(msg.getGuild().getID())) != null)
 				em.appendField("Top macro", "**" + topMacro[1] + "** by **"

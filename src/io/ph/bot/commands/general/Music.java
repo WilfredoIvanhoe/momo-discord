@@ -44,9 +44,9 @@ public class Music implements Command {
 		}
 		if(contents.equals("") && msg.getAttachments().isEmpty()) {
 			String prefix = Util.getPrefixForGuildId(msg.getGuild().getID());
-			em = MessageUtils.commandErrorMessage(msg, "music", "[Youtube|Soundcloud|" + prefix + "theme-result-#]", 
+			em = MessageUtils.commandErrorMessage(msg, "music", "[Youtube|Soundcloud|" + prefix + "theme-result|" + prefix + "youtube-result]", 
 					"*[Youtube|Soundcloud|"	+ prefix + "theme-result-#]* - URL of song to play. "
-							+ "In the case of a theme command result, its number in the list",
+							+ "In the case of a theme or youtube command result, its number in the list",
 							"`" + prefix + "music now` shows current song",
 							"`" + prefix + "music next` shows queued songs",
 							"`" + prefix + "music skip` casts a vote to skip the song");
@@ -90,7 +90,7 @@ public class Music implements Command {
 			} else {
 				m.setSkipVotes(currentVotes);
 				m.getSkipVoters().add(msg.getAuthor().getID());
-				em.withColor(Color.GREEN).withTitle("Voted to skip").withDesc("Votes needed to pass: " + current + "/" + maxVotes);
+				em.withColor(Color.GREEN).withTitle("Voted to skip").withDesc("Votes needed to pass: " + currentVotes + "/" + maxVotes);
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
