@@ -3,6 +3,7 @@ package io.ph.bot.commands.owner;
 import java.awt.Color;
 import java.lang.management.ManagementFactory;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -12,6 +13,8 @@ import javax.management.ObjectName;
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
+import io.ph.bot.feed.RedditEventListener;
+import io.ph.bot.feed.RedditFeedObserver;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
@@ -45,11 +48,17 @@ public class Diagnostics implements Command {
 		em.appendField("Memory usage", format.format(r.totalMemory() / (1024 * 1024)) + "MB", true);
 		em.appendField("CPU usage", getCpuLoad() + "%", true);
 		em.appendField("Threads", Thread.activeCount() + "", true);
-		em.appendField("Version", Bot.BOT_VERSION, true);
+		em.appendField("Subreddit Feed Count", getSubredditFeedCount() + "", true);
 		em.withColor(Color.CYAN);
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
-
+	private static int getSubredditFeedCount() {
+		int counter = 0;
+		for(List<RedditFeedObserver> list : RedditEventListener.getFeed().values()) {
+			counter += list.size();
+		}
+		return counter;
+	}
 	private double getCpuLoad() {
 		// http://stackoverflow.com/questions/18489273/how-to-get-percentage-of-cpu-usage-of-os-from-java
 		try {

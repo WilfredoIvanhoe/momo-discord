@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import io.ph.bot.Bot;
 import io.ph.bot.exception.NoAPIKeyException;
+import io.ph.bot.feed.RedditEventListener;
 import io.ph.bot.jobs.ReminderJob;
 import io.ph.bot.jobs.TimedPunishJob;
 import io.ph.bot.jobs.TwitchStreamJob;
@@ -75,6 +76,17 @@ public class JobScheduler {
 		}
 	}
 	
+	private static void redditFeed() {
+		JobDetail job = JobBuilder.newJob(RedditEventListener.class).withIdentity("redditFeedJob", "group1").build();
+		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("redditFeedJob", "group1")
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(8).repeatForever()).build();
+		try {
+			scheduler.scheduleJob(job, trigger);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void initializeEventSchedule() {
 		try {
 			Bot.getInstance().getApiKeys().get("twitch");
@@ -90,6 +102,12 @@ public class JobScheduler {
 			webSync();
 		} catch (NoAPIKeyException e1) { 
 			LoggerFactory.getLogger(JobScheduler.class).warn("You do not have a web dashboard setup. Scheduler will not run dashboard updates");
+		}
+		try {
+			Bot.getInstance().getApiKeys().get("redditkey");
+			redditFeed();
+		} catch (NoAPIKeyException e1) { 
+			LoggerFactory.getLogger(JobScheduler.class).warn("You do not have a reddit client/secret setup. Scheduler will not run reddit feed updates");
 		}
 	}
 }
