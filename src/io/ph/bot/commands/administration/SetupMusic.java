@@ -45,6 +45,7 @@ public class SetupMusic implements Command {
 			voice = msg.getGuild().createVoiceChannel("music");
 			voice.join();
 			g.getSpecialChannels().setVoice(voice.getID());
+			g.initMusicManager(msg.getGuild());
 			em.withColor(Color.GREEN);
 			em.withTitle("Success");
 			em.withDesc("Setup your music channel. I suggest doing " + g.getGuildConfig().getCommandPrefix() + "musicchannel to setup a "

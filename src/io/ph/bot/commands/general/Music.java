@@ -31,7 +31,6 @@ import sx.blah.discord.util.EmbedBuilder;
 						+ "skip"
 		)
 public class Music implements Command {
-
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
