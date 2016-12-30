@@ -24,10 +24,11 @@ target/*
 !/resources/avatar/avatar.png
 /resources/guilds/*
 !/resources/guilds/template.*
+/resources/feeds/*
+/resources/tempdownloads/*
 build.xml
 dependency-reduced-pom.xml
 /deploy/
 /clean_resources/
-
 # temporary #
 /web2/

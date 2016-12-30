@@ -59,7 +59,7 @@ public class Util {
 			return msg.getMentions().get(0);
 		return resolveUserFromMessage(getCommandContents(msg.getContent()), msg.getGuild());
 	}
-	
+
 	/**
 	 * Resolve a user from a String - String must be only their username
 	 * First checks nicknames then usernames
@@ -103,6 +103,33 @@ public class Util {
 		}
 		return null;
 	}
+	/**
+	 * Similar implementation to JavaScript setTimeout
+	 * @param runnable
+	 * @param delay
+	 */
+	public static void setTimeout(Runnable runnable, int delay, boolean async){
+		if(async) {
+			new Thread(() -> {
+				try {
+					Thread.sleep(delay);
+					runnable.run();
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+			}).start();
+		} else {
+			try {
+				Thread.sleep(delay);
+				runnable.run();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	/**
 	 * Get command prefix for guild id
