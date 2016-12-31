@@ -15,6 +15,7 @@ import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.events.UserBanEvent;
 import io.ph.bot.events.UserMutedEvent;
 import io.ph.bot.events.UserUnmutedEvent;
+import io.ph.bot.feed.TwitterEventListener;
 import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
 import io.ph.bot.procedural.ProceduralListener;
@@ -69,6 +70,7 @@ public class Listeners {
 		JobScheduler.initializeEventSchedule();
 		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
 		LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
+		TwitterEventListener.initTwitter();
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
 
@@ -260,15 +262,22 @@ public class Listeners {
 		Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
 		if(e.getChannel().getID().equals(g.getSpecialChannels().getLog())) {
 			g.getSpecialChannels().setLog("");
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+					e.getChannel().getGuild().getID());
 		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getMusic())) {
 			g.getSpecialChannels().setMusic("");
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+					e.getChannel().getGuild().getID());
 		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getTwitch())) {
 			g.getSpecialChannels().setTwitch("");
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+					e.getChannel().getGuild().getID());
 		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getWelcome())) {
 			g.getSpecialChannels().setWelcome("");
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+					e.getChannel().getGuild().getID());
 		}
-		LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
-				e.getChannel().getGuild().getID());
+		
 	}
 
 	@EventSubscriber

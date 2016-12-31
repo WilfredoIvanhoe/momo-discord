@@ -155,7 +155,6 @@ public class GetAudio implements Runnable {
 					em.withColor(Color.RED);
 					em.withTitle("Error");
 					em.withDesc("Please keep file size below 25 megabytes");
-					System.out.println(getFileSize(link));
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
