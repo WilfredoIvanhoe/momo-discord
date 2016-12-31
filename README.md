@@ -1,14 +1,14 @@
 # Momo, your new Discord bot
-[![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) [![requirement](https://img.shields.io/badge/java%20req-java%208-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8) 
+[![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![Dependency Status](https://www.versioneye.com/user/projects/58677499e78d7d00471b7787/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58677499e78d7d00471b7787) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8) 
 
 Join the discord server linked above to get support, see upcoming features, or to test the bot! Also, check out the website for a command list & bot status [here](http://momobot.io)
 
 **Momo** is a simple-to-use Discord bot based off of [Discord4J](https://github.com/austinv11/Discord4J).  From sending Twitch.tv notifications to playing music, and from pulling anime theme songs off of [Themes.moe](https://themes.moe) to temporarily muting troublemakers, Momo can do a lot for your server.
 
 ## Adding Momo to your server
-Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want her to join. When she joins, go ahead and run `$info`. It's as easy as that!
+Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want it to join. When she joins, go ahead and run `$info`. It's as easy as that!
 #### What commands are available?
-Send the command `$help` to her. If you need more information on specific commands, you can try `$help command-name` or just PM her the command name.
+Send the command `$help`. If you need more information on specific commands, you can try `$help command-name` or just PM the bot the command name.
 
 ---
 
