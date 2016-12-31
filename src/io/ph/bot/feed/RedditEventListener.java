@@ -109,10 +109,6 @@ public class RedditEventListener implements Job {
 						saveFeed();
 					}
 				}
-				if(redditFeed.get(post.getSubredditName().toLowerCase()).isEmpty()) {
-					redditFeed.remove(post.getSubredditName().toLowerCase());
-					saveFeed();
-				}
 			}
 		}
 		cutoffId = posts.get(0).getId();

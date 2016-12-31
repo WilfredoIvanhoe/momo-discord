@@ -93,7 +93,7 @@ public class RedditFeedObserver implements Serializable {
 		em.appendField("Title", post.getTitle(), true);
 		em.appendField("Author", String.format("/u/**%s**", post.getAuthor()), true);
 		em.withAuthorUrl(post.getShortURL());
-		em.withColor(Color.CYAN);
+		em.withColor(Color.MAGENTA);
 		StringBuilder sb = new StringBuilder();
 		if(descriptionText != null && descriptionText.length() > 0) {
 			sb.append(descriptionText);
