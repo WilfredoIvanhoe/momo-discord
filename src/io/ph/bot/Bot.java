@@ -24,7 +24,7 @@ import sx.blah.discord.util.MessageList.EfficiencyLevel;
  * Fill out the properties file (Bot.properties) to setup
  */
 public class Bot {
-	public static final String BOT_VERSION = "v1.0.5";
+	public static final String BOT_VERSION = "v1.1";
 	private static final Bot instance;
 	private static IDiscordClient bot;
 	private final Logger logger = LoggerFactory.getLogger(Bot.class);
@@ -61,7 +61,7 @@ public class Bot {
 
 	private IDiscordClient getClient(String token) {
 		try {
-			return new ClientBuilder().withToken(token).setDaemon(true).login();
+			return new ClientBuilder().withToken(token).login();
 		} catch (DiscordException e) {
 			logger.error("Bot could not connect. Is your bot token correct?");
 			System.exit(0);
