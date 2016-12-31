@@ -2,6 +2,7 @@ package io.ph.bot.procedural;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -21,8 +22,17 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 	// Title of all embeds
 	private String title;
 	private int currentStep;
-	private ArrayList<Object> responses = new ArrayList<Object>();
+	private List<Object> responses = new ArrayList<Object>();
+	private List<Object> cache;
 	
+	public void addCache(Object o) {
+		if(cache == null)
+			cache = new ArrayList<Object>();
+		cache.add(o);
+	}
+	public List<Object> getCache() {
+		return this.cache;
+	}
 	/**
 	 * Generate a procedural command and set the starting message
 	 * @param msg Message that started it all
@@ -31,6 +41,10 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 		currentStep = 0;
 		this.starter = msg;
 	}
+	/*public void initiate(IMessage msg) {
+		this.starter = msg;
+		currentStep = 0;
+	}*/
 	/**
 	 * Send a (templated) message to the original channel
 	 * @param description Description to be included
@@ -122,7 +136,7 @@ public abstract class ProceduralCommand implements ProceduralInterface {
 	public void addResponse(Object o) {
 		this.responses.add(o);
 	}
-	public ArrayList<Object> getResponses() {
+	public List<Object> getResponses() {
 		return this.responses;
 	}
 	public int getCurrentStep() {
