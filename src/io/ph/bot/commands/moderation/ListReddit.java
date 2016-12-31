@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
 
 @CommandData (
 		defaultSyntax = "listreddit",
-		aliases = {"listredditfeeds"},
+		aliases = {"listredditfeeds", "redditlist"},
 		permission = Permission.KICK,
 		description = "List all reddit feeds for your server",
 		example = "(no parameters)"
@@ -43,6 +43,8 @@ public class ListReddit implements Command {
 			StringBuilder sb = new StringBuilder();
 			String prevChannelName = "";
 			for(RedditFeedObserver observer : thisGuilds) {
+				if(observer.getDiscoChannel() == null)
+					continue;
 				if(!prevChannelName.equals(observer.getDiscoChannel().getName())) {
 					if(prevChannelName.length() > 0)
 						em.appendField("\\#" + prevChannelName, sb.toString(), false);

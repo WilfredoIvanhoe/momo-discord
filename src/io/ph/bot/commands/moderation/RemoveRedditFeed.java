@@ -14,7 +14,6 @@ import sx.blah.discord.util.EmbedBuilder;
 /**
  * Remove a registration for this server from a reddit feed
  * @author Paul
- * TODO: Have this take place immediately rather than after the ~30s delay period
  */
 @CommandData (
 		defaultSyntax = "removereddit",
@@ -37,7 +36,8 @@ public class RemoveRedditFeed implements Command {
 			return;
 		}
 		if(RedditEventListener.removeRedditFeed(contents, msg.getGuild())) {
-			em.withColor(Color.GREEN).withTitle("Success").withDesc("Removed /r/**" + contents + "** from your reddit feeds");
+			em.withColor(Color.GREEN).withTitle("Success").withDesc("Removed /r/**" + contents + "** from your reddit feeds.\n"
+					+ "Changes will take place in about 30 seconds");
 		} else {
 			em.withColor(Color.RED).withTitle("Error").withDesc("/r/**" + contents + "** is not a current feed...");
 		}

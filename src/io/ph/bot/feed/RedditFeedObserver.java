@@ -89,10 +89,10 @@ public class RedditFeedObserver implements Serializable {
 			if(this.showNsfw || !RedditEventListener.redditClient.getSubmission(post.getId()).isNsfw())
 				em.withImage(post.getUrl());
 		}
-		em.withAuthorName("New post on /r/" + post.getSubredditName());
+		em.withTitle("New post on /r/" + post.getSubredditName());
 		em.appendField("Title", post.getTitle(), true);
 		em.appendField("Author", String.format("/u/**%s**", post.getAuthor()), true);
-		em.withAuthorUrl(post.getShortURL());
+		em.withUrl(post.getShortURL());
 		em.withColor(Color.MAGENTA);
 		StringBuilder sb = new StringBuilder();
 		if(descriptionText != null && descriptionText.length() > 0) {
@@ -116,5 +116,6 @@ public class RedditFeedObserver implements Serializable {
 
 	public String getSubreddit() {
 		return subreddit;
-	}	
+	}
+	
 }

@@ -144,6 +144,7 @@ public class RedditEventListener implements Job {
 			OAuthData authData = redditClient.getOAuthHelper().easyAuth(credentials);
 			redditClient.authenticate(authData);
 			if(!serializedFile.createNewFile()) {
+				serializedFile.getParentFile().mkdirs();
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serializedFile));
 				redditFeed = (Map<String, List<RedditFeedObserver>>) ois.readObject();
 				ois.close();
@@ -165,5 +166,15 @@ public class RedditEventListener implements Job {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String debugList() {
+		StringBuilder sb = new StringBuilder();
+		for(List<RedditFeedObserver> list : redditFeed.values()) {
+			for(RedditFeedObserver observer : list) {
+				sb.append(observer.getSubreddit() + " on " + observer.getDiscoChannel().getID() + "\n");
+			}
+		}
+		return sb.toString();
 	}
 }

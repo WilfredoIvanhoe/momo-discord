@@ -19,7 +19,7 @@ import sx.blah.discord.util.EmbedBuilder;
 /**
  * Set reddit feed from given channel
  * @author Paul
- *
+ * TODO: Link to a webpage detailing the fringe cases of spoilers vs nsfw
  */
 @CommandData (
 		defaultSyntax = "reddit",
