@@ -41,7 +41,7 @@ public class TwitterEventListener {
 	static TwitterStream twitterStream;
 
 	private static long lastChange;
-	public static final long DELAY = 10;
+	public static final long DELAY = 60;
 
 	private static Map<Long, List<TwitterFeedObserver>> twitterFeed = new HashMap<Long, List<TwitterFeedObserver>>();
 
