@@ -69,7 +69,7 @@ public class RedditFeedObserver implements Serializable {
 				if(descriptionText.length() > 500)
 					descriptionText = descriptionText.substring(0, 500) + "...";
 			}
-		} else if(this.showImages && !post.getUrl().contains("reddituploads")) {
+		} else if(!post.getTitle().toLowerCase().contains("spoiler") && this.showImages && !post.getUrl().contains("reddituploads")) {
 			try {
 				String mime = Util.getMIMEFromURL(new URL(post.getUrl()));
 				if(!mime.contains("png") && !mime.contains("jpeg")
@@ -85,8 +85,9 @@ public class RedditFeedObserver implements Serializable {
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
-		} else if(this.showImages && !post.getUrl().contains("reddituploads")) {
-			if(this.showNsfw || !RedditEventListener.redditClient.getSubmission(post.getId()).isNsfw())
+		} else if(this.showImages && post.getUrl().contains("reddituploads")) {
+			if(!post.getTitle().toLowerCase().contains("spoiler")
+					&& (this.showNsfw || !RedditEventListener.redditClient.getSubmission(post.getId()).isNsfw()))
 				em.withImage(post.getUrl());
 		}
 		em.withTitle("New post on /r/" + post.getSubredditName());
