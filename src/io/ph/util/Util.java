@@ -105,8 +105,9 @@ public class Util {
 	}
 	/**
 	 * Similar implementation to JavaScript setTimeout
-	 * @param runnable
-	 * @param delay
+	 * @param runnable Runnable to run
+	 * @param delay Delay in milliseconds
+	 * @param async Run in async or blocking
 	 */
 	public static void setTimeout(Runnable runnable, int delay, boolean async){
 		if(async) {

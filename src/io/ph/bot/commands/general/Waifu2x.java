@@ -80,7 +80,7 @@ public class Waifu2x implements Command {
 					+ MimeTypes.getDefaultMimeTypes().forName(mimeType(f)).getExtension());
 
 		} catch (Exception e) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("Error occured while 2x'ing your image");
+			em.withColor(Color.RED).withTitle("Error").withDesc("Error occured while 2x'ing your image. You've probably reached the resolution limit");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			e.printStackTrace();
 		} finally {
