@@ -99,6 +99,7 @@ public class TwitterFeed extends ProceduralCommand implements Command {
 			when = "in " + timeLeft;
 		em.withDesc("Subscribed to feeds from **" + u.getScreenName() + "**\nChanges will take effect " + when + " seconds");
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
+		super.exit();
 	}
 	
 }

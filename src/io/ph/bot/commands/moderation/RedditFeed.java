@@ -123,5 +123,6 @@ public class RedditFeed extends ProceduralCommand implements Command {
 		}
 		new RedditFeedObserver(msg.getChannel().getID(), contents, showImg, showNsfw, (boolean) super.getResponses().get(1));
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
+		super.exit();
 	}
 }
