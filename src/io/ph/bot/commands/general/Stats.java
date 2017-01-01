@@ -3,6 +3,7 @@ package io.ph.bot.commands.general;
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 
+import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.MacroObject;
@@ -30,10 +31,13 @@ public class Stats implements Command {
 		EmbedBuilder em = new EmbedBuilder();
 		em.withTitle(msg.getGuild().getName());
 		em.appendField("Users", msg.getGuild().getUsers().size() + "", true);
+		em.appendField("Channels", msg.getGuild().getChannels().size() + "", true);
+		em.appendField("Owner", msg.getGuild().getOwner().getDisplayName(msg.getGuild()), true);
 		em.appendField("Creation Date", msg.getGuild().getCreationDate().format(
 				DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 				.toString(), true);
 		em.appendField("Server ID", msg.getGuild().getID(), true);
+		em.appendField("Bot version", Bot.BOT_VERSION, true);
 		Object[] topMacro = null;
 		if((topMacro = MacroObject.topMacro(msg.getGuild().getID())) != null)
 				em.appendField("Top macro", "**" + topMacro[1] + "** by **"
