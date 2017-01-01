@@ -24,7 +24,7 @@ import sx.blah.discord.util.MessageList.EfficiencyLevel;
  * Fill out the properties file (Bot.properties) to setup
  */
 public class Bot {
-	public static final String BOT_VERSION = "v1.1";
+	public static final String BOT_VERSION = "v1.1.1";
 	private static final Bot instance;
 	private static IDiscordClient bot;
 	private final Logger logger = LoggerFactory.getLogger(Bot.class);
@@ -32,7 +32,7 @@ public class Bot {
 	private String secret, username, botOwnerId, avatar;
 	private APIKeys apiKeys = new APIKeys();
 
-	private boolean debug = true;
+	private boolean debug = false;
 
 	/*
 	 * Persistent objects that can be cached for lifetime of the bot,
