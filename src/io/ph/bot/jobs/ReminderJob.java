@@ -70,7 +70,7 @@ public class ReminderJob implements Job {
 			SQLUtils.closeQuietly(conn);
 			long gap = TimeUnit.MILLISECONDS.toSeconds(Duration.between(start, Instant.now()).toMillis());
 			if(Bot.getInstance().isDebug())
-				LoggerFactory.getLogger(ReminderJob.class).info("Checked global reminders. Duration: {} seconds", gap);
+				LoggerFactory.getLogger(ReminderJob.class).debug("Checked global reminders. Duration: {} seconds", gap);
 		}
 
 	}

@@ -49,7 +49,7 @@ public class WebSyncJob implements Job {
 			e.printStackTrace();
 		} catch (IOException e) {
 			if(Bot.getInstance().isDebug())
-				LoggerFactory.getLogger(WebSyncJob.class).warn("Web sync offline...");
+				LoggerFactory.getLogger(WebSyncJob.class).debug("Web sync offline...");
 		} catch (NoAPIKeyException e) {
 			//handled before this
 		}

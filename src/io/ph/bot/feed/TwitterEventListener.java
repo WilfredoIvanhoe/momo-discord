@@ -61,7 +61,8 @@ public class TwitterEventListener {
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serializedFile));
 				twitterFeed = (Map<Long, List<TwitterFeedObserver>>) ois.readObject();
 				ois.close();
-				update();
+				if(!twitterFeed.keySet().isEmpty())
+					update();
 			} else {
 				saveFeed();
 			}

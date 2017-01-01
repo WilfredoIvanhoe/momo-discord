@@ -284,6 +284,8 @@ public class Listeners {
 	public void onMentionEvent(MentionEvent e) {
 		if(e.getMessage().mentionsEveryone() || e.getMessage().mentionsHere())
 			return;
+		if(e.getMessage().getAuthor().isBot())
+			return;
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
 		if(g.getFeatureStatus("cleverbot")) {
 			if(g.getCleverBot() != null) {

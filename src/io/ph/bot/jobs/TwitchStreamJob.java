@@ -112,7 +112,7 @@ public class TwitchStreamJob implements Job {
 			SQLUtils.closeQuietly(conn);
 			long gap = TimeUnit.MILLISECONDS.toSeconds(Duration.between(start, Instant.now()).toMillis());
 			if(Bot.getInstance().isDebug())
-				LoggerFactory.getLogger(TwitchStreamJob.class).info("Checked Twitch.tv streams. Duration: {} seconds", gap);
+				LoggerFactory.getLogger(TwitchStreamJob.class).debug("Checked Twitch.tv streams. Duration: {} seconds", gap);
 			announce = true;
 		}
 

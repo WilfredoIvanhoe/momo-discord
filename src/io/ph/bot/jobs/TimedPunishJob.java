@@ -99,7 +99,7 @@ public class TimedPunishJob implements Job {
 			SQLUtils.closeQuietly(conn);
 			long gap = TimeUnit.MILLISECONDS.toSeconds(Duration.between(start, Instant.now()).toMillis());
 			if(Bot.getInstance().isDebug())
-				LoggerFactory.getLogger(TimedPunishJob.class).info("Checked global timed mutes/bans. Duration: {} seconds", gap);
+				LoggerFactory.getLogger(TimedPunishJob.class).debug("Checked global timed mutes/bans. Duration: {} seconds", gap);
 		}
 
 	}
