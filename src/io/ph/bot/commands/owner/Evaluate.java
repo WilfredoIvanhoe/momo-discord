@@ -58,8 +58,6 @@ public class Evaluate implements Command {
 						evaluation.setLength(0);
 					}
 				}
-				if(o == null)
-					throw new ScriptException("Failed to parse your -> function");
 			} else {
 				o = engine.eval(String.format("Java.type('io.ph.bot.%s').%s", contents.substring(0, contents.indexOf(" ")),
 						contents.substring(contents.indexOf(" ") + 1)));
