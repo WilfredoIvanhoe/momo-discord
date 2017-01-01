@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -87,35 +86,46 @@ public class RedditEventListener implements Job {
 
 	static String cutoffId;
 	public static void update() {
-		SubredditPaginator allNew = new SubredditPaginator(redditClient);
-		allNew.setLimit(100);
-		allNew.setSorting(Sorting.NEW);
-		allNew.setSubreddit("all");
-		Listing<Submission> posts = allNew.next();
-		for(Submission post : posts) {
-			if(post.getId().equals(cutoffId))
-				break;
-			if(redditFeed.containsKey(post.getSubredditName().toLowerCase())) {
-				if(redditFeed.get(post.getSubredditName().toLowerCase()).isEmpty()) {
-					redditFeed.remove(post.getSubredditName().toLowerCase());
-					saveFeed();
-					continue;
-				}
-				Iterator<RedditFeedObserver> iter = redditFeed.get(post.getSubredditName().toLowerCase()).iterator();
-				while(iter.hasNext()) {
-					RedditFeedObserver observer = iter.next();
-					if(!observer.trigger(post)) {
-						iter.remove();
+		try {
+			SubredditPaginator allNew = new SubredditPaginator(redditClient);
+			allNew.setLimit(100);
+			allNew.setSorting(Sorting.NEW);
+			allNew.setSubreddit("all");
+			Listing<Submission> posts = allNew.next();
+			for(Submission post : posts) {
+				if(post.getId().equals(cutoffId))
+					break;
+				if(redditFeed.containsKey(post.getSubredditName().toLowerCase())) {
+					if(redditFeed.get(post.getSubredditName().toLowerCase()).isEmpty()) {
+						redditFeed.remove(post.getSubredditName().toLowerCase());
 						saveFeed();
+						continue;
+					}
+					Iterator<RedditFeedObserver> iter = redditFeed.get(post.getSubredditName().toLowerCase()).iterator();
+					while(iter.hasNext()) {
+						RedditFeedObserver observer = iter.next();
+						if(!observer.trigger(post)) {
+							iter.remove();
+							saveFeed();
+						}
 					}
 				}
 			}
+			cutoffId = posts.get(0).getId();
+		} catch(NetworkException e) {
+			try {
+				reAuthenticate();
+				update();
+			} catch (NetworkException e1) {
+				e1.printStackTrace();
+			}
 		}
-		cutoffId = posts.get(0).getId();
 	}
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+		if(Bot.getInstance().isDebug())
+			LoggerFactory.getLogger(RedditEventListener.class).debug("Reddit job executing...");
 		update();
 	}
 
@@ -130,19 +140,22 @@ public class RedditEventListener implements Job {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Map<String, List<RedditFeedObserver>> getFeed() {
 		return redditFeed;
 	}
-	
+	static Credentials credentials;
 	static {
 		try {
 			UserAgent userAgent = UserAgent.of("discord bot", "io.ph.bot", Bot.BOT_VERSION, Bot.getInstance().getApiKeys().get("redditusername"));
 			redditClient = new RedditClient(userAgent);
-			Credentials credentials = Credentials.userless(Bot.getInstance().getApiKeys().get("redditkey"),
-					Bot.getInstance().getApiKeys().get("redditsecret"), UUID.randomUUID());
-			OAuthData authData = redditClient.getOAuthHelper().easyAuth(credentials);
+			credentials = Credentials.script(Bot.getInstance().getApiKeys().get("redditusername"),
+					Bot.getInstance().getApiKeys().get("redditpassword"),
+					Bot.getInstance().getApiKeys().get("redditkey"),
+					Bot.getInstance().getApiKeys().get("redditsecret"));
+			OAuthData authData = authenticate();
 			redditClient.authenticate(authData);
+
 			if(!serializedFile.createNewFile()) {
 				serializedFile.getParentFile().mkdirs();
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serializedFile));
@@ -167,7 +180,23 @@ public class RedditEventListener implements Job {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void reAuthenticate() {
+		redditClient.getOAuthHelper().revokeAccessToken(credentials);
+		redditClient.deauthenticate();
+		try {
+			OAuthData authData = authenticate();
+			redditClient.authenticate(authData);
+		} catch (NetworkException e) {
+			e.printStackTrace();
+		} catch (OAuthException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static OAuthData authenticate() throws NetworkException, OAuthException {
+		return redditClient.getOAuthHelper().easyAuth(credentials);
+	}
+
 	public static String debugList() {
 		StringBuilder sb = new StringBuilder();
 		for(List<RedditFeedObserver> list : redditFeed.values()) {
