@@ -8,7 +8,16 @@ Join the discord server linked above to get support, see upcoming features, or t
 ## Adding Momo to your server
 Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want it to join. When she joins, go ahead and run `$info`. It's as easy as that!
 #### What commands are available?
-Send the command `$help`. If you need more information on specific commands, you can try `$help command-name` or just PM the bot the command name.
+Send the command `$help` or visit the website at [this link](http://momobot.io/public/commands.html). If you need more information on specific commands, you can try `$help command-name` or just PM the bot the command name.
+### Features? Gimme some info!
+* Reddit, Twitter, & Twitch.tv feeds - Get updates directly to your channel of choice with image/preview configuration
+* Role management: Set roles as *joinable* and allow users to join/leave at their whim
+* Play music in a music channel. Can play off direct Youtube searches with `$youtube`
+* Bring up character for various video games: FFXIV, WoW *(LoL & osu! coming soon)*
+* Commands to ban, kick, and prune messages
+* Create a strawpoll from discord & directly link it to your users
+* Log channel for user join/leaves, bans, kicks, and nickname changes
+* And more!
 
 ---
 
