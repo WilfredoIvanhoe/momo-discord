@@ -9,7 +9,7 @@ import sx.blah.discord.handle.obj.IMessage;
 
 @CommandData (
 		defaultSyntax = "changestatus",
-		aliases = {"status"},
+		aliases = {},
 		permission = Permission.BOT_OWNER,
 		description = "Change bot's game status",
 		example = "New status"
