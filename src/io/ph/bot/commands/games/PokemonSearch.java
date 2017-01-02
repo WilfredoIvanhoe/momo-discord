@@ -58,13 +58,13 @@ public class PokemonSearch implements Command {
 		try {
 			Pokemon pokemon;
 			if((pokemon = pokemonCall.execute().body()) == null) {
-				em.withColor(Color.RED).withTitle("Error").withDesc(String.format("Pokemon not found for **%s%%", contents));
+				em.withColor(Color.RED).withTitle("Error").withDesc(String.format("Pokemon not found for **%s**", contents));
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
 			em.withTitle(StringUtils.capitalize(pokemon.getName()));
 			em.withThumbnail(pokemon.getSprites().getFrontDefault());
-			em.appendField("National Dex", pokemon.getId() + "", true);
+			em.appendField("National Dex", resolveId(pokemon.getSpecies().getUrl()), true);
 			if(pokemon.getGameIndices().size() > 0)
 				em.appendField("First seen", StringUtils.capitalize(Lists.reverse(pokemon.getGameIndices())
 						.get(0).getVersion().getName().replaceAll("-", " ")), true);
@@ -81,7 +81,17 @@ public class PokemonSearch implements Command {
 		}
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
-	private Color getColor(Type type) {
+	
+	/**
+	 * Because certain forms have odd IDs, this'll resolve the pokemon ID based on their Species redirect
+	 * @param url Species URL
+	 * @return Pokemon ID
+	 */
+	private static String resolveId(String url) {
+		url = url.substring(0, url.length() - 1);
+		return url.substring(url.lastIndexOf("/") + 1);
+	}
+	private static Color getColor(Type type) {
 		switch(type.getType().getName()) {
 		case "normal":
 			return Color.decode("#A8A77A");

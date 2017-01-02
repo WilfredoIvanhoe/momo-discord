@@ -41,6 +41,9 @@ public class Pokemon {
     @SerializedName("sprites")
     @Expose
     private Sprites sprites;
+    @SerializedName("species")
+    @Expose
+    private Species species;
     @SerializedName("stats")
     @Expose
     private List<Stat> stats = null;
@@ -128,7 +131,15 @@ public class Pokemon {
         this.gameIndices = gameIndices;
     }
 
-    public Sprites getSprites() {
+    public Species getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(Species species) {
+		this.species = species;
+	}
+
+	public Sprites getSprites() {
         return sprites;
     }
 
