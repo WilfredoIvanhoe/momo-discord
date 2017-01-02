@@ -17,6 +17,7 @@ import io.ph.bot.rest.imgur.album.Album;
 import io.ph.bot.rest.imgur.image.Image;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
+import net.dean.jraw.models.Flair;
 import net.dean.jraw.models.Submission;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -76,7 +77,13 @@ public class RedditFeedObserver implements Serializable {
 		EmbedBuilder em = new EmbedBuilder();
 		String descriptionText = null;
 		int imagesInAlbum = 0;
-		if(!post.getTitle().toLowerCase().contains("spoiler") && !post.getSubmissionFlair().getText().toLowerCase().contains("spoiler")) {
+		Flair submissionFlair = post.getSubmissionFlair();
+		boolean spoilerFlair;
+		if(submissionFlair.getText() == null)
+			spoilerFlair = false;
+		else
+			spoilerFlair = submissionFlair.getText().toLowerCase().contains("spoiler");
+		if(!post.getTitle().toLowerCase().contains("spoiler") && !spoilerFlair) {
 			if(post.isSelfPost() && this.showPreview && !RedditEventListener.redditClient.getSubmission(post.getId()).isNsfw()) {
 				descriptionText = post.getSelftext();
 				if(descriptionText.length() > 500)
