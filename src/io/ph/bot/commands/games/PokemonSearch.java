@@ -2,6 +2,7 @@ package io.ph.bot.commands.games;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -55,15 +56,24 @@ public class PokemonSearch implements Command {
 		PokemonAPI api = retrofit.create(PokemonAPI.class);
 		Call<Pokemon> pokemonCall = api.getPokemon(contents);
 		try {
-			Pokemon pokemon = pokemonCall.execute().body();
+			Pokemon pokemon;
+			if((pokemon = pokemonCall.execute().body()) == null) {
+				em.withColor(Color.RED).withTitle("Error").withDesc(String.format("Pokemon not found for **%s%%", contents));
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 			em.withTitle(StringUtils.capitalize(pokemon.getName()));
 			em.withThumbnail(pokemon.getSprites().getFrontDefault());
 			em.appendField("National Dex", pokemon.getId() + "", true);
 			if(pokemon.getGameIndices().size() > 0)
 				em.appendField("First seen", StringUtils.capitalize(Lists.reverse(pokemon.getGameIndices())
 						.get(0).getVersion().getName().replaceAll("-", " ")), true);
-			em.appendField("Abilities", String.join(", ", Joiner.on(", ").join(Lists.reverse(pokemon.getAbilities()))), true);
+			em.appendField("Abilities", Lists.reverse(pokemon.getAbilities()).stream()
+					.map(a -> a.toString() + (a.getIsHidden() ? " (H)" : "")).collect(Collectors.joining(", ")), true);
 			em.appendField("Typing", Joiner.on(" & ").join(Lists.reverse(pokemon.getTypes())), true);
+			em.withFooterText("Stat total: " +pokemon.getStats().stream()
+					.mapToInt(type -> type.getBaseStat())
+					.sum());
 			em.withColor(getColor(Lists.reverse(pokemon.getTypes()).get(0)));
 		} catch (IOException e) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Something went funny connecting");

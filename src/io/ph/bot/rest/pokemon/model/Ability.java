@@ -1,7 +1,7 @@
 
 package io.ph.bot.rest.pokemon.model;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -44,6 +44,6 @@ public class Ability {
 
     @Override
 	public String toString() {
-    	return StringUtils.capitalize(this.ability.getName().replaceAll("-", " "));
+    	return WordUtils.capitalize(this.ability.getName().replaceAll("-", " "));
     }
 }

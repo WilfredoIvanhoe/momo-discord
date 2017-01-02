@@ -8,6 +8,7 @@ import io.ph.bot.model.Permission;
 /**
  * Syntax for commands
  * TODO: Eventually replace Command error messages with the content of these annotations
+ * TODO: Categorize commands for better sorting with help command
  * @author Paul
  *
  */
