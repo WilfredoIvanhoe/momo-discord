@@ -21,6 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
 
+/**
+ * osu! user lookup
+ * @author Paul
+ *
+ */
 @CommandData (
 		defaultSyntax = "osu",
 		aliases = {"circles"},
