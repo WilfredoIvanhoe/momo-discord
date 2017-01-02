@@ -76,7 +76,7 @@ public class RedditFeedObserver implements Serializable {
 		EmbedBuilder em = new EmbedBuilder();
 		String descriptionText = null;
 		int imagesInAlbum = 0;
-		if(!post.getTitle().toLowerCase().contains("spoiler")) {
+		if(!post.getTitle().toLowerCase().contains("spoiler") && !post.getSubmissionFlair().getText().toLowerCase().contains("spoiler")) {
 			if(post.isSelfPost() && this.showPreview && !RedditEventListener.redditClient.getSubmission(post.getId()).isNsfw()) {
 				descriptionText = post.getSelftext();
 				if(descriptionText.length() > 500)
