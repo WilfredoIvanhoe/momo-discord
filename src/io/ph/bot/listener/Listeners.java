@@ -152,6 +152,7 @@ public class Listeners {
 		try {
 			FileUtils.deleteDirectory(new File("resources/guilds/" + e.getGuild().getID() + "/"));
 			Bot.getInstance().getLogger().info("Guild has left: {}", e.getGuild().getName());
+			Guild.guildMap.remove(e.getGuild().getID());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
