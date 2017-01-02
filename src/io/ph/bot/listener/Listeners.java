@@ -260,25 +260,28 @@ public class Listeners {
 
 	@EventSubscriber
 	public void onChannelDeleteEvent(ChannelDeleteEvent e) {
-		Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
-		if(e.getChannel().getID().equals(g.getSpecialChannels().getLog())) {
-			g.getSpecialChannels().setLog("");
-			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
-					e.getChannel().getGuild().getID());
-		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getMusic())) {
-			g.getSpecialChannels().setMusic("");
-			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
-					e.getChannel().getGuild().getID());
-		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getTwitch())) {
-			g.getSpecialChannels().setTwitch("");
-			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
-					e.getChannel().getGuild().getID());
-		} else if(e.getChannel().getID().equals(g.getSpecialChannels().getWelcome())) {
-			g.getSpecialChannels().setWelcome("");
-			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
-					e.getChannel().getGuild().getID());
+		try {
+			Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
+			if(e.getChannel().getID().equals(g.getSpecialChannels().getLog())) {
+				g.getSpecialChannels().setLog("");
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+						e.getChannel().getGuild().getID());
+			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getMusic())) {
+				g.getSpecialChannels().setMusic("");
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+						e.getChannel().getGuild().getID());
+			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getTwitch())) {
+				g.getSpecialChannels().setTwitch("");
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+						e.getChannel().getGuild().getID());
+			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getWelcome())) {
+				g.getSpecialChannels().setWelcome("");
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+						e.getChannel().getGuild().getID());
+			}
+		} catch(NullPointerException e1) {
+			System.err.println("NPE onChannelDelete");
 		}
-		
 	}
 
 	@EventSubscriber
