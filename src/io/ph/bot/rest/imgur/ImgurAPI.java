@@ -8,12 +8,12 @@ import retrofit2.http.Header;
 import retrofit2.http.Path;
 
 public interface ImgurAPI {
-	String ENDPOINT = "https://api.imgur.com/3/";
-	
+	final String ENDPOINT = "https://api.imgur.com/3/";
+
 	@GET("image/{id}")
-    Call<Image> getImage(@Path("id") String id,
-    		@Header("Authorization") String authId);
-	
+	Call<Image> getImage(@Path("id") String id,
+			@Header("Authorization") String authId);
+
 	@GET("album/{id}")
 	Call<Album> getAlbum(@Path("id") String id,
 			@Header("Authorization") String authId);

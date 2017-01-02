@@ -125,19 +125,18 @@ public class RedditFeedObserver implements Serializable {
 				}
 			}
 		}
-		em.withTitle("New post on /r/" + post.getSubredditName());
+		em.ignoreNullEmptyFields();
+		em.withAuthorName("New post on /r/" + post.getSubredditName());
 		em.appendField("Title", post.getTitle(), true);
 		em.appendField("Author", String.format("/u/**%s**", post.getAuthor()), true);
-		em.withUrl(post.getShortURL());
+		em.withAuthorUrl(post.getShortURL());
 		em.withColor(Color.MAGENTA);
-		StringBuilder sb = new StringBuilder();
-		if(descriptionText != null && descriptionText.length() > 0) {
-			sb.append(descriptionText);
-			em.appendField("Preview", sb.toString(), true);
-		}
 		em.appendField("Reddit Link", post.getShortURL(), true);
 		if(imagesInAlbum > 1) {
 			em.appendField("Album Link (" + imagesInAlbum + " images)", post.getUrl(), true);
+		}
+		if(descriptionText != null && descriptionText.length() > 0) {
+			em.appendField("Preview", descriptionText, false);
 		}
 		if(post.isNsfw() || post.getTitle().toLowerCase().contains("spoiler")) {
 			em.withFooterText("Post marked as NSFW/spoilers");

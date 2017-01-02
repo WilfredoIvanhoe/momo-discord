@@ -40,7 +40,7 @@ public class RemindMe implements Command {
 			em = MessageUtils.commandErrorMessage(msg, "remindme", "#w#d#h#m reminder-message", 
 					"*#w#d#h#m* - When you want to be reminded. Need to have at least one time, or any combination\n"
 							+ "\tFor example, you can use 3d2h5m to be reminded in 3 days, 2 hours, and 1 minute",
-					"*reminder# - The message you want to be reminded of");
+					"*reminder-message* - The message you want to be reminded of");
 			em.withFooterText("The reminder is accurate to within 20 seconds");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
