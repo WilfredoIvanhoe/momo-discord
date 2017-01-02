@@ -32,6 +32,11 @@ import net.dean.jraw.paginators.Sorting;
 import net.dean.jraw.paginators.SubredditPaginator;
 import sx.blah.discord.handle.obj.IGuild;
 
+/**
+ * Reddit event listener
+ * @author Paul
+ * TODO: Sometimes double sends posts
+ */
 @SuppressWarnings("unchecked")
 public class RedditEventListener implements Job {
 	private static File serializedFile = new File("resources/feeds/Reddit.bin");

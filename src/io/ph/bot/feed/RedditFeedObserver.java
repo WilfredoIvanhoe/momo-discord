@@ -87,7 +87,7 @@ public class RedditFeedObserver implements Serializable {
 					em.withImage(post.getUrl().replaceAll("amp;", ""));
 				} else {
 					try {
-						String mime = Util.getMIMEFromURL(new URL(post.getUrl()));
+						String mime = Util.getMIMEFromURL(new URL(post.getUrl().replaceAll("amp;", "")));
 						if(mime.contains("png") || mime.contains("jpeg")) {
 								em.withImage(post.getUrl());
 						} else if(post.getUrl().contains("imgur")) {
@@ -96,7 +96,7 @@ public class RedditFeedObserver implements Serializable {
 									.addConverterFactory(GsonConverterFactory.create())
 									.build();
 							ImgurAPI imgur = retrofit.create(ImgurAPI.class);
-							Pattern p = Pattern.compile("(?:https?:\\/\\/imgur\\.com\\/[a|gallery]+\\/)(.*?)(?:[#\\/].*|$)");
+							Pattern p = Pattern.compile("(?:https?:\\/\\/(?:m.)?imgur\\.com\\/(?:[a|gallery]+\\/)?)(.*?)(?:[#\\/].*|$)");
 							Matcher m = p.matcher(post.getUrl());
 							if(m.find()) {
 								if(post.getUrl().contains("/a/")) {
@@ -115,7 +115,11 @@ public class RedditFeedObserver implements Serializable {
 					} catch (NoAPIKeyException e) {
 						LoggerFactory.getLogger(RedditFeedObserver.class).error("No Imgur API key set! Cannot extract full URL. Bot.properties needs imgur=*****");
 					} catch (IOException e) {
+						System.err.println("Error for post: " + post.getPermalink());
 						// API failed
+						e.printStackTrace();
+					} catch (Exception e) {
+						System.err.println("Error for post: " + post.getPermalink());
 						e.printStackTrace();
 					}
 				}
