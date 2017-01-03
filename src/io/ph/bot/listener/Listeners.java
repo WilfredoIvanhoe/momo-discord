@@ -81,7 +81,7 @@ public class Listeners {
 			// Private message
 			EmbedBuilder em = new EmbedBuilder();
 			Command c;
-			if((c = CommandHandler.getCommand(e.getMessage().getContent())) == null) {
+			if((c = CommandHandler.getCommand(e.getMessage().getContent().toLowerCase())) == null) {
 				em.withTitle("Invalid command").withColor(Color.RED).withDesc(e.getMessage().getContent() + " is not a valid command");
 				MessageUtils.sendPrivateMessage(e.getMessage().getAuthor(), em.build());
 				return;
@@ -264,19 +264,19 @@ public class Listeners {
 			Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
 			if(e.getChannel().getID().equals(g.getSpecialChannels().getLog())) {
 				g.getSpecialChannels().setLog("");
-				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their log channel.",
 						e.getChannel().getGuild().getID());
 			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getMusic())) {
 				g.getSpecialChannels().setMusic("");
-				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their music channel.",
 						e.getChannel().getGuild().getID());
 			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getTwitch())) {
 				g.getSpecialChannels().setTwitch("");
-				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their twitch channel.",
 						e.getChannel().getGuild().getID());
 			} else if(e.getChannel().getID().equals(g.getSpecialChannels().getWelcome())) {
 				g.getSpecialChannels().setWelcome("");
-				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a special channel.",
+				LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their welcome channel.",
 						e.getChannel().getGuild().getID());
 			}
 		} catch(NullPointerException e1) {
