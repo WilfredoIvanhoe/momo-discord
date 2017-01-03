@@ -14,8 +14,10 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.common.base.Joiner;
 
+import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
+import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
@@ -46,16 +48,9 @@ public class Youtube implements Command {
 			return;
 		}
 		try {
-			YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-				@Override
-				public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
-
-				}
-			}).setApplicationName("momo discord bot").build();
-			String queryTerm = contents;
+			YouTube youtube = getYoutubeClient();
 			YouTube.Search.List search = youtube.search().list("id");
-			String apiKey = "AIzaSyD7n_n9lZgjncLwXe_Iyt8YKQUTfD9W-M4";
-			search.setKey(apiKey).setQ(queryTerm).setType("video").setFields("items(id/videoId)");
+			search.setKey(Bot.getInstance().getApiKeys().get("youtube")).setQ(contents).setType("video").setFields("items(id/videoId)");
 			search.setMaxResults((long) 5);
 			List<SearchResult> searchResultList = search.execute().getItems();
 			if(searchResultList.isEmpty()) {
@@ -68,7 +63,8 @@ public class Youtube implements Command {
 				idsToQuery.add(res.getId().getVideoId());
 			}
 			String joinedIds = Joiner.on(",").join(idsToQuery);
-			YouTube.Videos.List searchTwo = youtube.videos().list("id,snippet,contentDetails").setKey(apiKey).setId(joinedIds);
+			YouTube.Videos.List searchTwo = youtube.videos().list("id,snippet,contentDetails")
+					.setKey(Bot.getInstance().getApiKeys().get("youtube")).setId(joinedIds);
 			StringBuilder sb = new StringBuilder();
 			int count = 0;
 			Guild.guildMap.get(msg.getGuild().getID()).getHistoricalSearches().getHistoricalMusic().clear();
@@ -85,16 +81,24 @@ public class Youtube implements Command {
 			}
 			em.withTitle("Youtube results for " + contents);
 			em.withColor(Color.GREEN);
-			//em.withThumbnail(videos.get(0).getSnippet().getThumbnails().getMedium().getUrl());
+			// em.withThumbnail(videos.get(0).getSnippet().getThumbnails().getMedium().getUrl());
 			em.withDesc(sb.toString());
 			if(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice().length() > 0)
 				em.withFooterText(String.format("Use %smusic # on these results to play music", Util.getPrefixForGuildId(msg.getGuild().getID())));
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
 		} catch(IOException e) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Something went wrong searching Youtube");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
+		} catch (NoAPIKeyException e) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("This bot does not have Youtube search setup");
 		}
+		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
+	
+	private static YouTube getYoutubeClient() {
+		return new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+			@Override
+			public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
 
+			}
+		}).setApplicationName("momo discord bot").build();
+	}
 }

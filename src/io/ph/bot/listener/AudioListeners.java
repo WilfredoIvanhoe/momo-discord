@@ -12,6 +12,7 @@ import io.ph.bot.model.Guild.GuildMusic;
 import io.ph.bot.model.Guild.MusicMeta;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
@@ -24,26 +25,6 @@ import sx.blah.discord.util.audio.events.TrackStartEvent;
  *
  */
 public class AudioListeners {
-
-	@EventSubscriber
-	public void onTrackFinishEvent(TrackFinishEvent e) {
-		if(e.getOldTrack().getMetadata().get("file") != null) {
-			((File) e.getOldTrack().getMetadata().get("file")).delete();
-		}
-		if(Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().getMusicMeta().size() == 0)
-			Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().setCurrentSong(null);
-		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		IVoiceChannel channel = e.getPlayer().getGuild()
-				.getVoiceChannelByID(g.getSpecialChannels().getVoice());
-		if(channel.getConnectedUsers().size() == 1) {
-			GuildMusic m = g.getMusicManager();
-			m.getAudioPlayer().clear();
-			m.getMusicMeta().clear();
-			m.setSkipVotes(0);
-			m.getSkipVoters().clear();
-			m.setCurrentSong(null);
-		}
-	}
 
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
@@ -69,17 +50,27 @@ public class AudioListeners {
 			}
 		}
 	}
-	
+	@EventSubscriber
+	public void onTrackFinishEvent(TrackFinishEvent e) {
+		if(e.getOldTrack().getMetadata().get("file") != null) {
+			((File) e.getOldTrack().getMetadata().get("file")).delete();
+		}
+		handleFinishedTrack(e.getPlayer().getGuild());
+	}
+
 	@EventSubscriber
 	public void onTrackSkipEvent(TrackSkipEvent e) {
 		if(e.getTrack().getMetadata().get("file") != null) {
 			((File) e.getTrack().getMetadata().get("file")).delete();
 		}
-		if(Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().getMusicMeta().size() == 0)
-			Guild.guildMap.get(e.getPlayer().getGuild().getID()).getMusicManager().setCurrentSong(null);
-		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		IVoiceChannel channel = e.getPlayer().getGuild()
-				.getVoiceChannelByID(g.getSpecialChannels().getVoice());
+		handleFinishedTrack(e.getPlayer().getGuild());
+	}
+	
+	private static void handleFinishedTrack(IGuild guild) {
+		Guild g = Guild.guildMap.get(guild.getID());
+		if(g.getMusicManager().getMusicMeta().size() == 0)
+			g.getMusicManager().setCurrentSong(null);
+		IVoiceChannel channel = guild.getVoiceChannelByID(g.getSpecialChannels().getVoice());
 		if(channel.getConnectedUsers().size() == 1) {
 			GuildMusic m = g.getMusicManager();
 			m.getAudioPlayer().clear();
