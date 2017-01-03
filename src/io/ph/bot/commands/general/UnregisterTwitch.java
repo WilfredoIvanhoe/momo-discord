@@ -52,37 +52,26 @@ public class UnregisterTwitch implements Command {
 		TwitchObject to;
 		try {
 			to = new TwitchObject(contents, msg.getGuild().getID(), msg.getAuthor().getID());
-		} catch (NoAPIKeyException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like the person running this bot does not have a Twitch.tv API key setup yet");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
-		} catch (IOException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("There was a problem accessing the Twitch.tv API");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			e1.printStackTrace();
-			return;
-		} catch (UnspecifiedException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("Something bad happened with that username...");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			e1.printStackTrace();
-			return;
-		} catch (BadUsernameException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("That isn't a valid username!");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
-		}
-		try {
 			if(to.unregister(msg.getAuthor().getID())) {
 				em.withTitle("Success").withColor(Color.GREEN).withDesc("Unregistered **" + contents + "** from Twitch.tv updates");
 			} else {
 				em.withTitle("Error").withColor(Color.RED).withDesc("Twitch username **" + contents + "** not registered for updates");
 			}
-		} catch(NoPermissionException e) {
+		} catch (NoAPIKeyException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like the person running this bot does not have a Twitch.tv API key setup yet");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+		} catch (IOException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("There was a problem accessing the Twitch.tv API");
+			e1.printStackTrace();
+		} catch (UnspecifiedException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("Something bad happened with that username...");
+			e1.printStackTrace();
+		} catch (BadUsernameException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("That isn't a valid username!");
+		} catch (NoPermissionException e) {
 			em.withTitle("Error").withColor(Color.RED).withDesc("You cannot delete this Twitch.tv update registration");
 		}
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
-
-
 	}
 
 }

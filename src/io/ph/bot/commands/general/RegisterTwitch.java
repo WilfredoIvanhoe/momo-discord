@@ -29,7 +29,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		permission = Permission.NONE,
 		description = "Register a Twitch channel for notifications, if the Twitch announcement channel is setup\n"
 				+ "Protip: If users are spamming users, disable the command so it is only usable by moderators+",
-		example = "TSM_TheOddOne"
+				example = "TSM_TheOddOne"
 		)
 public class RegisterTwitch implements Command {
 
@@ -53,32 +53,24 @@ public class RegisterTwitch implements Command {
 		TwitchObject to;
 		try {
 			to = new TwitchObject(contents, msg.getGuild().getID(), msg.getAuthor().getID());
-		} catch (NoAPIKeyException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like the person running this bot does not have a Twitch.tv API key setup yet");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
-		} catch (IOException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("There was a problem accessing the Twitch.tv API");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			e1.printStackTrace();
-			return;
-		} catch (UnspecifiedException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("Something bad happened with that username...");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			e1.printStackTrace();
-			return;
-		} catch (BadUsernameException e1) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("That isn't a valid username!");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
-		}
-		try {
 			if(to.register()) {
 				em.withTitle("Success").withColor(Color.GREEN).withDesc("Registered **" + contents + "** for Twitch.tv updates");
 			} else {
 				em.withTitle("Error").withColor(Color.RED).withDesc("Twitch username **" + contents + "** is already registered for updates");
 			}
+		} catch (NoAPIKeyException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like the person running this bot does not have a Twitch.tv API key setup yet");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+		} catch (IOException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("There was a problem accessing the Twitch.tv API");
+			e1.printStackTrace();
+		} catch (UnspecifiedException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("Something bad happened with that username...");
+			e1.printStackTrace();
+		} catch (BadUsernameException e1) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("That isn't a valid username!");
 		} catch (SQLException e) {
+			em.withColor(Color.RED).withTitle("Error").withDesc("Something happened to my database...");
 			e.printStackTrace();
 		}
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
