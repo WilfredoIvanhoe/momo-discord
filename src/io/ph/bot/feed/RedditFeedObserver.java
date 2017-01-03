@@ -106,7 +106,7 @@ public class RedditFeedObserver implements Serializable {
 							Pattern p = Pattern.compile("(?:https?:\\/\\/(?:m.)?imgur\\.com\\/(?:[a|gallery]+\\/)?)(.*?)(?:[#\\/].*|$)");
 							Matcher m = p.matcher(post.getUrl());
 							if(m.find()) {
-								if(post.getUrl().contains("/a/")) {
+								if(post.getUrl().contains("/a/") || post.getUrl().contains("/gallery/")) {
 									Call<Album> album = imgur.getAlbum(m.group(1), "Client-ID " + Bot.getInstance().getApiKeys().get("imgur"));
 									Album a = album.execute().body();
 									em.withImage(a.getData().getImages().get(0).getLink());
