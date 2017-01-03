@@ -122,11 +122,11 @@ public class RedditFeedObserver implements Serializable {
 					} catch (NoAPIKeyException e) {
 						LoggerFactory.getLogger(RedditFeedObserver.class).error("No Imgur API key set! Cannot extract full URL. Bot.properties needs imgur=*****");
 					} catch (IOException e) {
-						System.err.println("Error for post: " + post.getPermalink());
+						System.err.println("Error for post: " + post.getUrl());
 						// API failed
 						e.printStackTrace();
 					} catch (Exception e) {
-						System.err.println("Error for post: " + post.getPermalink());
+						System.err.println("Error for post: " + post.getUrl());
 						e.printStackTrace();
 					}
 				}
