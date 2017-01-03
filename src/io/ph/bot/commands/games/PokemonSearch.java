@@ -70,8 +70,8 @@ public class PokemonSearch implements Command {
 			em.withThumbnail(pokemon.getSprites().getFrontDefault());
 			em.appendField("National Dex", resolveId(pokemon.getSpecies().getUrl()), true);
 			if(pokemon.getGameIndices().size() > 0)
-				em.appendField("First seen", StringUtils.capitalize(Lists.reverse(pokemon.getGameIndices())
-						.get(0).getVersion().getName().replaceAll("-", " ")), true);
+				em.appendField("First seen", resolveGeneration((Lists.reverse(pokemon.getGameIndices())
+						.get(0).getVersion().getName().replaceAll("-", " "))), true);
 			em.appendField("Abilities", Lists.reverse(pokemon.getAbilities()).stream()
 					.map(a -> a.toString() + (a.getIsHidden() ? " (H)" : "")).collect(Collectors.joining(", ")), true);
 			em.appendField("Typing", Joiner.on(" & ").join(Lists.reverse(pokemon.getTypes())), true);
@@ -88,7 +88,7 @@ public class PokemonSearch implements Command {
 		}
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
-	
+
 	/**
 	 * Because certain forms have odd IDs, this'll resolve the pokemon ID based on their Species redirect
 	 * @param url Species URL
@@ -97,6 +97,48 @@ public class PokemonSearch implements Command {
 	private static String resolveId(String url) {
 		url = url.substring(0, url.length() - 1);
 		return url.substring(url.lastIndexOf("/") + 1);
+	}
+
+	private static String resolveGeneration(String given) {
+		switch(given) {
+		case "red":
+		case "yellow":
+		case "firered":
+		case "leafgreen":
+			return "R/B";
+
+		case "gold":
+		case "silver":
+		case "crystal":
+		case "heartgold":
+		case "soulsilver":
+			return "G/S/C";
+
+		case "ruby":
+		case "sapphire":
+		case "emerald":
+		case "omega ruby":
+		case "alpha sapphire":
+			return "R/S/E";
+
+		case "diamond":
+		case "pearl":
+		case "platinum":
+			return "D/P/Pt";
+
+		case "black":
+		case "white":
+		case "black 2":
+		case "white 2":
+			return "B/W";
+
+		case "x":
+		case "y":
+			return "X/Y";
+
+		default:
+			return StringUtils.capitalize(given);
+		}
 	}
 	private static Color getColor(Type type) {
 		switch(type.getType().getName()) {
