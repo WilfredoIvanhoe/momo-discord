@@ -1,4 +1,4 @@
-package io.ph.bot.commands.general;
+package io.ph.bot.commands.japanese;
 
 import java.awt.Color;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package io.ph.bot.commands.general;
+package io.ph.bot.commands.japanese;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -32,17 +32,16 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
 
 /**
- * Search for an anime by name
+ * Search for an anime from MAL by name
  * @author Paul
  * TODO: Clean this up. Was quickly ported over from an old bot, so it looks pretty bad
  */
 @CommandData (
-		defaultSyntax = "anime",
-		aliases = {"mal", "animesearch"},
+		defaultSyntax = "mal",
+		aliases = {},
 		permission = Permission.NONE,
-		description = "Search for an anime from MyAnimeList.net\n"
-				+ "Will soon be supporting Kitsu.io and possibly Anichart",
-				example = "shinsekai yori"
+		description = "Search for an anime from MyAnimeList.net\n",
+		example = "shinsekai yori"
 		)
 public class AnimeSearch implements Runnable, Command {
 

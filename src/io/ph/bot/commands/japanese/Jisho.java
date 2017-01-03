@@ -1,4 +1,4 @@
-package io.ph.bot.commands.language;
+package io.ph.bot.commands.japanese;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class Jisho implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
-		String word = Util.combineStringArray(Util.removeFirstArrayEntry(msg.getContent().split(" ")));
+		String word = Util.getCommandContents(msg);
 		ArrayList<JishoObject> jA = JishoObject.searchVocabulary(word);
 		if(jA.size() == 0 || jA == null) {
 			em.withColor(Color.RED).withTitle("No results found")
