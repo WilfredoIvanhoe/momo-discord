@@ -41,6 +41,10 @@ public class PokemonSearch implements Command {
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
+		if(contents.split(" ")[0].equalsIgnoreCase("mega")) {
+			contents = Util.getCommandContents(contents);
+			contents += "-mega";
+		}
 		if(contents.isEmpty()) {
 			em = MessageUtils.commandErrorMessage(msg, "pokemon", "[name|id]", "*[name|id]* - search a Pokemon by its name or ID");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -71,9 +75,12 @@ public class PokemonSearch implements Command {
 			em.appendField("Abilities", Lists.reverse(pokemon.getAbilities()).stream()
 					.map(a -> a.toString() + (a.getIsHidden() ? " (H)" : "")).collect(Collectors.joining(", ")), true);
 			em.appendField("Typing", Joiner.on(" & ").join(Lists.reverse(pokemon.getTypes())), true);
-			em.withFooterText("Stat total: " +pokemon.getStats().stream()
+			em.withFooterText("Stat total: " + pokemon.getStats().stream()
 					.mapToInt(type -> type.getBaseStat())
-					.sum());
+					.sum() + " | "
+					+ Lists.reverse(pokemon.getStats()).stream()
+					.map(s -> s.getBaseStat().toString())
+					.collect(Collectors.joining("/")));
 			em.withColor(getColor(Lists.reverse(pokemon.getTypes()).get(0)));
 		} catch (IOException e) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Something went funny connecting");
