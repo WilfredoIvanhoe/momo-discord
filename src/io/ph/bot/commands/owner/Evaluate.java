@@ -39,14 +39,14 @@ public class Evaluate implements Command {
 			Object o = null;
 			if(contents.startsWith("Bot.") && !contents.endsWith("loop")) {
 				o = engine.eval("Java.type('io.ph.bot.Bot').getInstance().getBot()" + contents.substring(3));
-			} else if(contents.contains("=>")) {
-				// Usage: $eval varName package varName package => varName.method()
+			} else if(contents.contains("|")) {
+				// Usage: $eval varName package varName package | varName.method()
 				// Allows for static methods only i.e. String.join(String delim, Collection coll);
 				StringBuilder evaluation = new StringBuilder();
 				int count = 0;
 				for(String s : contents.split(" ")) {
-					if(s.equals("=>")) {
-						o = engine.eval(contents.substring(contents.indexOf("->") + 3));
+					if(s.equals("|")) {
+						o = engine.eval(contents.substring(contents.indexOf("|") + 2));
 						break;
 					}
 					if(++count%2 == 1) {
