@@ -97,6 +97,8 @@ public class Guild {
 		for(String s : joinableRolesP) {
 			if(s.equals(""))
 				continue;
+			if(g.getRoleByID(s) == null)
+				continue;
 			this.joinableRoles.add(s);
 		}
 		this.mutedRoleId = config.getString("MutedRoleId", "");
@@ -285,6 +287,9 @@ public class Guild {
 			return true;
 		}
 		return false;
+	}
+	public HashSet<String> getJoinableRoles() {
+		return this.joinableRoles;
 	}
 	public boolean isJoinableRole(String roleId) {
 		return this.joinableRoles.contains(roleId) ? true : false;

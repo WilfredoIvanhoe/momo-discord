@@ -31,6 +31,7 @@ import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.NickNameChangeEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.handle.impl.events.RoleDeleteEvent;
 import sx.blah.discord.handle.impl.events.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.UserPardonEvent;
@@ -72,6 +73,14 @@ public class Listeners {
 		LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
 		TwitterEventListener.initTwitter();
 		Bot.getInstance().getLogger().info("Bot is now online");
+	}
+	
+	@EventSubscriber
+	public void onRoleDeleteEvent(RoleDeleteEvent e) {
+		Guild g = Guild.guildMap.get(e.getGuild().getID());
+		if(g.removeJoinableRole(e.getRole().getID()))  {
+			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted a joinable role", e.getGuild().getID());
+		}
 	}
 
 	@EventSubscriber
@@ -341,5 +350,24 @@ public class Listeners {
 				}
 			} catch (MissingPermissionsException e1) { }
 		}
+		/*if(e.getChannel().getID().equals(Guild.guildMap.get(e.getChannel().getGuild().getID()).getSpecialChannels().getVoice())
+				&& e.getChannel().getConnectedUsers().size() == 1) {
+			Util.setTimeout(() -> killMusic(e.getChannel()), 15000, true);
+		}*/
+	}
+
+	/*@EventSubscriber
+	public void onUserVoiceChannelMoveEvent(UserVoiceChannelMoveEvent e) {
+		if(e.getOldChannel().getID().equals(Guild.guildMap.get(e.getOldChannel().getGuild().getID()).getSpecialChannels().getVoice())
+				&& e.getOldChannel().getConnectedUsers().size() == 1) {
+			Util.setTimeout(() -> killMusic(e.getOldChannel()), 15000, true);
+		}
+	}*/
+	
+	static void killMusic(IVoiceChannel v) {
+		if(v.getConnectedUsers().size() > 1) {
+			return;
+		}
+		// Code to kill
 	}
 }
