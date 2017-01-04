@@ -94,7 +94,7 @@ public class RedditFeedObserver implements Serializable {
 					em.withImage(post.getUrl().replaceAll("amp;", ""));
 				} else {
 					try {
-						String mime = Util.getMIMEFromURL(new URL(post.getUrl().replaceAll("amp;", "")));
+						String mime = Util.getMimeFromUrl(new URL(post.getUrl().replaceAll("amp;", "")));
 						if(mime.contains("png") || mime.contains("jpeg")) {
 								em.withImage(post.getUrl());
 						} else if(post.getUrl().contains("imgur")) {
@@ -133,10 +133,10 @@ public class RedditFeedObserver implements Serializable {
 			}
 		}
 		em.ignoreNullEmptyFields();
-		em.withAuthorName("New post on /r/" + post.getSubredditName());
+		em.withTitle("New post on /r/" + post.getSubredditName());
 		em.appendField("Title", post.getTitle(), true);
 		em.appendField("Author", String.format("/u/**%s**", post.getAuthor()), true);
-		em.withAuthorUrl(post.getShortURL());
+		em.withUrl(post.getShortURL());
 		em.withColor(Color.MAGENTA);
 		em.appendField("Reddit Link", post.getShortURL(), true);
 		if(imagesInAlbum > 1) {

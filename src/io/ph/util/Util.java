@@ -238,7 +238,7 @@ public class Util {
 	 * @return String of MIME type
 	 * @throws IOException i/o went bad
 	 */
-	public static String getMIMEFromURL(URL url) {
+	public static String getMimeFromUrl(URL url) {
 		InputStream in;
 		try {
 			if(url.getProtocol().equals("https")) {
@@ -260,7 +260,16 @@ public class Util {
 		}
 		return null;
 	}
-
+	/**
+	 * Use Apache Tika to detect MIME type
+	 * @param f File to detect
+	 * @return String of MIME type
+	 * @throws IOException Bad file
+	 */
+	public static String getMimeFromFile(File f) throws IOException {
+		final Tika tika = new Tika();
+		return tika.detect(f);
+	}
 	/**
 	 * Returns json value for given String url
 	 * @param url url to connect to
