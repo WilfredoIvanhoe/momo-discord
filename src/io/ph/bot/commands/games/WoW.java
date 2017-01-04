@@ -53,7 +53,7 @@ public class WoW implements Command {
 
 		IMessage tempMessage = null;
 		try {
-			tempMessage = MessageUtils.sendMessage(msg.getChannel(), 
+			tempMessage = MessageUtils.buildAndReturn(msg.getChannel(), 
 					new EmbedBuilder().withColor(Color.CYAN).withDesc("Searching...").build());
 			WoWCharacter wow = new WoWCharacter(serverName, split[0], split[1].toLowerCase());
 

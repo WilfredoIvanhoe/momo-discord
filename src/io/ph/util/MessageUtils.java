@@ -13,6 +13,7 @@ import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 public class MessageUtils {
 	/**
@@ -21,11 +22,11 @@ public class MessageUtils {
 	 * @param content Content of message
 	 * @return 
 	 */
-	public static IMessage sendMessage(IChannel channel, String content) {
-		return sendMessage(channel, content, null, false);
+	public static void sendMessage(IChannel channel, String content) {
+		sendMessage(channel, content, null, false);
 	}
-	public static IMessage sendMessage(IChannel channel, EmbedObject embed) {
-		return sendMessage(channel, "", embed, false);
+	public static void sendMessage(IChannel channel, EmbedObject embed) {
+		sendMessage(channel, "", embed, false);
 	}
 
 	/**
@@ -34,40 +35,36 @@ public class MessageUtils {
 	 * @param content Content of message
 	 * @param embed EmbedObject to format with
 	 */
-	private static IMessage sendMessage(IChannel channel, String content, EmbedObject embed, boolean bypass) {
+	private static void sendMessage(IChannel channel, String content, EmbedObject embed, boolean bypass) {
 		if(!bypass)
 			content = content.replaceAll("@", "\\\\@");
 		if(content.equals("") && embed == null)
-			return null;
-		try {
-			return new MessageBuilder(Bot.getInstance().getBot()).withChannel(channel).withContent(content).withEmbed(embed).build();
-		} catch (RateLimitException e) {
-			e.printStackTrace();
-			return null;
-		} catch (DiscordException e) {
-			e.printStackTrace();
-			return null;
-		} catch (MissingPermissionsException e) {
-			e.printStackTrace();
-			return null;
-		}
+			return;
+		final String s = content;
+		RequestBuffer.request(() -> {
+			try {
+				new MessageBuilder(Bot.getInstance().getBot()).withChannel(channel).withContent(s).withEmbed(embed).build();
+			} catch (MissingPermissionsException | DiscordException e) {
+				e.printStackTrace();
+				return;
+			}
+		});
 	}
 	/**
 	 * Send a message that shows mentions (for user welcomes)
 	 * @param channel Channel to send in
 	 * @param content Message to send
 	 * @param bypass Bypass to true
-	 * @return IMessage built
 	 */
-	public static IMessage sendMessage(IChannel channel, String content, boolean bypass) {
-		return sendMessage(channel, content, null, true);
+	public static void sendMessage(IChannel channel, String content, boolean bypass) {
+		sendMessage(channel, content, null, true);
 	}
-	public static IMessage sendErrorEmbed(IChannel channel, String title, String description) {
+	public static void sendErrorEmbed(IChannel channel, String title, String description) {
 		EmbedBuilder em = new EmbedBuilder().withColor(Color.red).withTitle(title).withDesc(description)
 				.withTimestamp(System.currentTimeMillis());
-		return sendMessage(channel, em.build());
+		sendMessage(channel, em.build());
 	}
-	
+
 	/**
 	 * Create an EmbedBuilder template to notify a user of correct command usage
 	 * @param originalCommand Original IMessage sent
@@ -85,8 +82,15 @@ public class MessageUtils {
 		}
 		return new EmbedBuilder().withColor(Color.RED).withTitle("Usage: " + prefix + command + " " + params)
 				.withDesc(sb.toString());
-		}
+	}
 
+	public static IMessage buildAndReturn(IChannel channel, EmbedObject embed) {
+		RequestBuffer.request(() -> {
+			return new MessageBuilder(Bot.getInstance().getBot()).withChannel(channel).withEmbed(embed);
+		});
+		return null;
+
+	}
 	/**
 	 * Send a private message to target user
 	 * @param target User to send to
@@ -115,6 +119,6 @@ public class MessageUtils {
 		} catch (MissingPermissionsException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }

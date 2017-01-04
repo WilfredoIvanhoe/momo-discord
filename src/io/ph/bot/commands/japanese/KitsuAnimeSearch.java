@@ -63,7 +63,7 @@ public class KitsuAnimeSearch implements Command {
 			em.withColor(Color.GREEN);
 			em.withTitle(anime.getData().get(0).getAttributes().getCanonicalTitle());
 			em.withUrl("https://kitsu.io/anime/" + anime.getData().get(0).getAttributes().getSlug());
-			if(anime.getData().get(0).getAttributes().getCoverImage().getOriginal() != null)
+			if(anime.getData().get(0).getAttributes().getCoverImage() != null)
 				em.withImage(anime.getData().get(0).getAttributes().getCoverImage().getOriginal());
 			em.appendField("Type", WordUtils.capitalize(anime.getData().get(0).getType()), true);
 			if(Util.isDouble(anime.getData().get(0).getAttributes().getAverageRating() + ""))

@@ -51,13 +51,13 @@ public class PokemonSearch implements Command {
 			return;
 		}
 
-		Retrofit retrofit = new Retrofit.Builder()
+		Retrofit rf = new Retrofit.Builder()
 				.baseUrl(PokemonAPI.ENDPOINT)
 				.client(RESTCache.client)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		PokemonAPI api = retrofit.create(PokemonAPI.class);
+		PokemonAPI api = rf.create(PokemonAPI.class);
 		Call<Pokemon> pokemonCall = api.getPokemon(contents);
 		try {
 			Pokemon pokemon;

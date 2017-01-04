@@ -40,7 +40,7 @@ public class FFXIV implements Command {
 		}
 		IMessage tempMessage = null;
 		try {
-			tempMessage = MessageUtils.sendMessage(msg.getChannel(), 
+			tempMessage = MessageUtils.buildAndReturn(msg.getChannel(), 
 					new EmbedBuilder().withColor(Color.CYAN).withDesc("Searching...").build());
 			FFXIVCharacter xiv = new FFXIVCharacter(split[0], split[1], split[2]);
 			EmbedBuilder em = new EmbedBuilder().withColor(Color.GREEN);

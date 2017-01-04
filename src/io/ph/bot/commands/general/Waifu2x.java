@@ -13,7 +13,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.Random;
 
-import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypes;
 
 import io.ph.bot.commands.Command;
@@ -67,9 +66,9 @@ public class Waifu2x implements Command {
 			return;
 		}
 		InputStream in = null;
-		IMessage tempMessage = MessageUtils.sendMessage(msg.getChannel(), em.withColor(Color.CYAN).withDesc("Working...").build());
+		IMessage tempMessage = MessageUtils.buildAndReturn(msg.getChannel(), em.withColor(Color.CYAN).withDesc("Working...").build());
 		try {
-			if(!mimeType(f).contains("jpeg") && !mimeType(f).contains("png")) {
+			if(!Util.getMimeFromFile(f).contains("jpeg") && !Util.getMimeFromFile(f).contains("png")) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("This command requires an image as an attachment");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
@@ -77,7 +76,7 @@ public class Waifu2x implements Command {
 			msg.getChannel().sendFile("", false, (in = waifu2x(f)), 
 					filename 
 					+ "-2x"
-					+ MimeTypes.getDefaultMimeTypes().forName(mimeType(f)).getExtension());
+					+ MimeTypes.getDefaultMimeTypes().forName(Util.getMimeFromFile(f)).getExtension());
 
 		} catch (Exception e) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Error occured while 2x'ing your image. You've probably reached the resolution limit");
@@ -92,16 +91,7 @@ public class Waifu2x implements Command {
 		}
 	}
 
-	/**
-	 * Use Apache Tika to detect MIME type
-	 * @param f File to detect
-	 * @return String of MIME type
-	 * @throws IOException Bad file
-	 */
-	private static String mimeType(File f) throws IOException {
-		final Tika tika = new Tika();
-		return tika.detect(f);
-	}
+	
 	/**
 	 * Upload an image file and 2x upscale it with waifu2x
 	 * @param f Image file to upload

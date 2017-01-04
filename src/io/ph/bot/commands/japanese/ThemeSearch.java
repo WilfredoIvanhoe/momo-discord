@@ -79,7 +79,7 @@ public class ThemeSearch implements Runnable, Command {
 			return;
 		}
 		try {
-			tempMessage = MessageUtils.sendMessage(msg.getChannel(), 
+			tempMessage = MessageUtils.buildAndReturn(msg.getChannel(), 
 					new EmbedBuilder().withColor(Color.CYAN).withDesc("Searching...").build());
 			Map<String, ArrayList<Theme>> map = Theme.getThemeResults(search);
 			if(map.size() == 1) {
