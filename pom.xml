@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>momo</artifactId>
-	<version>1.1.3</version>
+	<version>1.1.3-2</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -21,6 +21,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.4.3</version>
+				<configuration>
+					<!-- <minimizeJar>true</minimizeJar> -->
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -49,6 +62,10 @@
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
+		</repository>
+		<repository>
+			<id>jaudiotagger-repository</id>
+			<url>https://dl.bintray.com/ijabz/maven</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -114,6 +131,11 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
 			<version>1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>net.jthink</groupId>
+			<artifactId>jaudiotagger</artifactId>
+			<version>2.2.3</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.rometools/rome -->
 		<dependency>

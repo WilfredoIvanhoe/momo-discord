@@ -13,6 +13,15 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -148,6 +157,8 @@ public class GetAudio implements Runnable {
 
 		} else if(url.endsWith(".mp3") || url.endsWith(".flac")) {
 			this.preparedFile = new File("resources/tempdownloads/" + rand + url.substring(url.lastIndexOf(".")));
+
+
 			try {
 				URL link = new URL(url);
 				if((getFileSize(link) / (1024*1024) > 25)
@@ -164,7 +175,16 @@ public class GetAudio implements Runnable {
 				.withFooterText("Place in queue: " + (this.guildMusic.getQueueSize() + 1))
 				.withColor(Color.GREEN);
 				MessageUtils.sendMessage(channel, em.build());
+
 				Util.saveFile(link, preparedFile);
+				
+				try {
+					AudioFile f = AudioFileIO.read(this.preparedFile);
+					Tag tag = f.getTag();
+					this.title = tag.getFirst(FieldKey.TITLE);
+				} catch (CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
+					System.err.println("Could not read Title tags");
+				}
 			} catch (MalformedURLException e) {
 				em.withTitle("Error").withColor(Color.RED).withDesc("Your URL is invalid!");
 				MessageUtils.sendMessage(channel, em.build());
@@ -180,12 +200,11 @@ public class GetAudio implements Runnable {
 			MessageUtils.sendMessage(channel, em.build());
 			return;
 		}
-		String songLength;
+		String songLength = "null";
 		try {
 			songLength = Util.getMp3Duration(this.preparedFile);
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
-			songLength = "null";
 		}
 		this.guildMusic.queueMusicMeta(this.userId, this.title, this.url, songLength, this);
 	}
