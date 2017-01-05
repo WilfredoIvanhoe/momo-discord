@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +73,8 @@ public class RedditFeedObserver implements Serializable {
 	 */
 	private void processPost(String postId) {
 		Submission post = RedditEventListener.redditClient.getSubmission(postId);
-		if(post == null || post.isHidden() || post.getAuthor().equals("[deleted]"))
+		if(post == null || post.isHidden() || post.getAuthor().equals("[deleted]")
+				|| (post.isSelfPost() && post.getSelftext().equals("[removed]")))
 			return;
 		EmbedBuilder em = new EmbedBuilder();
 		String descriptionText = null;
@@ -139,6 +141,7 @@ public class RedditFeedObserver implements Serializable {
 		em.withUrl(post.getShortURL());
 		em.withColor(Color.MAGENTA);
 		em.appendField("Reddit Link", post.getShortURL(), true);
+		em.withFooterText(Instant.now() + "");
 		if(imagesInAlbum > 1) {
 			em.appendField("Album Link (" + imagesInAlbum + " images)", post.getUrl(), true);
 		}

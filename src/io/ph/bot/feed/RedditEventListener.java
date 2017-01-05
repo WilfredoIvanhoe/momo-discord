@@ -7,11 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -35,7 +37,6 @@ import sx.blah.discord.handle.obj.IGuild;
 /**
  * Reddit event listener
  * @author Paul
- * TODO: Sometimes double sends posts
  */
 @SuppressWarnings("unchecked")
 public class RedditEventListener implements Job {
@@ -89,7 +90,9 @@ public class RedditEventListener implements Job {
 		return null;
 	}
 
-	static String cutoffId;
+	// Buffer 4 of the last posts in case one (or more) gets deleted
+	private static Set<String> cutoffIds = new HashSet<String>();
+	private static final int BUFFER_SIZE = 4;
 	public static void update() {
 		try {
 			SubredditPaginator allNew = new SubredditPaginator(redditClient);
@@ -97,26 +100,28 @@ public class RedditEventListener implements Job {
 			allNew.setSorting(Sorting.NEW);
 			allNew.setSubreddit("all");
 			Listing<Submission> posts = allNew.next();
-			for(Submission post : posts) {
-				if(post.getId().equals(cutoffId))
-					break;
-				if(redditFeed.containsKey(post.getSubredditName().toLowerCase())) {
-					if(redditFeed.get(post.getSubredditName().toLowerCase()).isEmpty()) {
-						redditFeed.remove(post.getSubredditName().toLowerCase());
-						saveFeed();
-						continue;
+			postSearch: {
+				for(Submission post : posts) {
+					for(String cutoff : cutoffIds) {
+						if(post.getId().equals(cutoff))
+							break postSearch;
 					}
-					Iterator<RedditFeedObserver> iter = redditFeed.get(post.getSubredditName().toLowerCase()).iterator();
-					while(iter.hasNext()) {
-						RedditFeedObserver observer = iter.next();
-						if(!observer.trigger(post)) {
-							iter.remove();
+					if(redditFeed.containsKey(post.getSubredditName().toLowerCase())) {
+						if(redditFeed.get(post.getSubredditName().toLowerCase()).isEmpty()) {
+							redditFeed.remove(post.getSubredditName().toLowerCase());
 							saveFeed();
+							continue;
 						}
+						redditFeed.get(post.getSubredditName().toLowerCase()).removeIf(observer -> !observer.trigger(post));
+						System.out.println(post.getSubredditName() + " size: " + redditFeed.get(post.getSubredditName().toLowerCase()).size() +
+								" | " + post.getId() + " | " + Instant.now());
 					}
 				}
 			}
-			cutoffId = posts.get(0).getId();
+			cutoffIds.clear();
+			for(int i = 0; i < BUFFER_SIZE; i++) {
+				cutoffIds.add(posts.get(i).getId());
+			}
 		} catch(NetworkException e) {
 			try {
 				reAuthenticate();
@@ -191,6 +196,7 @@ public class RedditEventListener implements Job {
 		try {
 			OAuthData authData = authenticate();
 			redditClient.authenticate(authData);
+			LoggerFactory.getLogger(RedditEventListener.class).info("Reauthenticating Reddit credentials");
 		} catch (NetworkException e) {
 			e.printStackTrace();
 		} catch (OAuthException e) {
