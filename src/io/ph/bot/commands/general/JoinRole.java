@@ -54,15 +54,12 @@ public class JoinRole implements Command {
 					return;
 				} catch (MissingPermissionsException e) {
 					MessageUtils.sendErrorEmbed(msg.getChannel(), "Error", "Looks like I don't have permissions to assign roles. Check the hierarchy!");
-					e.printStackTrace();
 					return;
 				} catch (RateLimitException e) {
 					MessageUtils.sendErrorEmbed(msg.getChannel(), "Error", "Rate limit :( Try again soon");
-					e.printStackTrace();
 					return;
 				} catch (DiscordException e) {
 					MessageUtils.sendErrorEmbed(msg.getChannel(), "Error", "Something went wayyyy wrong");
-					e.printStackTrace();
 					return;
 				}
 			}
