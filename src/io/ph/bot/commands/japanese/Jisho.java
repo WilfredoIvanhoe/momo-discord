@@ -30,7 +30,7 @@ public class Jisho implements Command {
 		EmbedBuilder em = new EmbedBuilder();
 		String word = Util.getCommandContents(msg);
 		ArrayList<JishoObject> jA = JishoObject.searchVocabulary(word);
-		if(jA.size() == 0 || jA == null) {
+		if(jA == null || jA.size() == 0) {
 			em.withColor(Color.RED).withTitle("No results found")
 				.withDesc("No results found for: " + word).withTimestamp(System.currentTimeMillis());
 		} else {
