@@ -39,7 +39,16 @@ public class Data {
     @SerializedName("drawr_id")
     @Expose
     private Integer drawrId;
-
+    @SerializedName("shutterstock_id")
+    @Expose
+    private Integer shutterstockId;
+    @SerializedName("anidb_aid")
+    @Expose
+    private Integer anidbAid;
+    @SerializedName("part")
+    @Expose
+    private String part;
+    
     public String getTitle() {
         return title;
     }
@@ -127,5 +136,29 @@ public class Data {
     public void setDrawrId(Integer drawrId) {
         this.drawrId = drawrId;
     }
+
+	public Integer getShutterstockId() {
+		return shutterstockId;
+	}
+
+	public void setShutterstockId(Integer shutterstockId) {
+		this.shutterstockId = shutterstockId;
+	}
+
+	public Integer getAnidbAid() {
+		return anidbAid;
+	}
+
+	public void setAnidbAid(Integer anidbAid) {
+		this.anidbAid = anidbAid;
+	}
+
+	public String getPart() {
+		return part;
+	}
+
+	public void setPart(String part) {
+		this.part = part;
+	}
 
 }

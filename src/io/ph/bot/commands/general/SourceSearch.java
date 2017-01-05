@@ -73,6 +73,9 @@ public class SourceSearch implements Command {
 		Call<SauceNaoResult> sauceCall = api.getSauce(url);
 		try {
 			SauceNaoResult sauce = sauceCall.execute().body();
+			if(sauce.getResults() == null) {
+				//This might be what happend when rate limited? Haven't tested. Don't want to hit the limit
+			}
 			if(sauce.getResults().isEmpty()) {
 				em.withColor(Color.RED).withTitle("Error").withDesc(String.format("No results found on SauceNao for <%s>", url.toString()));
 				em.withThumbnail(url.toString());
@@ -101,13 +104,24 @@ public class SourceSearch implements Command {
 			em.appendField("Original", String.format("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=%d",
 					image.getData().getPixivId()), true);
 			break;
-		case 9: //Danbooru
+		case 9: // Danbooru
 			em.withTitle(String.format("Artist: %s", image.getData().getCreator()));
 			em.appendField("Artist", image.getData().getCreator(), true);
 			em.appendField("Original", String.format("https://danbooru.donmai.us/posts/%d", image.getData().getDanbooruId()), true);
 			break;
+		case 15: // Shutterstock lol
+			em.withTitle("Source");
+			em.appendField("Original", String.format("https://www.shutterstock.com/pic-%d/", image.getData().getShutterstockId()), true);
+			break;
+		case 21: // Direct screenshot from an anime, anidb
+			em.withTitle("Anime match: " + image.getData().getSource());
+			em.appendField("Episode", image.getData().getPart(), true);
+			em.appendField("Anidb", 
+					String.format("https://anidb.net/perl-bin/animedb.pl?show=anime&aid=%d", image.getData().getAnidbAid()), true);
+			break;
 		default:
-			em.withTitle("Source unknown").withColor(Color.RED).withDesc("Please report this to Kagumi: Error for " + image.getHeader().getIndexName());
+			em.withTitle("Source unknown").withColor(Color.RED).withDesc("Please report this to Kagumi with the URL of the image"
+					+ ": Error for " + image.getHeader().getIndexName());
 			break;
 		}
 	}
@@ -181,7 +195,7 @@ public class SourceSearch implements Command {
 
 	private static URL checkMime(URL url) {
 		String mime = Util.getMimeFromUrl(url);
-		if(mime != null && (mime.contains("jpeg") || mime.contains("png")))
+		if(mime != null && (mime.contains("jpeg") || mime.contains("png") || mime.contains("gif")))
 			return url;
 		return null;
 	}
