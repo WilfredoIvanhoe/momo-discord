@@ -28,7 +28,7 @@ public class Help implements Command {
 
 	@Override
 	public void executeCommand(IMessage msg) {
-		String command = Util.getCommandContents(msg);
+		String command = Util.getCommandContents(msg).toLowerCase();
 		EmbedBuilder em = new EmbedBuilder();
 		if(command.length() > 0) {
 			//Help about a specific command

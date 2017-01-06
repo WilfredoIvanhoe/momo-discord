@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,7 +140,6 @@ public class RedditFeedObserver implements Serializable {
 		em.withUrl(post.getShortURL());
 		em.withColor(Color.MAGENTA);
 		em.appendField("Reddit Link", post.getShortURL(), true);
-		em.withFooterText(Instant.now() + "");
 		if(imagesInAlbum > 1) {
 			em.appendField("Album Link (" + imagesInAlbum + " images)", post.getUrl(), true);
 		}

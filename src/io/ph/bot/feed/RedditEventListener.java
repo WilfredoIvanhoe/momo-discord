@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,8 +112,6 @@ public class RedditEventListener implements Job {
 							continue;
 						}
 						redditFeed.get(post.getSubredditName().toLowerCase()).removeIf(observer -> !observer.trigger(post));
-						System.out.println(post.getSubredditName() + " size: " + redditFeed.get(post.getSubredditName().toLowerCase()).size() +
-								" | " + post.getId() + " | " + Instant.now());
 					}
 				}
 			}
