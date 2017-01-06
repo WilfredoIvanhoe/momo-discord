@@ -74,9 +74,6 @@ public class SourceSearch implements Command {
 		try {
 			SauceNaoResult sauce = sauceCall.execute().body();
 			if(sauce.getResults() == null) {
-				//This might be what happend when rate limited? Haven't tested. Don't want to hit the limit
-			}
-			if(sauce.getResults().isEmpty()) {
 				em.withColor(Color.RED).withTitle("Error").withDesc(String.format("No results found on SauceNao for <%s>", url.toString()));
 				em.withThumbnail(url.toString());
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
