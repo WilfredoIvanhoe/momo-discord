@@ -23,20 +23,20 @@ import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ChannelCreateEvent;
-import sx.blah.discord.handle.impl.events.ChannelDeleteEvent;
-import sx.blah.discord.handle.impl.events.GuildCreateEvent;
-import sx.blah.discord.handle.impl.events.GuildLeaveEvent;
-import sx.blah.discord.handle.impl.events.MentionEvent;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.events.NickNameChangeEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.events.RoleDeleteEvent;
-import sx.blah.discord.handle.impl.events.UserJoinEvent;
-import sx.blah.discord.handle.impl.events.UserLeaveEvent;
-import sx.blah.discord.handle.impl.events.UserPardonEvent;
-import sx.blah.discord.handle.impl.events.UserVoiceChannelLeaveEvent;
-import sx.blah.discord.handle.impl.events.VoiceChannelDeleteEvent;
+import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
+import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.ChannelCreateEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.ChannelDeleteEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.member.NickNameChangeEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserPardonEvent;
+import sx.blah.discord.handle.impl.events.guild.role.RoleDeleteEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.VoiceChannelDeleteEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -343,10 +343,10 @@ public class Listeners {
 	public void onUserVoiceChannelLeaveEvent(UserVoiceChannelLeaveEvent e) {
 		if(e.getUser().equals(Bot.getInstance().getBot().getOurUser())) {
 			try {
-				if(Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()) != null) {
-					Bot.getInstance().getBot().getVoiceChannelByID(e.getChannel().getID()).join();
+				if(Bot.getInstance().getBot().getVoiceChannelByID(e.getVoiceChannel().getID()) != null) {
+					Bot.getInstance().getBot().getVoiceChannelByID(e.getVoiceChannel().getID()).join();
 					LoggerFactory.getLogger(Listeners.class).warn("Auto rejoined voice channel {} in {}",
-							e.getChannel().getName(), e.getChannel().getGuild().getName());
+							e.getVoiceChannel().getName(), e.getVoiceChannel().getGuild().getName());
 				}
 			} catch (MissingPermissionsException e1) { }
 		}

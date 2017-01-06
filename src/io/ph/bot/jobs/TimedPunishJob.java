@@ -19,7 +19,7 @@ import io.ph.bot.events.UserUnmutedEvent;
 import io.ph.bot.model.Guild;
 import io.ph.db.ConnectionPool;
 import io.ph.db.SQLUtils;
-import sx.blah.discord.handle.impl.events.UserPardonEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserPardonEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -59,7 +59,7 @@ public class TimedPunishJob implements Job {
 				case "ban":
 					try {
 						g.pardonUser(userId);
-						Bot.getInstance().getBot().getDispatcher().dispatch(new UserPardonEvent(g.getUserByID(userId), g));
+						Bot.getInstance().getBot().getDispatcher().dispatch(new UserPardonEvent(g, g.getUserByID(userId)));
 					} catch (MissingPermissionsException e) {
 						e.printStackTrace();
 					} catch (RateLimitException e) {
