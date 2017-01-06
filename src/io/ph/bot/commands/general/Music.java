@@ -2,6 +2,7 @@ package io.ph.bot.commands.general;
 
 import java.awt.Color;
 
+import io.ph.bot.Bot;
 import io.ph.bot.audio.GetAudio;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
@@ -14,6 +15,7 @@ import io.ph.util.Util;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
 
 /**
  * Play music in designated channel
@@ -36,10 +38,21 @@ public class Music implements Command {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
 		if(Guild.guildMap.get(msg.getGuild().getID()).getMusicManager() == null) {
-			em.withColor(Color.RED).withTitle("Error").withDesc("I don't have a music channel setup in this server! \n"
-					+ "If you have the Manage Server role, run " + Util.getPrefixForGuildId(msg.getGuild().getID()) + "setupmusic");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
+			IVoiceChannel v;
+			if((v = Bot.getInstance().getBot()
+					.getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice())) != null) {
+				try {
+					v.join();
+					Guild.guildMap.get(msg.getGuild().getID()).initMusicManager(msg.getGuild());
+				} catch (MissingPermissionsException e) {
+					e.printStackTrace();
+				}
+			} else {
+				em.withColor(Color.RED).withTitle("Error").withDesc("I don't have a music channel setup in this server! \n"
+						+ "If you have the Manage Server role, run " + Util.getPrefixForGuildId(msg.getGuild().getID()) + "setupmusic");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 		}
 		if(contents.equals("") && msg.getAttachments().isEmpty()) {
 			String prefix = Util.getPrefixForGuildId(msg.getGuild().getID());

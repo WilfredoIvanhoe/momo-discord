@@ -45,7 +45,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * true playlist size is < 2. If not, wait for TrackFinishEvent to poll
  * then convert it to an AudioInputStream
  * @author Paul
- *
+ * TODO: Refactor this ugly thing
  */
 public class GetAudio implements Runnable {
 
@@ -157,8 +157,6 @@ public class GetAudio implements Runnable {
 
 		} else if(url.endsWith(".mp3") || url.endsWith(".flac")) {
 			this.preparedFile = new File("resources/tempdownloads/" + rand + url.substring(url.lastIndexOf(".")));
-
-
 			try {
 				URL link = new URL(url);
 				if((getFileSize(link) / (1024*1024) > 25)
