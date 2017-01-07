@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import com.google.code.chatterbotapi.ChatterBotType;
 
 import io.ph.bot.Bot;
 import io.ph.bot.audio.MusicSource;
+import io.ph.bot.audio.sources.Youtube;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
@@ -158,7 +160,7 @@ public class Guild {
 		config.setProperty("DisabledCommands", disabled);
 		return true;
 	}
-	
+
 	public boolean getCommandStatus(String input) {
 		try {
 			Command c = CommandHandler.getCommand(input);
@@ -185,7 +187,7 @@ public class Guild {
 	public void disableAllCommands() {
 		commandStatus.replaceAll((key, value) -> false);
 	}
-	
+
 	/**
 	 * Disable a feature in this guild
 	 * @param s name of feature to disable
@@ -244,7 +246,7 @@ public class Guild {
 			return false;
 		}
 	}
-	
+
 	public HistoricalSearches getHistoricalSearches() {
 		return historicalSearches;
 	}
@@ -495,18 +497,15 @@ public class Guild {
 
 	public class GuildMusic {
 		private AudioPlayer audioPlayer;
-		private int trueQueueSize;
 		private int skipVotes;
 		private MusicSource currentSong;
 
-		private ArrayList<String> skipVoters = new ArrayList<String>();
-		private LinkedList<MusicSource> queuedSources = new LinkedList<MusicSource>();
+		private Set<String> skipVoters = new HashSet<String>();
 		private LinkedList<MusicSource> overflowQueue = new LinkedList<MusicSource>();
 
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
 			this.audioPlayer.setVolume(0.5f);
-			this.trueQueueSize = 0;
 			this.skipVotes = 0;
 		}
 
@@ -520,38 +519,54 @@ public class Guild {
 		 * @param userId User who queued
 		 * @param trackName Name of track
 		 * @param url URL if applicable
+		 * @throws UnsupportedAudioFileException 
+		 * @throws IOException 
 		 */
-		public void queueSource(MusicSource source) {
-			queuedSources.add(source);
+		public void addMusicSource(MusicSource source) {
+			overflowQueue.add(source);
 			if(this.audioPlayer.getPlaylistSize() < 2) {
-				try {
-					audioPlayer.queue(source.getSource());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (UnsupportedAudioFileException e) {
-					e.printStackTrace();
-				}
-			} else {
-				overflowQueue.add(source);
+				queueNext();
 			}
-			trueQueueSize++;
-			this.currentSong = this.getQueuedSources().get(0);
+		}
+
+		public void queueNext() {
+			if(overflowQueue.isEmpty())
+				return;
+			try {
+				MusicSource source;
+				if((source = overflowQueue.peek()) instanceof Youtube) {
+					((Youtube) source).processVideo();
+					System.out.println("fug");
+				}
+				System.out.println("Getting source: " + source.getSource().getName());
+				audioPlayer.queue((this.currentSong = source).getSource());
+			} catch (IOException e) {
+				e.printStackTrace();
+				overflowQueue.pop();
+			} catch (UnsupportedAudioFileException e) {
+				e.printStackTrace();
+				overflowQueue.pop();
+			}
 		}
 
 		public MusicSource pollSource() {
-			trueQueueSize--;
-			return (this.currentSong = queuedSources.poll());
+			return (this.currentSong = overflowQueue.poll());
 		}
 
 		public MusicSource pollSourceBuffer() {
 			return overflowQueue.poll();
 		}
 
-		public int getAudioSize() {
+		public List<MusicSource> getOverflowQueue() {
+			return overflowQueue;
+		}
+
+		public int getOverflowQueueSize() {
 			return overflowQueue.size();
 		}
+
 		public int getQueueSize() {
-			return trueQueueSize;
+			return overflowQueue.size();
 		}
 
 		public int getSkipVotes() {
@@ -562,12 +577,8 @@ public class Guild {
 			this.skipVotes = skipVotes;
 		}
 
-		public ArrayList<String> getSkipVoters() {
+		public Set<String> getSkipVoters() {
 			return skipVoters;
-		}
-
-		public LinkedList<MusicSource> getQueuedSources() {
-			return queuedSources;
 		}
 
 		public void setCurrentSong(MusicSource m) {

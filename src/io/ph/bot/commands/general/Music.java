@@ -145,7 +145,7 @@ public class Music implements Command {
 			em.withTitle("Coming up");
 			StringBuilder sb = new StringBuilder();
 			int count = 0;
-			for(MusicSource source : m.getQueuedSources()) {
+			for(MusicSource source : m.getOverflowQueue()) {
 				sb.append("**" + (++count) + ")** ");
 				if(source.getTitle() != null && !source.getTitle().equals("")) {
 					sb.append(source.getTitle() + " | ");
@@ -163,7 +163,7 @@ public class Music implements Command {
 			return;
 		} else if(contents.startsWith("stop") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 			m.getAudioPlayer().clear();
-			m.getQueuedSources().clear();
+			m.getOverflowQueue().clear();
 			m.setSkipVotes(0);
 			m.getSkipVoters().clear();
 			m.setCurrentSong(null);
@@ -207,7 +207,14 @@ public class Music implements Command {
 			.withFooterText("Place in queue: " + (g.getMusicManager().getQueueSize() + 1));
 			if(titleOverride != null)
 				source.setTitle(titleOverride);
-			g.getMusicManager().queueSource(source);
+			if(!Bot.getInstance().getBot().getVoiceChannelByID(g.getSpecialChannels().getVoice()).isConnected()) {
+				try {
+					Bot.getInstance().getBot().getVoiceChannelByID(g.getSpecialChannels().getVoice()).join();
+				} catch (MissingPermissionsException e) {
+					e.printStackTrace();
+				}
+			}
+			g.getMusicManager().addMusicSource(source);
 		} catch (MalformedURLException e) {
 			em.withColor(Color.RED)
 			.withTitle("Error")

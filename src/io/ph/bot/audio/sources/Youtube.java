@@ -1,5 +1,6 @@
 package io.ph.bot.audio.sources;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
@@ -40,11 +41,19 @@ public class Youtube extends MusicSource {
 			throw new FileTooLargeException(super.getUrl());
 		}
 		super.setTitle(v.getSnippet().getTitle());
-		this.processVideo();
 	}
-	private void processVideo() {
+
+	public synchronized void processVideo() {
 		String command = "youtube-dl --external-downloader ffmpeg -o resources/tempdownloads/"
-				+ super.getFileSeed() + " -f mp4 --extract-audio --audio-format mp3 " + super.getUrl();
+				+ super.getFileSeed() + ".mp3 -f mp4 --extract-audio --audio-format mp3 " + super.getUrl();
+		try {
+			File copied = new File(super.getSource().getCanonicalPath() + ".mp3");
+			super.getSource().delete();
+			super.setSource(copied);
+			System.out.println("Set source to: " + copied.getName());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		Process p = null;
 		try {
 			p = Runtime.getRuntime().exec(command);
