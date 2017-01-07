@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.listener.AudioListeners;
 import io.ph.bot.listener.Listeners;
+import io.ph.bot.listener.ModLogListeners;
+import io.ph.bot.listener.VoiceChannelListeners;
 import io.ph.bot.scheduler.JobScheduler;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -54,8 +56,10 @@ public class Bot {
 		// when server count gets high
 		MessageList.setEfficiency(bot, EfficiencyLevel.NONE);
 		EventDispatcher dispatcher = bot.getDispatcher();
-		dispatcher.registerListener(new Listeners());
 		dispatcher.registerListener(new AudioListeners());
+		dispatcher.registerListener(new VoiceChannelListeners());
+		dispatcher.registerListener(new ModLogListeners());
+		dispatcher.registerListener(new Listeners());
 		JobScheduler.initializeScheduler();
 	}
 
