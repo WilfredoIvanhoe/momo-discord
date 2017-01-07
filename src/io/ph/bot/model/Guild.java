@@ -23,7 +23,7 @@ import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 
 import io.ph.bot.Bot;
-import io.ph.bot.audio.GetAudio;
+import io.ph.bot.audio.MusicSource;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
@@ -497,11 +497,11 @@ public class Guild {
 		private AudioPlayer audioPlayer;
 		private int trueQueueSize;
 		private int skipVotes;
-		private MusicMeta currentSong;
+		private MusicSource currentSong;
 
 		private ArrayList<String> skipVoters = new ArrayList<String>();
-		private LinkedList<MusicMeta> musicMeta = new LinkedList<MusicMeta>();
-		private LinkedList<GetAudio> overflowQueue = new LinkedList<GetAudio>();
+		private LinkedList<MusicSource> queuedSources = new LinkedList<MusicSource>();
+		private LinkedList<MusicSource> overflowQueue = new LinkedList<MusicSource>();
 
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
@@ -521,30 +521,29 @@ public class Guild {
 		 * @param trackName Name of track
 		 * @param url URL if applicable
 		 */
-		public void queueMusicMeta(String userId, String trackName, String url, String songLength, GetAudio get) {
-			musicMeta.add(new MusicMeta(userId, trackName, url, songLength, get));
+		public void queueSource(MusicSource source) {
+			queuedSources.add(source);
 			if(this.audioPlayer.getPlaylistSize() < 2) {
 				try {
-					audioPlayer.queue(get.getPreparedFile());
+					audioPlayer.queue(source.getSource());
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (UnsupportedAudioFileException e) {
 					e.printStackTrace();
 				}
 			} else {
-				overflowQueue.add(get);
+				overflowQueue.add(source);
 			}
 			trueQueueSize++;
-			this.currentSong = this.getMusicMeta().get(0);
+			this.currentSong = this.getQueuedSources().get(0);
 		}
 
-		public MusicMeta pollMetaData() {
+		public MusicSource pollSource() {
 			trueQueueSize--;
-			this.currentSong = musicMeta.peek();
-			return musicMeta.poll();
+			return (this.currentSong = queuedSources.poll());
 		}
 
-		public GetAudio pollGetAudio() {
+		public MusicSource pollSourceBuffer() {
 			return overflowQueue.poll();
 		}
 
@@ -567,71 +566,16 @@ public class Guild {
 			return skipVoters;
 		}
 
-		public LinkedList<MusicMeta> getMusicMeta() {
-			return musicMeta;
+		public LinkedList<MusicSource> getQueuedSources() {
+			return queuedSources;
 		}
 
-		public void setCurrentSong(MusicMeta m) {
+		public void setCurrentSong(MusicSource m) {
 			this.currentSong = m;
 		}
 
-		public MusicMeta getCurrentSong() {
+		public MusicSource getCurrentSong() {
 			return this.currentSong;
-		}
-
-		/*public String getSongLength() {
-			return songLength;
-		}
-
-		public void setSongLength(String songLength) {
-			this.songLength = songLength;
-		}*/
-
-	}
-
-	public class MusicMeta {
-		private String userId;
-		private String trackName;
-		private String url;
-		private GetAudio audioSrcInterface;
-		private String songLength;
-
-		public MusicMeta(String userId, String trackName, String url, String songLength, GetAudio get) {
-			this.userId = userId;
-			this.trackName = trackName;
-			this.url = url;
-			this.songLength = songLength;
-			this.audioSrcInterface = get;
-		}
-		public String getUserId() {
-			return userId == null ? "" : userId;
-		}
-		public void setUserId(String userId) {
-			this.userId = userId;
-		}
-		public String getTrackName() {
-			return trackName == null ? "" : trackName;
-		}
-		public void setTrackName(String trackName) {
-			this.trackName = trackName;
-		}
-		public String getUrl() {
-			return url;
-		}
-		public void setUrl(String url) {
-			this.url = url;
-		}
-		public GetAudio getAudioSrcInterface() {
-			return audioSrcInterface;
-		}
-		public void setAudioSrcInterface(GetAudio audioSrcInterface) {
-			this.audioSrcInterface = audioSrcInterface;
-		}
-		public String getSongLength() {
-			return songLength;
-		}
-		public void setSongLength(String songLength) {
-			this.songLength = songLength;
 		}
 	}
 }

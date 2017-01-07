@@ -7,9 +7,9 @@ import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import io.ph.bot.Bot;
+import io.ph.bot.audio.MusicSource;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Guild.GuildMusic;
-import io.ph.bot.model.Guild.MusicMeta;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
@@ -29,22 +29,22 @@ public class AudioListeners {
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
 		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		MusicMeta m = g.getMusicManager().pollMetaData();
+		MusicSource source = g.getMusicManager().pollSource();
 		if(g.getSpecialChannels().getMusic().equals(""))
 			return;
 		EmbedBuilder em = new EmbedBuilder();
-		em.withTitle("New track: " + m.getTrackName());
+		em.withTitle("New track" + ((source.getTitle() != null) ? ": " + source.getTitle() : ""));
 		StringBuilder sb = new StringBuilder();
-		sb.append("<@" + m.getUserId() + ">, your song is now playing");
-		if(m.getUrl() != null)
-			sb.append("\n" + m.getUrl());
+		sb.append("<@" + source.getQueuer().getID() + ">, your song is now playing");
+		if(source.getUrl() != null)
+			sb.append("\n" + source.getUrl());
 		em.withDesc(sb.toString());
 		em.withColor(Color.CYAN);
 		MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
 
 		if(g.getMusicManager().getAudioPlayer().getPlaylistSize() < 2 && g.getMusicManager().getAudioSize() > 0) {
 			try {
-				g.getMusicManager().getAudioPlayer().queue(g.getMusicManager().pollGetAudio().getPreparedFile());
+				g.getMusicManager().getAudioPlayer().queue(g.getMusicManager().pollSourceBuffer().getSource());
 			} catch (IOException | UnsupportedAudioFileException e1) {
 				e1.printStackTrace();
 			}
@@ -68,13 +68,13 @@ public class AudioListeners {
 	
 	private static void handleFinishedTrack(IGuild guild) {
 		Guild g = Guild.guildMap.get(guild.getID());
-		if(g.getMusicManager().getMusicMeta().size() == 0)
+		if(g.getMusicManager().getQueuedSources().size() == 0)
 			g.getMusicManager().setCurrentSong(null);
 		IVoiceChannel channel = guild.getVoiceChannelByID(g.getSpecialChannels().getVoice());
 		if(channel.getConnectedUsers().size() == 1) {
 			GuildMusic m = g.getMusicManager();
 			m.getAudioPlayer().clear();
-			m.getMusicMeta().clear();
+			m.getQueuedSources().clear();
 			m.setSkipVotes(0);
 			m.getSkipVoters().clear();
 			m.setCurrentSong(null);
