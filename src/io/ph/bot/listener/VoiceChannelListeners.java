@@ -37,7 +37,7 @@ public class VoiceChannelListeners {
 		Guild g;
 		if(e.getVoiceChannel().getID().equals((g = Guild.guildMap.get(e.getGuild().getID())).getSpecialChannels().getVoice())
 				&& Bot.getInstance().getBot().getConnectedVoiceChannels().contains(e.getVoiceChannel())) {
-			if(g.getMusicManager().getQueueSize() == 0)
+			if(g.getMusicManager().getQueueSize() == 0 && e.getVoiceChannel().getUsersHere().size() == 1)
 				e.getVoiceChannel().leave();
 		}
 	}
@@ -47,7 +47,7 @@ public class VoiceChannelListeners {
 		Guild g;
 		if(e.getOldChannel().getID().equals((g = Guild.guildMap.get(e.getGuild().getID())).getSpecialChannels().getVoice())
 				&& Bot.getInstance().getBot().getConnectedVoiceChannels().contains(e.getOldChannel())) {
-			if(g.getMusicManager().getQueueSize() == 0)
+			if(g.getMusicManager().getQueueSize() == 0 && e.getVoiceChannel().getUsersHere().size() == 1)
 				e.getOldChannel().leave();
 		}
 	}

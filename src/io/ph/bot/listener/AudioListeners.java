@@ -6,7 +6,6 @@ import java.io.File;
 import io.ph.bot.Bot;
 import io.ph.bot.audio.MusicSource;
 import io.ph.bot.model.Guild;
-import io.ph.bot.model.Guild.GuildMusic;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
@@ -25,11 +24,12 @@ public class AudioListeners {
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
 		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
+		System.out.println("Delete previous: " + g.getMusicManager().getCurrentSong().getSource().delete());
 		MusicSource source = g.getMusicManager().pollSource();
 		if(g.getSpecialChannels().getMusic().equals(""))
 			return;
 		EmbedBuilder em = new EmbedBuilder();
-		em.withTitle("New track" + ((source.getTitle() != null) ? ": " + source.getTitle() : ""));
+		em.withTitle("New track" + ((source != null && source.getTitle() != null) ? ": " + source.getTitle() : ""));
 		StringBuilder sb = new StringBuilder();
 		sb.append("<@" + source.getQueuer().getID() + ">, your song is now playing");
 		if(source.getUrl() != null)
@@ -37,10 +37,8 @@ public class AudioListeners {
 		em.withDesc(sb.toString());
 		em.withColor(Color.CYAN);
 		MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
-
-		//if(g.getMusicManager().getAudioPlayer().getPlaylistSize() < 2 && g.getMusicManager().getOverflowQueueSize() > 0) {
+		
 		g.getMusicManager().queueNext();
-		//}
 	}
 	@EventSubscriber
 	public void onTrackFinishEvent(TrackFinishEvent e) {
@@ -72,12 +70,14 @@ public class AudioListeners {
 		}
 		if(guild.getVoiceChannelByID(g.getSpecialChannels().getVoice())
 				.getConnectedUsers().size() == 1) {
-			GuildMusic m = g.getMusicManager();
+			/*GuildMusic m = g.getMusicManager();
 			m.getAudioPlayer().clear();
+			g.initMusicManager(guild);
 			m.getOverflowQueue().clear();
 			m.setSkipVotes(0);
 			m.getSkipVoters().clear();
-			m.setCurrentSong(null);
+			m.setCurrentSong(null);*/
+			g.initMusicManager(guild);
 			guild.getVoiceChannelByID(g.getSpecialChannels().getVoice()).leave();
 		}
 	}

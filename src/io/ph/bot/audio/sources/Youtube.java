@@ -35,7 +35,13 @@ public class Youtube extends MusicSource {
 		}).setApplicationName("momo discord bot").build();
 		YouTube.Videos.List search = youtube.videos().list("snippet,contentDetails")
 				.setKey(Bot.getInstance().getApiKeys().get("youtube")).setId(Util.extractYoutubeId(super.getUrl().toString()));
-		Video v = search.execute().getItems().get(0);
+		System.out.println("Youtube#downloadLocally at ID " + Util.extractYoutubeId(super.getUrl().toString()));
+		Video v;
+		try {
+			v = search.execute().getItems().get(0);
+		} catch(IndexOutOfBoundsException e) {
+			throw new IOException("Invalid Youtube key");
+		}
 		Duration d = Duration.parse(v.getContentDetails().getDuration());
 		if((d.get(ChronoUnit.SECONDS) / 60) > 9) {
 			throw new FileTooLargeException(super.getUrl());
@@ -45,12 +51,12 @@ public class Youtube extends MusicSource {
 
 	public synchronized void processVideo() {
 		String command = "youtube-dl --external-downloader ffmpeg -o resources/tempdownloads/"
-				+ super.getFileSeed() + ".mp3 -f mp4 --extract-audio --audio-format mp3 " + super.getUrl();
+				+ super.getFileSeed() + ".mp4 -f mp4 --extract-audio --audio-format mp3 " + super.getUrl();
 		try {
 			File copied = new File(super.getSource().getCanonicalPath() + ".mp3");
 			super.getSource().delete();
 			super.setSource(copied);
-			System.out.println("Set source to: " + copied.getName());
+			System.out.println("Set source to: " + copied.getName() + " for object address: " + this.toString());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

@@ -10,6 +10,7 @@ import io.ph.bot.audio.MusicSource;
 import io.ph.bot.audio.sources.DirectLink;
 import io.ph.bot.audio.sources.Webm;
 import io.ph.bot.audio.sources.Youtube;
+import io.ph.bot.audio.sources.YoutubePlaylist;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
 import io.ph.bot.exception.FileTooLargeException;
@@ -189,7 +190,17 @@ public class Music implements Command {
 		MusicSource source;
 		try {
 			if(contents.contains("youtu.be") || contents.contains("youtube")) {
-				source = new Youtube(new URL(contents), msg);
+				if(Util.extractYoutubePlaylistId(contents) != null) {
+					String title = YoutubePlaylist.queuePlaylist(new URL(contents), msg);
+					em.withColor(Color.GREEN)
+					.withTitle("Queued the Youtube playlist: " + title)
+					.withDesc(msg.getAuthor().getDisplayName(msg.getGuild()) + " queued a Youtube playlist\n"
+							+ contents)
+					.withFooterText("Place in queue: " + (g.getMusicManager().getQueueSize() + 1));
+					return;
+				} else {
+					source = new Youtube(new URL(contents), msg);
+				}
 			} else if(contents.contains(".webm")) {
 				source = new Webm(new URL(contents), msg);
 			} else if(contents.endsWith(".mp3") || contents.endsWith(".flac")) {
@@ -214,7 +225,9 @@ public class Music implements Command {
 					e.printStackTrace();
 				}
 			}
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			g.getMusicManager().addMusicSource(source);
+			return;
 		} catch (MalformedURLException e) {
 			em.withColor(Color.RED)
 			.withTitle("Error")

@@ -35,6 +35,10 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.audio.AudioPlayer;
 
 public class Guild {
+	// How many songs to have buffered at one time per guild
+	// Leave this at 2 for now! TODO: Allow values greater than 2
+	private static final int MUSIC_QUEUE_SIZE = 2;
+
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
 	private PropertiesConfiguration config;
 	private SpecialChannels specialChannels;
@@ -318,6 +322,7 @@ public class Guild {
 	public void initMusicManager(IGuild guild) {
 		this.musicManager = new GuildMusic(guild);
 	}
+
 	public class ServerConfiguration {
 		private String commandPrefix;
 		private int messagesPerFifteen;
@@ -500,13 +505,15 @@ public class Guild {
 		private int skipVotes;
 		private MusicSource currentSong;
 
-		private Set<String> skipVoters = new HashSet<String>();
-		private LinkedList<MusicSource> overflowQueue = new LinkedList<MusicSource>();
+		private Set<String> skipVoters;
+		private LinkedList<MusicSource> overflowQueue;
 
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
 			this.audioPlayer.setVolume(0.5f);
 			this.skipVotes = 0;
+			this.skipVoters = new HashSet<String>();
+			this.overflowQueue = new LinkedList<MusicSource>();
 		}
 
 		public AudioPlayer getAudioPlayer() {
@@ -514,8 +521,8 @@ public class Guild {
 		}
 
 		/**
-		 * The special method. If the audioPlayer queue size (the true, memory queue) is < 2,
-		 * then automatically queue this meta. Else, it will be "polled" by the TrackStopEvent
+		 * The special method. Queue a MusicSource, which will then be buffered if the current
+		 * audio playlist size is less than designated MUSIC_QUEUE_SIZE
 		 * @param userId User who queued
 		 * @param trackName Name of track
 		 * @param url URL if applicable
@@ -524,11 +531,11 @@ public class Guild {
 		 */
 		public void addMusicSource(MusicSource source) {
 			overflowQueue.add(source);
-			if(this.audioPlayer.getPlaylistSize() < 2) {
+			if(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
 				queueNext();
 			}
 		}
-
+		
 		public void queueNext() {
 			if(overflowQueue.isEmpty())
 				return;
@@ -539,7 +546,7 @@ public class Guild {
 					System.out.println("fug");
 				}
 				System.out.println("Getting source: " + source.getSource().getName());
-				audioPlayer.queue((this.currentSong = source).getSource());
+				audioPlayer.queue(source.getSource());
 			} catch (IOException e) {
 				e.printStackTrace();
 				overflowQueue.pop();
@@ -553,10 +560,6 @@ public class Guild {
 			return (this.currentSong = overflowQueue.poll());
 		}
 
-		public MusicSource pollSourceBuffer() {
-			return overflowQueue.poll();
-		}
-
 		public List<MusicSource> getOverflowQueue() {
 			return overflowQueue;
 		}
@@ -566,7 +569,7 @@ public class Guild {
 		}
 
 		public int getQueueSize() {
-			return overflowQueue.size();
+			return overflowQueue.size() + audioPlayer.getPlaylistSize();
 		}
 
 		public int getSkipVotes() {
