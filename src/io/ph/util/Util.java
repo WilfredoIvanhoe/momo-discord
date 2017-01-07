@@ -318,8 +318,24 @@ public class Util {
 	 */
 	public static String extractYoutubeId(String url) {
 		String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-		Pattern compiledPattern = Pattern.compile(pattern);
-		Matcher matcher = compiledPattern.matcher(url);
+		Pattern p = Pattern.compile(pattern);
+		Matcher matcher = p.matcher(url);
+		if(matcher.find()){
+			return matcher.group();
+		} else {
+			return null;  
+		}
+	}
+	
+	/**
+	 * Extract youtube playlist ID from given URL
+	 * @param url URL to extract from
+	 * @return ID if found, null if not
+	 */
+	public static String extractYoutubePlaylistId(String url) {
+		String pattern = "(?<=youtu.be|watch\\?list=|list=|embed\\/)[^#\\&\\?]*";
+		Pattern p = Pattern.compile(pattern);
+		Matcher matcher = p.matcher(url);
 		if(matcher.find()){
 			return matcher.group();
 		} else {
