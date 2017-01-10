@@ -101,9 +101,8 @@ public class Listeners {
 				em.appendField("Aliases", 
 						Arrays.toString(aliases).substring(1, Arrays.toString(aliases).length() - 1) + "\n", true);
 			}
-			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false).
-			appendField("Example", c.getDefaultCommand() + " " + c.getExample(), false);
-			em.appendField("Example", c.getDefaultCommand() + " " + c.getExample().replaceAll("\n", "\n" + c.getDefaultCommand() + " "), false);
+			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false)
+			.appendField("Example", c.getDefaultCommand() + " " + c.getExample().replaceAll("\n", "\n" + c.getDefaultCommand() + " "), false);
 			MessageUtils.sendPrivateMessage(e.getMessage().getAuthor(), em.build());
 			return;
 		}
