@@ -49,7 +49,10 @@ import sx.blah.discord.util.RateLimitException;
 public class Util {
 
 	/**
-	 * Resolve a user from an IMessage. Username must be the only parameter in the IMessage
+	 * Resolve a user from an IMessage.
+	 * <p>
+	 * If this IMessage contains a mention, it returns the first. Otherwise, 
+	 * username must be the only parameter in the IMessage
 	 * First checks nicknames then usernames
 	 * @param s String to check
 	 * @return User if found, null if not found
@@ -61,7 +64,7 @@ public class Util {
 	}
 
 	/**
-	 * Resolve a user from a String - String must be only their username
+	 * Resolve a user from a String - String must be only their username.
 	 * First checks nicknames then usernames
 	 * @param s String to check
 	 * @return User if found, null if not found

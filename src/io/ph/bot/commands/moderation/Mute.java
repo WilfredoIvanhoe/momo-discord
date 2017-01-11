@@ -62,14 +62,20 @@ public class Mute implements Command {
 
 		try {
 			IUser target;
+			String targetS = null;
 			em.withColor(Color.GREEN).withTitle("Success");
 			Instant now = null;
 			if(Util.getParam(msg).equalsIgnoreCase("temp")) {
 				now = Util.resolveInstantFromString(Util.getParam(t));
-				String targetS = Util.getCommandContents(Util.getCommandContents(t));
-				target = Util.resolveUserFromMessage(targetS, msg.getGuild());
+				if(msg.getMentions().isEmpty()) {
+					targetS = Util.getCommandContents(Util.getCommandContents(t));
+					target = Util.resolveUserFromMessage(targetS, msg.getGuild());
+				} else
+					target = msg.getMentions().get(0);
 				if(target == null) {
-					em.withColor(Color.RED).withTitle("Error").withDesc("No user found for **" + targetS + "**");
+					em.withColor(Color.RED)
+					.withTitle("Error")
+					.withDesc("No user found for **" + targetS == null ? target.getName() : targetS + "**");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());
 					return;
 				}
