@@ -148,9 +148,9 @@ public class Listeners {
 		Guild g = new Guild(e.getGuild());
 
 		if(g.getGuildConfig().isFirstTime()) {
-			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm Momo! You are my "
+			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "Hi, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
-					+ "Command prefix: $ | Try $info");
+					+ "Default command prefix: $ | Try $howto");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}
 	}
