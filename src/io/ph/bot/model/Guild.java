@@ -89,9 +89,11 @@ public class Guild {
 		}
 		String welcomeMessage = Arrays.toString(config.getStringArray("NewUserWelcomeMessage"));
 		welcomeMessage = welcomeMessage.substring(1, welcomeMessage.length() - 1);
-		this.guildConfig = new ServerConfiguration(config.getString("ServerCommandPrefix"), config.getInt("MessagesPerFifteenSeconds"),
+		this.guildConfig = new ServerConfiguration(config.getString("ServerCommandPrefix"), 
+				config.getInt("MessagesPerFifteenSeconds"),
 				config.getInt("CommandCooldown"), 
 				welcomeMessage,
+				config.getBoolean("LimitToOneRole", false),
 				config.getBoolean("FirstTime"));
 		String[] joinableRolesP = config.getStringArray("JoinableRoles");
 		for(String s : joinableRolesP) {
@@ -321,14 +323,16 @@ public class Guild {
 		private int messagesPerFifteen;
 		private int commandCooldown;
 		private String welcomeMessage;
+		private boolean limitToOneRole;
 		private boolean firstTime;
 
 		ServerConfiguration(String commandPrefix, int messagesPerFifteen, int commandCooldown,
-				String welcomeMessage, boolean firstTime) {
+				String welcomeMessage, boolean limitToOneRole, boolean firstTime) {
 			this.commandPrefix = commandPrefix;
 			this.messagesPerFifteen = messagesPerFifteen;
 			this.commandCooldown = commandCooldown;
 			this.welcomeMessage = welcomeMessage;
+			this.limitToOneRole = limitToOneRole;
 			this.firstTime = firstTime;
 		}
 
@@ -373,6 +377,15 @@ public class Guild {
 		public void setFirstTime(boolean firstTime) {
 			this.firstTime = firstTime;
 			config.setProperty("FirstTime", firstTime);
+		}
+
+		public boolean isLimitToOneRole() {
+			return limitToOneRole;
+		}
+
+		public void setLimitToOneRole(boolean limitToOneRole) {
+			this.limitToOneRole = limitToOneRole;
+			config.setProperty("LimitToOneRole", limitToOneRole);
 		}
 	}
 
