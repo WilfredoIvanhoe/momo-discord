@@ -14,7 +14,7 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "howto",
 		aliases = {"tutorial"},
-		permission = Permission.NONE,
+		permission = Permission.KICK,
 		description = "PM a guide to the user, specified by their first argument",
 		example = ""
 		)
@@ -35,6 +35,7 @@ public class HowTo implements Command {
 		case "live feeds":
 		case "livefeeds":
 		case "live":
+			setupFeeds(Util.getPrefixForGuildId(msg.getGuild().getID()));
 			break;
 		case "moderation":
 			break;
@@ -47,6 +48,47 @@ public class HowTo implements Command {
 		}
 		em.withFooterText(String.format("Current version: %s", Bot.BOT_VERSION));
 		MessageUtils.sendPrivateMessage(msg.getAuthor(), em.build());
+	}
+	
+	private void setupRoleManagement(String prefix) {
+		em.withTitle("Role management")
+		.withDesc("Users with manage role+ permissions can setup and disable *joinable roles*. "
+				+ "Joinable roles allow users to join a role to show their flair, whether it's allegiance "
+				+ "to a character or to a color")
+		.appendField("Creating a joinable role", String.format("", prefix), false);
+	}
+	
+	private void setupModeration(String prefix) {
+		em.withTitle("Moderation features")
+		.withDesc("I provide various moderation functions to both streamline mutes, kicks, and bans, as well as "
+				+ "limiting usage on my commands")
+		.appendField("Timed mutes and bans", String.format("As well as offering indefinite mutes and bans, "
+				+ "you can use the `%smute` and %<sban` commands to temporarily punish a user.\n"
+				+ "To do so, use the `temp` parameter with a time in this format: #w#d#h#s. For example, "
+				+ "to mute someone for 1 day and 2 hours, do `%<smute temp 1d2h @target`. "
+				+ "Same syntax with bans: `%<sban temp 1d2h @target`", prefix), false)
+		.appendField("Enabling & disabling commands", String.format("You can enable or disable commands for users "
+				+ "with the `%senablecommand` and `%<sdisablecommand`. You can then check "
+				+ "the status of your commands with `%<scommandstatus`\n"
+				+ "Note: disabled commands can still be used by users with kick+ permissions", prefix), false);
+	}
+	
+	private void setupFeeds(String prefix) {
+		em.withTitle("Live feeds")
+		.withDesc("This tutorial briefly goes over Twitch.tv, Twitter, and Reddit feeds. You need at least the *kick* permission")
+		.appendField("Twitch.tv", String.format("You can register Twitch.tv channels for automatic notifications "
+				+ "that trigger when they go online and offline. To do so, use the `%stwitchchannel` "
+				+ "in the channel you want to register. Then, use `%<stwitch username` to register. "
+				+ "To undo, do `%<sunregistertwitch username`", prefix), false)
+		.appendField("Subreddits", String.format("Registering subreddits is straightforward. \n"
+				+ "Use the `%sreddit subreddit` command to register a subreddit for notifications. "
+				+ "You can then connfigure various features, such as showing all/no nsfw/no images and text previews.\n"
+				+ "You can remove a subscription with `%<sremovereddit subreddit`. \n"
+				+ "To list all of your subscriptions, use `%<slistreddit`", prefix), false)
+		.appendField("Twitter", String.format("Twitter follows the same format as subreddits.\n"
+				+ "Use `%stwitter twitter-name` to register a Twitter account.\n"
+				+ "To remove it, use `%<sremovetwitter twitter-name`\n"
+				+ "To list all of your subscriptions, use `%<stwitterlist`", prefix), false);
 	}
 	
 	private void setupMusic(String prefix) {
