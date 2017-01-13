@@ -55,7 +55,12 @@ public class HowTo implements Command {
 		.withDesc("Users with manage role+ permissions can setup and disable *joinable roles*. "
 				+ "Joinable roles allow users to join a role to show their flair, whether it's allegiance "
 				+ "to a character or to a color")
-		.appendField("Creating a joinable role", String.format("", prefix), false);
+		.appendField("Creating a joinable role", String.format("You can create a joinable role with "
+				+ "`%sjoinablerole name-of-role`. If the role doesn't exist, I will create it for you. "
+				+ "If it does exist, I'll use that role. \n"
+				+ "`%<sdisablerole name-of-role` will disable this as a joinable role. "
+				+ "Note that this will not automatically remove users from this role!\n"
+				+ "If you want a listing of roles, you can use `%<srolestats`", prefix), false);
 	}
 	
 	private void setupModeration(String prefix) {
