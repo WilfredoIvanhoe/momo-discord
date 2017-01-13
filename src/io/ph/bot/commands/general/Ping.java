@@ -10,7 +10,10 @@ import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 /**
  * Ping the bot and get a response
@@ -39,12 +42,19 @@ public class Ping implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		Long l = msg.getTimestamp().atZone(ZoneId.systemDefault()).toEpochSecond();
-		LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 		int r = new Random().nextInt(responses.length);
 		EmbedBuilder em = new EmbedBuilder();
 		em.withColor(Color.CYAN).withDesc(responses[r]);
-		em.withFooterText("Delay: " + (now.atZone(ZoneId.systemDefault()).toEpochSecond() - l) + "ms");
-		MessageUtils.sendMessage(msg.getChannel(), em.build());
+		em.withFooterText("Delay: ");
+		//MessageUtils.sendMessage(msg.getChannel(), em.build());
+		IMessage m = MessageUtils.buildAndReturn(msg.getChannel(), em.build());
+		LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+		try {
+			m.edit("", em.withFooterText("Delay: " 
+					+ (now.atZone(ZoneId.systemDefault()).toEpochSecond() - l) + "ms").build());
+		} catch (DiscordException | RateLimitException | MissingPermissionsException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

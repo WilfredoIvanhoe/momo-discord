@@ -150,7 +150,8 @@ public class Listeners {
 		if(g.getGuildConfig().isFirstTime()) {
 			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "Hi, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
-					+ "Default command prefix: $ | Try $howto");
+					+ "If you want a list of commands, use `$help`. If you want some tutorials on some of my features, "
+					+ "do `$howto`.");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}
 	}
@@ -159,8 +160,8 @@ public class Listeners {
 	public void onGuildLeaveEvent(GuildLeaveEvent e) {
 		try {
 			FileUtils.deleteDirectory(new File("resources/guilds/" + e.getGuild().getID() + "/"));
-			Bot.getInstance().getLogger().info("Guild has left: {}", e.getGuild().getName());
 			Guild.guildMap.remove(e.getGuild().getID());
+			Bot.getInstance().getLogger().info("Guild has left: {}", e.getGuild().getName());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

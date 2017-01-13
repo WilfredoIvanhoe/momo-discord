@@ -85,12 +85,14 @@ public class MessageUtils {
 	}
 
 	public static IMessage buildAndReturn(IChannel channel, EmbedObject embed) {
-		RequestBuffer.request(() -> {
-			return new MessageBuilder(Bot.getInstance().getBot()).withChannel(channel).withEmbed(embed);
-		});
-		return null;
-
+		try {
+			return new MessageBuilder(Bot.getInstance().getBot()).withChannel(channel).withEmbed(embed).build();
+		} catch (DiscordException | RateLimitException | MissingPermissionsException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
+	
 	/**
 	 * Send a private message to target user
 	 * @param target User to send to

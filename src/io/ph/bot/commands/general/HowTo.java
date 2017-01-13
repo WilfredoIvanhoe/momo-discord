@@ -8,6 +8,7 @@ import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
 
@@ -16,7 +17,7 @@ import sx.blah.discord.util.EmbedBuilder;
 		aliases = {"tutorial"},
 		permission = Permission.KICK,
 		description = "PM a guide to the user, specified by their first argument",
-		example = ""
+		example = "setup"
 		)
 public class HowTo implements Command {
 	EmbedBuilder em;
@@ -38,13 +39,15 @@ public class HowTo implements Command {
 			setupFeeds(Util.getPrefixForGuildId(msg.getGuild().getID()));
 			break;
 		case "moderation":
+			setupModeration(Util.getPrefixForGuildId(msg.getGuild().getID()));
 			break;
 		case "roles":
 		case "role management":
+			setupRoleManagement(Util.getPrefixForGuildId(msg.getGuild().getID()));
 			break;
 		default:
-			defaultMessage(Util.getPrefixForGuildId(msg.getGuild().getID()));
-			break;
+			defaultMessage(Util.getPrefixForGuildId(msg.getGuild().getID()), msg.getChannel());
+			return;
 		}
 		em.withFooterText(String.format("Current version: %s", Bot.BOT_VERSION));
 		MessageUtils.sendPrivateMessage(msg.getAuthor(), em.build());
@@ -129,40 +132,11 @@ public class HowTo implements Command {
 				+ "designated channel.", 
 				prefix), false);
 	}
-	private void defaultMessage(String prefix) {
+	private void defaultMessage(String prefix, IChannel channel) {
 		em.withTitle("How To options")
 		.withColor(Color.MAGENTA)
 		.withDesc(String.format("Do %showto with a topic afterwards, i.e. `%<showto setup`", prefix))
 		.appendField("Options", "setup, moderation, role management, live feeds, music", true);
+		MessageUtils.sendMessage(channel, em.build());
 	}
-	private void setGeneral(String prefix) {
-		em.withTitle("Getting started with Momo");
-		em.withDesc("This is a quick introduction to using my features and commands. "
-				+ "It's by no means comprehensive, but it should be a good starting point!");
-		em.appendField("About", "I am an open-source bot written in the Java programming language. "
-				+ "You can find my source code at http://momobot.io/github.", true);
-		em.appendField("Commands", String.format("Commands are separated into permissions native to Discord. "
-				+ "These permissions include Manage server, Manage roles, and all the way down to Kick. "
-				+ "Any commands that are usable by general users can be disabled by admins\n"
-				+ "You can find a full listing of commands at %shelp", 
-				prefix), false);
-		em.appendField("Live updates", 
-				String.format("I can provide live updates from various websites, including Reddit, Twitter, and Twitch.tv. "
-				+ "To set this up, make sure you have the correct roles - then you can use %stwitchchannel, %<sreddit, and %<stwitter. "
-				+ "From there, it's simple to follow the instructions to get live feeds from your favorite sources.",
-				prefix), false);
-		em.appendField("Music", String.format("Did you know I can also play music from various sources? "
-				+ "You can use the %smusic command to queue up songs from direct attachments, links, and YouTube videos. ]\n"
-				+ "You can also use the command with the search result from a %<syoutube or %<stheme command.\n"
-				+ "Make sure you do %<ssetupmusic beforehand so I can create the correct voice channel!", 
-				prefix), false);
-		em.appendField("Role management", String.format("You can set special roles that users can join and leave at will. "
-				+ "To start, someone with the Manage Roles can do %sjoinablerole role-name. "
-				+ "This will designate the role as joinable if it exists, or create a new one. "
-				+ "Then, users can use %<sjoinrole and %<sleaverole to join and leave. "
-				+ "This function is useful if you want more color for your server, or if you have a fandom and like certain characters\n"
-				+ "You can also use %<sconfig to determine if users can join multiple or if they are restricted to one",
-				prefix), false);
-	}
-
 }
