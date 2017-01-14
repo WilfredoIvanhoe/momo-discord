@@ -1,7 +1,7 @@
 package io.ph.bot.commands.general;
 
 import java.awt.Color;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
@@ -19,26 +19,38 @@ import sx.blah.discord.util.EmbedBuilder;
 		defaultSyntax = "roll",
 		aliases = {"dice"},
 		permission = Permission.NONE,
-		description = "Roll a dice!",
-		example = "[optional #]"
+		description = "Roll a die! (or many dice with the format #d#)",
+		example = "2d6"
 		)
 public class Roll implements Command {
 
 	@Override
 	public void executeCommand(IMessage msg) {
-		Random r = new Random();
-		EmbedBuilder em;
-		if(msg.getContent().split(" ").length == 1) {
-			em = new EmbedBuilder().withColor(Color.GREEN)
-					.withTitle(msg.getAuthor().getDisplayName(msg.getGuild()) + " rolled " + (r.nextInt(6) + 1) + " out of 6");
+		EmbedBuilder em = new EmbedBuilder();
+		String contents = Util.getCommandContents(msg);
+		if(contents.isEmpty()) {
+			em.withColor(Color.GREEN)
+			.withTitle(msg.getAuthor().getDisplayName(msg.getGuild()) + " rolled " 
+			+ (ThreadLocalRandom.current().nextInt(6) + 1) + " out of 6");
+		} else if(contents.contains("d")) {
+			String[] split = contents.split("d");
+			if(split.length == 2 && Util.isInteger(split[0]) && Util.isInteger(split[1])) {
+				int max = Integer.parseInt(split[0]) * Integer.parseInt(split[1]);
+				int roll = ThreadLocalRandom.current().nextInt(Integer.parseInt(split[0]), max + 1);
+				em.withColor(Color.GREEN)
+				.withTitle(msg.getAuthor().getDisplayName(msg.getGuild()) + " rolled " 
+						+ roll + " with a " + split[0] + "d" + split[1]);
+			}
 		} else {
-			String arg = msg.getContent().split(" ")[1];
-			if(Util.isInteger(arg))
-				em = new EmbedBuilder().withColor(Color.GREEN).withAuthorIcon(msg.getAuthor().getAvatarURL())
-				.withAuthorName(msg.getAuthor().getDisplayName(msg.getGuild()) + " rolled " + (r.nextInt(Integer.parseInt(arg)) + 1) 
-						+ " out of " + Integer.parseInt(arg));
+			if(Util.isInteger(contents))
+				em.withColor(Color.GREEN)
+				.withTitle(msg.getAuthor().getDisplayName(msg.getGuild()) + " rolled "
+						+ (ThreadLocalRandom.current().nextInt(Integer.parseInt(contents)) + 1) 
+						+ " out of " + Integer.parseInt(contents));
 			else
-				em = MessageUtils.commandErrorMessage(msg, "roll", "[#]", new String[]{"*[#]* - how large the die is (leave # blank to default to 6)"});
+				em = MessageUtils.commandErrorMessage(msg, 
+						"roll", "[#]", "*[#]* - how large the die is (leave # blank to default to 6)\n"
+								+ "You can also use multiple dice, such as 2d6");
 		}
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
