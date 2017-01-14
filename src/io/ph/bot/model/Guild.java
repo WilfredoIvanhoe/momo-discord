@@ -3,6 +3,7 @@ package io.ph.bot.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,8 +37,7 @@ import sx.blah.discord.util.audio.AudioPlayer;
 
 public class Guild {
 	// How many songs to have buffered at one time per guild
-	// Leave this at 2 for now! TODO: Allow values greater than 2
-	private static final int MUSIC_QUEUE_SIZE = 2;
+	private static final int MUSIC_QUEUE_SIZE = 4;
 
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
 	private PropertiesConfiguration config;
@@ -507,6 +507,8 @@ public class Guild {
 
 		private Set<String> skipVoters;
 		private LinkedList<MusicSource> overflowQueue;
+		
+		private int index;
 
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
@@ -514,6 +516,7 @@ public class Guild {
 			this.skipVotes = 0;
 			this.skipVoters = new HashSet<String>();
 			this.overflowQueue = new LinkedList<MusicSource>();
+			this.index = 0;
 		}
 
 		public AudioPlayer getAudioPlayer() {
@@ -541,12 +544,12 @@ public class Guild {
 				return;
 			try {
 				MusicSource source;
-				if((source = overflowQueue.peek()) instanceof Youtube) {
+				if((source = overflowQueue.get(index)) instanceof Youtube) {
 					((Youtube) source).processVideo();
-					System.out.println("fug");
 				}
 				System.out.println("Getting source: " + source.getSource().getName());
 				audioPlayer.queue(source.getSource());
+				index++;
 			} catch (IOException e) {
 				e.printStackTrace();
 				overflowQueue.pop();
@@ -555,12 +558,24 @@ public class Guild {
 				overflowQueue.pop();
 			}
 		}
-
+		
+		public void shuffle() {
+			Collections.shuffle(this.overflowQueue);
+			this.audioPlayer.getPlaylist().clear();
+			//this.audioPlayer.clear();
+			this.audioPlayer.skip();
+			while(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
+				queueNext();
+			}
+			this.currentSong = this.overflowQueue.get(0);
+		}
+		
 		public MusicSource pollSource() {
+			index--;
 			return (this.currentSong = overflowQueue.poll());
 		}
 
-		public List<MusicSource> getOverflowQueue() {
+		public LinkedList<MusicSource> getOverflowQueue() {
 			return overflowQueue;
 		}
 
@@ -569,7 +584,15 @@ public class Guild {
 		}
 
 		public int getQueueSize() {
-			return overflowQueue.size() + audioPlayer.getPlaylistSize();
+			return overflowQueue.size();
+		}
+		
+		/**
+		 * Use this to test for no music at all
+		 * @return True if empty (and nothing currently playing), false if not
+		 */
+		public boolean emptyQueue() {
+			return overflowQueue.size() + this.audioPlayer.getPlaylistSize() == 0;
 		}
 
 		public int getSkipVotes() {
@@ -590,6 +613,13 @@ public class Guild {
 
 		public MusicSource getCurrentSong() {
 			return this.currentSong;
+		}
+		public void reset() {
+			this.setCurrentSong(null);
+			this.setSkipVotes(0);
+			this.overflowQueue.clear();
+			this.skipVoters.clear();
+			this.audioPlayer.clear();
 		}
 	}
 }

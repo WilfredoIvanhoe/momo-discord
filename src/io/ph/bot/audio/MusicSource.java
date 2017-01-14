@@ -24,7 +24,6 @@ public abstract class MusicSource {
 	private int fileSeed;
 
 	public MusicSource(URL url, IMessage msg) throws FileTooLargeException, IOException, NoAPIKeyException {
-		super();
 		this.url = url;
 		this.queuer = msg.getAuthor();
 		this.channel = msg.getChannel();
@@ -67,8 +66,11 @@ public abstract class MusicSource {
 		this.sourceFile = sourceFile;
 	}
 	public File getSource() {
-		if(sourceFile == null)
+		if(sourceFile == null) {
 			this.sourceFile = new File("resources/tempdownloads/" + this.fileSeed);
+			if(!sourceFile.exists())
+				this.sourceFile = new File("resources/tempdownloads/" + this.fileSeed + ".mp3");
+		}
 		return this.sourceFile;
 	}
 	public URL getUrl() {
@@ -85,7 +87,7 @@ public abstract class MusicSource {
 	}
 	public String getSongLength() {
 		try {
-			return Util.getMp3Duration(this.sourceFile);
+			return Util.getMp3Duration(getSource());
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 			return null;

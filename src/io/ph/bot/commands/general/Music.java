@@ -163,18 +163,20 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		} else if(contents.startsWith("stop") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
-			m.getAudioPlayer().clear();
-			m.getOverflowQueue().clear();
-			m.setSkipVotes(0);
-			m.getSkipVoters().clear();
-			m.setCurrentSong(null);
+			m.reset();
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Playlist cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
+		} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
+			if(m.getOverflowQueueSize() > 0) {
+				Util.setTimeout(() -> m.shuffle(), 0, true);
+				em.withColor(Color.GREEN).withTitle("Success").withDesc("Shuffled your playlist");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 		} else if(Util.isInteger(contents)) {
 			int index = Integer.parseInt(contents);
-			if((index) > g
-					.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
+			if((index) > g.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
 				MessageUtils.sendErrorEmbed(msg.getChannel(), "Invalid input",
 						"Giving a number will play music on a previous theme or youtube search. This # is too large");
 				return;
@@ -186,7 +188,22 @@ public class Music implements Command {
 		}
 		if(!msg.getAttachments().isEmpty()) {
 			contents = msg.getAttachments().get(0).getUrl();
-		} 
+		}
+		/*IVoiceChannel ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+				.filter(v -> v.getGuild().getID().equals(msg.getGuild().getID()))
+				.findAny().orElse(null);
+		if(ch == null) {
+			ch = Bot.getInstance().getBot()
+					.getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
+		}
+		if(msg.getAuthor().getConnectedVoiceChannels().isEmpty()
+				|| !ch.getID().equals(msg.getAuthor().getConnectedVoiceChannels().get(0))) {
+			em.withTitle("Error")
+			.withColor(Color.RED)
+			.withDesc("You must be in the correct music channel to queue a song!");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}*/
 		MusicSource source;
 		try {
 			if(contents.contains("youtu.be") || contents.contains("youtube")) {

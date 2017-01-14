@@ -9,6 +9,7 @@ import sx.blah.discord.handle.impl.events.guild.voice.VoiceChannelDeleteEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
+import sx.blah.discord.util.MissingPermissionsException;
 
 public class VoiceChannelListeners {
 
@@ -24,12 +25,12 @@ public class VoiceChannelListeners {
 
 	@EventSubscriber
 	public void onUserVoiceChannelJoinEvent(UserVoiceChannelJoinEvent e) {
-		/*if(e.getVoiceChannel().getID().equals(Guild.guildMap.get(e.getGuild().getID()).getSpecialChannels().getVoice())
+		if(e.getVoiceChannel().getID().equals(Guild.guildMap.get(e.getGuild().getID()).getSpecialChannels().getVoice())
 				&& !e.getVoiceChannel().isConnected()) {
 			try {
 				e.getVoiceChannel().join();
 			} catch (MissingPermissionsException e1) { }
-		}*/
+		}
 	}
 
 	@EventSubscriber
@@ -37,7 +38,7 @@ public class VoiceChannelListeners {
 		Guild g;
 		if(e.getVoiceChannel().getID().equals((g = Guild.guildMap.get(e.getGuild().getID())).getSpecialChannels().getVoice())
 				&& Bot.getInstance().getBot().getConnectedVoiceChannels().contains(e.getVoiceChannel())) {
-			if(g.getMusicManager().getQueueSize() == 0 && e.getVoiceChannel().getUsersHere().size() == 1)
+			if(g.getMusicManager().emptyQueue() && e.getVoiceChannel().getUsersHere().size() == 1)
 				e.getVoiceChannel().leave();
 		}
 	}
@@ -47,7 +48,7 @@ public class VoiceChannelListeners {
 		Guild g;
 		if(e.getOldChannel().getID().equals((g = Guild.guildMap.get(e.getGuild().getID())).getSpecialChannels().getVoice())
 				&& Bot.getInstance().getBot().getConnectedVoiceChannels().contains(e.getOldChannel())) {
-			if(g.getMusicManager().getQueueSize() == 0 && e.getVoiceChannel().getUsersHere().size() == 1)
+			if(g.getMusicManager().emptyQueue() && e.getOldChannel().getUsersHere().size() == 1)
 				e.getOldChannel().leave();
 		}
 	}

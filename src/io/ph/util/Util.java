@@ -326,7 +326,7 @@ public class Util {
 			return null;  
 		}
 	}
-	
+
 	/**
 	 * Extract youtube playlist ID from given URL
 	 * @param url URL to extract from
@@ -565,6 +565,7 @@ public class Util {
 	 * @return min:sec
 	 */
 	public static String getMp3Duration(File file) throws UnsupportedAudioFileException, IOException {
+		System.out.println(file.getAbsolutePath());
 		AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
 		if (fileFormat instanceof TAudioFileFormat) {
 			Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
@@ -579,6 +580,21 @@ public class Util {
 		} else {
 			throw new UnsupportedAudioFileException();
 		}
+	}
+
+	public static long getMp3DurationMillis(File file) {
+		try {
+			AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+			if (fileFormat instanceof TAudioFileFormat) {
+				Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
+				String key = "duration";
+				Long microseconds = (Long) properties.get(key);
+				return (microseconds / 1000);
+			}
+		} catch(UnsupportedAudioFileException | IOException e) {
+			return 60 * 15 * 1000;
+		}
+		return 60 * 15 * 1000;
 	}
 
 	/**
