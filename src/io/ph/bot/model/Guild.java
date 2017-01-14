@@ -560,13 +560,18 @@ public class Guild {
 		}
 		
 		public void shuffle() {
+			for(int i = 1; i < this.audioPlayer.getPlaylistSize(); i++) {
+				this.audioPlayer.getPlaylist().remove(i);
+			}
+			this.overflowQueue.pop();
 			Collections.shuffle(this.overflowQueue);
-			this.audioPlayer.getPlaylist().clear();
+			//this.audioPlayer.getPlaylist().clear();
 			//this.audioPlayer.clear();
+			this.index = 0;
 			while(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
 				queueNext();
 			}
-			this.currentSong = this.overflowQueue.get(0);
+			//this.currentSong = this.overflowQueue.get(0);
 		}
 		
 		public MusicSource pollSource() {

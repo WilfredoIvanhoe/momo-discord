@@ -138,7 +138,7 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		} else if(contents.startsWith("next") || contents.startsWith("list")) {
-			if(m.getAudioPlayer().getCurrentTrack() == null) {
+			if(m.getAudioPlayer().getCurrentTrack() == null && m.getOverflowQueueSize() == 0) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("No song currently playing");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
