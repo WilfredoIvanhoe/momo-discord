@@ -18,13 +18,13 @@ import sx.blah.discord.util.EmbedBuilder;
  * @author Paul
  */
 @CommandData (
-		defaultSyntax = "help",
-		aliases = {},
+		defaultSyntax = "commands",
+		aliases = {"commandlist"},
 		permission = Permission.NONE,
 		description = "Either list all commands or get help for one",
 		example = "(optional command name)"
 		)
-public class Help implements Command {
+public class CommandList implements Command {
 
 	@Override
 	public void executeCommand(IMessage msg) {

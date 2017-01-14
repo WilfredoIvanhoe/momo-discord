@@ -150,8 +150,8 @@ public class Listeners {
 		if(g.getGuildConfig().isFirstTime()) {
 			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "Hi, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
-					+ "If you want a list of commands, use `$help`. If you want some tutorials on some of my features, "
-					+ "do `$howto`.");
+					+ "If you want a list of commands, use `$commandlist`. If you want some tutorials on my features, "
+					+ "do `$howto`");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}
 	}

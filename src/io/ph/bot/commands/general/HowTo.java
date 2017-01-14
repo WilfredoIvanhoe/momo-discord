@@ -14,9 +14,10 @@ import sx.blah.discord.util.EmbedBuilder;
 
 @CommandData (
 		defaultSyntax = "howto",
-		aliases = {"tutorial"},
+		aliases = {"tutorial", "help"},
 		permission = Permission.KICK,
-		description = "PM a guide to the user, specified by their first argument",
+		description = "PM a guide to the user, specified by the given input. "
+				+ "Doing just the command will give you a list of help topics",
 		example = "setup"
 		)
 public class HowTo implements Command {
