@@ -563,7 +563,6 @@ public class Guild {
 			Collections.shuffle(this.overflowQueue);
 			this.audioPlayer.getPlaylist().clear();
 			//this.audioPlayer.clear();
-			this.audioPlayer.skip();
 			while(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
 				queueNext();
 			}
