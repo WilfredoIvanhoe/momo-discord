@@ -15,7 +15,7 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "howto",
 		aliases = {"tutorial", "help"},
-		permission = Permission.KICK,
+		permission = Permission.NONE,
 		description = "PM a guide to the user, specified by the given input. "
 				+ "Doing just the command will give you a list of help topics",
 		example = "setup"
@@ -25,7 +25,7 @@ public class HowTo implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		em = new EmbedBuilder();
-		em.withColor(Color.CYAN);
+		em.withColor(Color.MAGENTA);
 		String s = Util.getCommandContents(msg);
 		switch(s.toLowerCase()) {
 		case "setup":
@@ -52,6 +52,10 @@ public class HowTo implements Command {
 		}
 		em.withFooterText(String.format("Current version: %s", Bot.BOT_VERSION));
 		MessageUtils.sendPrivateMessage(msg.getAuthor(), em.build());
+		em = new EmbedBuilder().withTitle("Success")
+				.withDesc("Check your PMs!")
+				.withColor(Color.GREEN);
+		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 	
 	private void setupRoleManagement(String prefix) {
@@ -136,7 +140,7 @@ public class HowTo implements Command {
 	private void defaultMessage(String prefix, IChannel channel) {
 		em.withTitle("How To options")
 		.withColor(Color.MAGENTA)
-		.withDesc(String.format("Do %showto with a topic afterwards, i.e. `%<showto setup`", prefix))
+		.withDesc(String.format("Do `%showto` with a topic afterwards, i.e. `%<showto setup`", prefix))
 		.appendField("Options", "setup, moderation, role management, live feeds, music", true);
 		MessageUtils.sendMessage(channel, em.build());
 	}
