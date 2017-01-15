@@ -22,12 +22,15 @@ public abstract class MusicSource {
 	private IUser queuer;
 	private IChannel channel;
 	private int fileSeed;
+	
+	private boolean queued;
 
 	public MusicSource(URL url, IMessage msg) throws FileTooLargeException, IOException, NoAPIKeyException {
 		this.url = url;
 		this.queuer = msg.getAuthor();
 		this.channel = msg.getChannel();
 		this.fileSeed = (new Random()).nextInt(100000);
+		this.setQueued(false);
 		this.downloadLocally();
 	}	
 	protected abstract void downloadLocally() throws FileTooLargeException, IOException, NoAPIKeyException;
@@ -92,5 +95,11 @@ public abstract class MusicSource {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	public boolean isQueued() {
+		return queued;
+	}
+	public void setQueued(boolean queued) {
+		this.queued = queued;
 	}
 }

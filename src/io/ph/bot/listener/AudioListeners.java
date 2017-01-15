@@ -26,8 +26,8 @@ public class AudioListeners {
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
 		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		if(g.getMusicManager().getCurrentSong() == null)
-			g.getMusicManager().setCurrentSong(g.getMusicManager().getOverflowQueue().peek());
+		/*if(g.getMusicManager().getCurrentSong() == null)
+			g.getMusicManager().setCurrentSong(g.getMusicManager().getOverflowQueue().peek());*/
 		MusicSource source = g.getMusicManager().pollSource();
 		if(!g.getSpecialChannels().getMusic().equals("")) {
 			EmbedBuilder em = new EmbedBuilder();

@@ -320,7 +320,7 @@ public class Util {
 		String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 		Pattern p = Pattern.compile(pattern);
 		Matcher matcher = p.matcher(url);
-		if(matcher.find()){
+		if(matcher.find()) {
 			return matcher.group();
 		} else {
 			return null;  
@@ -333,10 +333,10 @@ public class Util {
 	 * @return ID if found, null if not
 	 */
 	public static String extractYoutubePlaylistId(String url) {
-		String pattern = "(?<=youtu.be|watch\\?list=|list=|embed\\/)[^#\\&\\?]*";
+		String pattern = "(?<=watch\\?list=|list=|embed\\/)[^#\\&\\?]*";
 		Pattern p = Pattern.compile(pattern);
 		Matcher matcher = p.matcher(url);
-		if(matcher.find()){
+		if(matcher.find()) {
 			return matcher.group();
 		} else {
 			return null;  

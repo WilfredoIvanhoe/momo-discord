@@ -167,13 +167,13 @@ public class Music implements Command {
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Playlist cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
-		} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
+		/*} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
 			if(m.getOverflowQueueSize() > 0) {
 				Util.setTimeout(() -> m.shuffle(), 0, true);
 				em.withColor(Color.GREEN).withTitle("Success").withDesc("Shuffled your playlist");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
-			}
+			}*/
 		} else if(Util.isInteger(contents)) {
 			int index = Integer.parseInt(contents);
 			if((index) > g.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
@@ -207,13 +207,15 @@ public class Music implements Command {
 		MusicSource source;
 		try {
 			if(contents.contains("youtu.be") || contents.contains("youtube")) {
-				if(Util.extractYoutubePlaylistId(contents) != null) {
+				if(Util.extractYoutubePlaylistId(contents) != null 
+						&& !Util.extractYoutubePlaylistId(contents).isEmpty()) {
 					String title = YoutubePlaylist.queuePlaylist(new URL(contents), msg);
 					em.withColor(Color.GREEN)
 					.withTitle("Queued the Youtube playlist: " + title)
 					.withDesc(msg.getAuthor().getDisplayName(msg.getGuild()) + " queued a Youtube playlist\n"
 							+ contents)
 					.withFooterText("Place in queue: " + (g.getMusicManager().getQueueSize() + 1));
+					MessageUtils.sendMessage(msg.getChannel(), em.build());
 					return;
 				} else {
 					source = new Youtube(new URL(contents), msg);

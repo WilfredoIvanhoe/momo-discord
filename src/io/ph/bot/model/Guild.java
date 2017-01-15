@@ -37,7 +37,7 @@ import sx.blah.discord.util.audio.AudioPlayer;
 
 public class Guild {
 	// How many songs to have buffered at one time per guild
-	private static final int MUSIC_QUEUE_SIZE = 4;
+	private static final int MUSIC_QUEUE_SIZE = 3;
 
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
 	private PropertiesConfiguration config;
@@ -539,43 +539,51 @@ public class Guild {
 			}
 		}
 		
-		public void queueNext() {
-			if(overflowQueue.isEmpty())
+		/**
+		 * Move a song from the overflowqueue to the AudioPlayer queue
+		 */
+		public synchronized void queueNext() {
+			if(overflowQueue.isEmpty() || index >= overflowQueue.size())
 				return;
 			try {
 				MusicSource source;
-				if((source = overflowQueue.get(index)) instanceof Youtube) {
+				if((source = overflowQueue.get(index)).isQueued()) {
+					System.out.println("Already queued");
+					return;
+				}
+				index++;
+				System.out.println("Incremented index: " + index);
+				source.setQueued(true);
+				if(source instanceof Youtube) {
 					((Youtube) source).processVideo();
 				}
 				System.out.println("Getting source: " + source.getSource().getName());
 				audioPlayer.queue(source.getSource());
-				index++;
-			} catch (IOException e) {
+			} catch (IOException | UnsupportedAudioFileException e) {
 				e.printStackTrace();
 				overflowQueue.pop();
-			} catch (UnsupportedAudioFileException e) {
-				e.printStackTrace();
-				overflowQueue.pop();
+				index--;
 			}
 		}
 		
+		/**
+		 * non-functional
+		 * TODO: make it functional
+		 */
 		public void shuffle() {
-			for(int i = 1; i < this.audioPlayer.getPlaylistSize(); i++) {
-				this.audioPlayer.getPlaylist().remove(i);
-			}
-			this.overflowQueue.pop();
+			System.out.println(this.audioPlayer.getPlaylistSize());
+			System.out.println(this.overflowQueue.size());
+			this.audioPlayer.clear();
 			Collections.shuffle(this.overflowQueue);
-			//this.audioPlayer.getPlaylist().clear();
-			//this.audioPlayer.clear();
 			this.index = 0;
 			while(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
 				queueNext();
 			}
-			//this.currentSong = this.overflowQueue.get(0);
 		}
 		
 		public MusicSource pollSource() {
 			index--;
+			System.out.println("New index: " +  index);
 			return (this.currentSong = overflowQueue.poll());
 		}
 
@@ -624,6 +632,7 @@ public class Guild {
 			this.overflowQueue.clear();
 			this.skipVoters.clear();
 			this.audioPlayer.clear();
+			this.index = 0;
 		}
 	}
 }
