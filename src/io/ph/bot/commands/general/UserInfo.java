@@ -2,6 +2,7 @@ package io.ph.bot.commands.general;
 
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
@@ -38,20 +39,22 @@ public class UserInfo implements Command {
 			return;
 		}
 		int mutualServers = (int) Bot.getInstance().getBot().getGuilds().stream()
-				.filter(g -> g.getUserByID(msg.getAuthor().getID()) != null)
+				.filter(g -> g.getUserByID(target.getID()) != null)
 				.count();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		em.withTitle("User info for " + target.getDisplayName(msg.getGuild()))
 		.withColor(Color.MAGENTA)
 		.appendField("User", target.getName() + "#" + target.getDiscriminator(), true)
-		.appendField("Creation date", msg.getAuthor().getCreationDate().format(formatter), true)
+		.appendField("Creation date", target.getCreationDate().format(formatter), true)
 		.appendField("Mutual servers", mutualServers + "", true);
 		try {
-			em.appendField("Server join date", msg.getGuild().getJoinTimeForUser(msg.getAuthor()).format(formatter), true);
+			em.appendField("Server join date", msg.getGuild().getJoinTimeForUser(target).format(formatter), true);
 		} catch(DiscordException e) {
 
 		}
-		em.withImage(msg.getAuthor().getAvatarURL());
+		em.appendField("Roles", "`" + target.getRolesForGuild(msg.getGuild()).stream()
+				.map(r -> r.getName()).collect(Collectors.joining(", ")) + "`", true);
+		em.withImage(target.getAvatarURL());
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 
