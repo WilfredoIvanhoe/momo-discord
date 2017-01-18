@@ -167,6 +167,18 @@ public class Music implements Command {
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Playlist cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
+		} else if(contents.startsWith("volume") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+			int input;
+			if(!Util.isInteger(Util.getCommandContents(contents)) 
+					|| (input = Integer.parseInt(Util.getCommandContents(contents))) > 100 || input < 0) {
+				em.withColor(Color.RED)
+				.withTitle("Error")
+				.withDesc("Please set volume between 0 and 100");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
+			g.getMusicManager().getAudioPlayer().setVolume((float) input / 100);
+			return;
 		/*} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
 			if(m.getOverflowQueueSize() > 0) {
 				Util.setTimeout(() -> m.shuffle(), 0, true);
