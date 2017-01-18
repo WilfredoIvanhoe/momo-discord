@@ -18,6 +18,7 @@ import io.ph.bot.events.UserUnmutedEvent;
 import io.ph.bot.feed.TwitterEventListener;
 import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
+import io.ph.bot.model.Permission;
 import io.ph.bot.procedural.ProceduralListener;
 import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
@@ -108,7 +109,7 @@ public class Listeners {
 		}
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
 		if(g.getGuildConfig().isDisableInvites() 
-				/*&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)*/) {
+				&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)) {
 			if(e.getMessage().getContent().toLowerCase().contains("discord.gg/")) {
 				e.getMessage().delete();
 			}
@@ -118,7 +119,7 @@ public class Listeners {
 			return;
 		}
 		if(g.getGuildConfig().getMessagesPerFifteen() > 0
-				/*&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)*/) {
+				&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)) {
 			Integer counter;
 			if((counter = g.getUserTimerMap().get(e.getAuthor().getID())) == null) {
 				counter = 0;
