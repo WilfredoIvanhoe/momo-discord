@@ -37,13 +37,13 @@ public class Stats implements Command {
 				DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 				.toString(), true);
 		em.appendField("Server ID", msg.getGuild().getID(), true);
-		em.appendField("Bot version", Bot.BOT_VERSION, true);
 		Object[] topMacro = null;
 		if((topMacro = MacroObject.topMacro(msg.getGuild().getID())) != null)
 				em.appendField("Top macro", "**" + topMacro[1] + "** by **"
 						+ msg.getGuild().getUserByID((String) topMacro[2]).getDisplayName(msg.getGuild()) 
 						+ "**: " + topMacro[0] + " hits", false);
 		em.withColor(Color.CYAN);
+		em.withFooterText("Bot version: " + Bot.BOT_VERSION);
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 
 	}
