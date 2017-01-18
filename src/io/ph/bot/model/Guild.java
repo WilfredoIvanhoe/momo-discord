@@ -34,6 +34,11 @@ import sx.blah.discord.util.audio.AudioPlayer;
 
 public class Guild {
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
+	
+	private Map<String, Integer> userTimerMap = ExpiringMap.builder()
+			.expiration(15, TimeUnit.SECONDS)
+			.expirationPolicy(ExpirationPolicy.CREATED)
+			.build();
 	private PropertiesConfiguration config;
 	private SpecialChannels specialChannels;
 	private HashMap<String, String> optIn = new HashMap<String, String>();
@@ -94,7 +99,8 @@ public class Guild {
 				config.getInt("CommandCooldown"), 
 				welcomeMessage,
 				config.getBoolean("LimitToOneRole", false),
-				config.getBoolean("FirstTime"));
+				config.getBoolean("FirstTime"),
+				config.getBoolean("DisableInvites", false));
 		String[] joinableRolesP = config.getStringArray("JoinableRoles");
 		for(String s : joinableRolesP) {
 			if(s.equals(""))
@@ -113,6 +119,7 @@ public class Guild {
 		Guild.guildMap.put(g.getID(), this);
 		Bot.getInstance().getLogger().info("Guild {} initialized - {}", g.getID(), g.getName());
 	}
+
 
 	/**
 	 * Disable a command on this guild
@@ -160,7 +167,7 @@ public class Guild {
 		config.setProperty("DisabledCommands", disabled);
 		return true;
 	}
-	
+
 	public boolean getCommandStatus(String input) {
 		try {
 			Command c = CommandHandler.getCommand(input);
@@ -187,7 +194,7 @@ public class Guild {
 	public void disableAllCommands() {
 		commandStatus.replaceAll((key, value) -> false);
 	}
-	
+
 	/**
 	 * Disable a feature in this guild
 	 * @param s name of feature to disable
@@ -246,7 +253,12 @@ public class Guild {
 			return false;
 		}
 	}
-	
+
+	public Map<String, Integer> getUserTimerMap() {
+		return userTimerMap;
+	}
+
+
 	public HistoricalSearches getHistoricalSearches() {
 		return historicalSearches;
 	}
@@ -325,15 +337,17 @@ public class Guild {
 		private String welcomeMessage;
 		private boolean limitToOneRole;
 		private boolean firstTime;
+		private boolean disableInvites;
 
 		ServerConfiguration(String commandPrefix, int messagesPerFifteen, int commandCooldown,
-				String welcomeMessage, boolean limitToOneRole, boolean firstTime) {
+				String welcomeMessage, boolean limitToOneRole, boolean firstTime, boolean disableInvites) {
 			this.commandPrefix = commandPrefix;
 			this.messagesPerFifteen = messagesPerFifteen;
 			this.commandCooldown = commandCooldown;
 			this.welcomeMessage = welcomeMessage;
 			this.limitToOneRole = limitToOneRole;
 			this.firstTime = firstTime;
+			this.disableInvites = disableInvites;
 		}
 
 		@Override
@@ -386,6 +400,15 @@ public class Guild {
 		public void setLimitToOneRole(boolean limitToOneRole) {
 			this.limitToOneRole = limitToOneRole;
 			config.setProperty("LimitToOneRole", limitToOneRole);
+		}
+
+		public boolean isDisableInvites() {
+			return disableInvites;
+		}
+
+		public void setDisableInvites(boolean disableInvites) {
+			this.disableInvites = disableInvites;
+			config.setProperty("DisableInvites", disableInvites);
 		}
 	}
 

@@ -74,7 +74,7 @@ public class Listeners {
 		TwitterEventListener.initTwitter();
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
-	
+
 	@EventSubscriber
 	public void onRoleDeleteEvent(RoleDeleteEvent e) {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());
@@ -107,9 +107,32 @@ public class Listeners {
 			return;
 		}
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
+		if(g.getGuildConfig().isDisableInvites() 
+				/*&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)*/) {
+			if(e.getMessage().getContent().toLowerCase().contains("discord.gg/")) {
+				e.getMessage().delete();
+			}
+		}
 		if(e.getMessage().getContent().startsWith(g.getGuildConfig().getCommandPrefix())) {
 			CommandHandler.processCommand(e.getMessage());
 			return;
+		}
+		if(g.getGuildConfig().getMessagesPerFifteen() > 0
+				/*&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)*/) {
+			Integer counter;
+			if((counter = g.getUserTimerMap().get(e.getAuthor().getID())) == null) {
+				counter = 0;
+			}
+			if(++counter > g.getGuildConfig().getMessagesPerFifteen()) {
+				e.getMessage().delete();
+				EmbedBuilder em = new EmbedBuilder();
+				em.withColor(Color.RED)
+				.withTitle("Error")
+				.withDesc("Whoa, slow down there! You're sending too many messages");
+				MessageUtils.sendPrivateMessage(e.getAuthor(), em.build());
+			} else {
+				g.getUserTimerMap().put(e.getAuthor().getID(), counter);
+			}
 		}
 		try {
 			if(g.getFeatureStatus("reactions")) {
@@ -363,7 +386,7 @@ public class Listeners {
 			Util.setTimeout(() -> killMusic(e.getOldChannel()), 15000, true);
 		}
 	}*/
-	
+
 	static void killMusic(IVoiceChannel v) {
 		if(v.getConnectedUsers().size() > 1) {
 			return;
