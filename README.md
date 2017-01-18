@@ -30,7 +30,7 @@ Send the command `$help` or visit the website at [this link](http://momobot.io/p
 
 Certain functions need a little more help.
 
-* Playing music off of YouTube requires [youtube-dl](https://github.com/rg3/youtube-dl/) - follow the installation instructions there for your system, and put it in your PATH
+* Playing music off of YouTube requires [youtube-dl](https://github.com/rg3/youtube-dl/) - follow the installation instructions there for your system, and put it in your PATH. You will also need [ffmpeg](https://ffmpeg.org/download.html).
 * Playing Themes.moe music (notably, the .webm format) requires [ffmpeg](https://ffmpeg.org/download.html) - download it and place load it up in your PATH
 
 ---
