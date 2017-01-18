@@ -19,7 +19,7 @@ import sx.blah.discord.util.EmbedBuilder;
  */
 @CommandData (
 		defaultSyntax = "commands",
-		aliases = {"commandlist"},
+		aliases = {"commandlist", "command"},
 		permission = Permission.NONE,
 		description = "Either list all commands or get help for one",
 		example = "(optional command name)"
