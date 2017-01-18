@@ -42,7 +42,10 @@ public class Diagnostics implements Command {
 		NumberFormat format = NumberFormat.getInstance();
 		em.appendField("Total shards", Bot.getInstance().getBot().getShardCount() + "", true);
 		em.appendField("Connected guilds", Bot.getInstance().getBot().getGuilds().size() + "", true);
-		em.appendField("Connected users", Bot.getInstance().getBot().getUsers().size() + "", true);
+		int botUsers = (int) Bot.getInstance().getBot().getUsers().stream()
+				.filter(u -> u.isBot())
+				.count();
+		em.appendField("Connected users", Bot.getInstance().getBot().getUsers().size() + " (" + botUsers + " bots)", true);
 		em.appendField("Connected text channels", Bot.getInstance().getBot().getChannels().size() + "", true);
 		em.appendField("Connected music channels", Bot.getInstance().getBot().getConnectedVoiceChannels().size() + "", true);
 		em.appendField("Memory usage", format.format(r.totalMemory() / (1024 * 1024)) + "MB", true);
@@ -50,6 +53,7 @@ public class Diagnostics implements Command {
 		em.appendField("Threads", Thread.activeCount() + "", true);
 		em.appendField("Subreddit Feed Count", getSubredditFeedCount() + "", true);
 		em.withColor(Color.CYAN);
+		em.withFooterText("Bot version: " + Bot.BOT_VERSION);
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 	private static int getSubredditFeedCount() {
