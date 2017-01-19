@@ -60,6 +60,7 @@ public class AudioListeners {
 
 	private static void handleFinishedTrack(IGuild guild) {
 		Guild g = Guild.guildMap.get(guild.getID());
+		IVoiceChannel ch;
 		if(g.getMusicManager().getOverflowQueue().size() == 0) {
 			g.getMusicManager().setCurrentSong(null);
 			if(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()) != null) {
@@ -68,9 +69,14 @@ public class AudioListeners {
 						.withDesc("Looks like your queue is all dried up!")
 						.withColor(Color.MAGENTA);
 				MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
+				if((ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+						.filter(v -> v.getGuild().getID().equals(guild.getID()))
+						.findAny().orElse(null)) != null) {
+					ch.leave();
+				}
 			}
 		}
-		IVoiceChannel ch;
+		
 		if((ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
 				.filter(v -> v.getGuild().getID().equals(guild.getID()))
 				.findAny().orElse(null)) != null && ch.getConnectedUsers().size() == 1) {
