@@ -38,7 +38,8 @@ import sx.blah.discord.util.MissingPermissionsException;
 				example = "https://youtu.be/dQw4w9WgXcQ\n"
 						+ "now\n"
 						+ "next\n"
-						+ "skip"
+						+ "skip\n"
+						+ "volume"
 		)
 public class Music implements Command {
 	@Override
@@ -177,6 +178,9 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
+			em.withColor(Color.GREEN)
+			.withTitle("Success")
+			.withDesc("Set volume to " + contents);
 			g.getMusicManager().getAudioPlayer().setVolume((float) input / 100);
 			return;
 		/*} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
@@ -201,21 +205,6 @@ public class Music implements Command {
 		if(!msg.getAttachments().isEmpty()) {
 			contents = msg.getAttachments().get(0).getUrl();
 		}
-		/*IVoiceChannel ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
-				.filter(v -> v.getGuild().getID().equals(msg.getGuild().getID()))
-				.findAny().orElse(null);
-		if(ch == null) {
-			ch = Bot.getInstance().getBot()
-					.getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
-		}
-		if(msg.getAuthor().getConnectedVoiceChannels().isEmpty()
-				|| !ch.getID().equals(msg.getAuthor().getConnectedVoiceChannels().get(0))) {
-			em.withTitle("Error")
-			.withColor(Color.RED)
-			.withDesc("You must be in the correct music channel to queue a song!");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
-			return;
-		}*/
 		MusicSource source;
 		try {
 			if(contents.contains("youtu.be") || contents.contains("youtube")) {
