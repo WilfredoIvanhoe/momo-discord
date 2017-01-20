@@ -8,6 +8,7 @@ import java.net.URL;
 import io.ph.bot.Bot;
 import io.ph.bot.audio.MusicSource;
 import io.ph.bot.audio.sources.DirectLink;
+import io.ph.bot.audio.sources.Soundcloud;
 import io.ph.bot.audio.sources.Webm;
 import io.ph.bot.audio.sources.Youtube;
 import io.ph.bot.audio.sources.YoutubePlaylist;
@@ -225,6 +226,8 @@ public class Music implements Command {
 				source = new Webm(new URL(contents), msg);
 			} else if(contents.endsWith(".mp3") || contents.endsWith(".flac")) {
 				source = new DirectLink(new URL(contents), msg);
+			} else if(contents.contains("soundcloud")) {
+				source = new Soundcloud(new URL(contents), msg);
 			} else {
 				em.withColor(Color.RED)
 				.withTitle("Error")
