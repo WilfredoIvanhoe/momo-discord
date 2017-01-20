@@ -321,9 +321,25 @@ public class Util {
 	 */
 	public static String extractYoutubeId(String url) {
 		String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-		Pattern compiledPattern = Pattern.compile(pattern);
-		Matcher matcher = compiledPattern.matcher(url);
-		if(matcher.find()){
+		Pattern p = Pattern.compile(pattern);
+		Matcher matcher = p.matcher(url);
+		if(matcher.find()) {
+			return matcher.group();
+		} else {
+			return null;  
+		}
+	}
+
+	/**
+	 * Extract youtube playlist ID from given URL
+	 * @param url URL to extract from
+	 * @return ID if found, null if not
+	 */
+	public static String extractYoutubePlaylistId(String url) {
+		String pattern = "(?<=watch\\?list=|list=|embed\\/)[^#\\&\\?]*";
+		Pattern p = Pattern.compile(pattern);
+		Matcher matcher = p.matcher(url);
+		if(matcher.find()) {
 			return matcher.group();
 		} else {
 			return null;  
@@ -566,6 +582,21 @@ public class Util {
 		} else {
 			throw new UnsupportedAudioFileException();
 		}
+	}
+
+	public static long getMp3DurationMillis(File file) {
+		try {
+			AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+			if (fileFormat instanceof TAudioFileFormat) {
+				Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
+				String key = "duration";
+				Long microseconds = (Long) properties.get(key);
+				return (microseconds / 1000);
+			}
+		} catch(UnsupportedAudioFileException | IOException e) {
+			return 60 * 15 * 1000;
+		}
+		return 60 * 15 * 1000;
 	}
 
 	/**

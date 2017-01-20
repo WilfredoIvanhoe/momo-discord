@@ -1,14 +1,23 @@
 package io.ph.bot.commands.general;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import io.ph.bot.Bot;
-import io.ph.bot.audio.GetAudio;
+import io.ph.bot.audio.MusicSource;
+import io.ph.bot.audio.sources.DirectLink;
+import io.ph.bot.audio.sources.Soundcloud;
+import io.ph.bot.audio.sources.Webm;
+import io.ph.bot.audio.sources.Youtube;
+import io.ph.bot.audio.sources.YoutubePlaylist;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
+import io.ph.bot.exception.FileTooLargeException;
+import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Guild.GuildMusic;
-import io.ph.bot.model.Guild.MusicMeta;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import io.ph.util.Util;
@@ -30,20 +39,23 @@ import sx.blah.discord.util.MissingPermissionsException;
 				example = "https://youtu.be/dQw4w9WgXcQ\n"
 						+ "now\n"
 						+ "next\n"
-						+ "skip"
+						+ "skip\n"
+						+ "volume"
 		)
 public class Music implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
-		if(Guild.guildMap.get(msg.getGuild().getID()).getMusicManager() == null) {
+		String titleOverride = null;
+		Guild g = Guild.guildMap.get(msg.getGuild().getID());
+		if(g.getMusicManager() == null) {
 			IVoiceChannel v;
 			if((v = Bot.getInstance().getBot()
-					.getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice())) != null) {
+					.getVoiceChannelByID(g.getSpecialChannels().getVoice())) != null) {
 				try {
 					v.join();
-					Guild.guildMap.get(msg.getGuild().getID()).initMusicManager(msg.getGuild());
+					g.initMusicManager(msg.getGuild());
 				} catch (MissingPermissionsException e) {
 					e.printStackTrace();
 				}
@@ -65,7 +77,7 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
-		GuildMusic m = Guild.guildMap.get(msg.getGuild().getID()).getMusicManager();
+		GuildMusic m = g.getMusicManager();
 		if(contents.startsWith("skip")) {
 			if(m.getSkipVoters().contains(msg.getAuthor().getID())) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("You have already voted to skip!");
@@ -77,7 +89,7 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
-			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(Guild.guildMap.get(msg.getGuild().getID()).getSpecialChannels().getVoice());
+			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(g.getSpecialChannels().getVoice());
 			int current = voice.getConnectedUsers().size();
 			int currentVotes = m.getSkipVotes();
 			if(current <= 0)
@@ -113,12 +125,12 @@ public class Music implements Command {
 				return;
 			}
 			em.withTitle("Current song");
-			if(m.getCurrentSong().getTrackName() != null || m.getCurrentSong().getTrackName().equals(""))
-				em.withTitle("Current track: " + m.getCurrentSong().getTrackName());
+			if(m.getCurrentSong().getTitle() != null && !m.getCurrentSong().getTitle().isEmpty())
+				em.withTitle("Current track: " + m.getCurrentSong().getTitle());
 			else
 				em.withTitle("Current track");
 			StringBuilder sb = new StringBuilder();
-			sb.append("Queued by " + msg.getGuild().getUserByID(m.getCurrentSong().getUserId()).getDisplayName(msg.getGuild()));
+			sb.append("Queued by " + m.getCurrentSong().getQueuer().getDisplayName(msg.getGuild()));
 			if(m.getCurrentSong().getUrl() != null)
 				sb.append("\n" + m.getCurrentSong().getUrl());
 			String currentTime = Util.formatTime((int) m.getAudioPlayer().getCurrentTrack().getCurrentTrackTime());
@@ -128,7 +140,7 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		} else if(contents.startsWith("next") || contents.startsWith("list")) {
-			if(m.getAudioPlayer().getCurrentTrack() == null) {
+			if(m.getAudioPlayer().getCurrentTrack() == null && m.getOverflowQueueSize() == 0) {
 				em.withColor(Color.RED).withTitle("Error").withDesc("No song currently playing");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
@@ -136,14 +148,14 @@ public class Music implements Command {
 			em.withTitle("Coming up");
 			StringBuilder sb = new StringBuilder();
 			int count = 0;
-			for(MusicMeta meta : m.getMusicMeta()) {
+			for(MusicSource source : m.getOverflowQueue()) {
 				sb.append("**" + (++count) + ")** ");
-				if(!meta.getTrackName().equals("") || meta.getTrackName() == null) {
-					sb.append(meta.getTrackName() + " | ");
+				if(source.getTitle() != null && !source.getTitle().equals("")) {
+					sb.append(source.getTitle() + " | ");
 				} else {
 					sb.append("Unknown track name | ");
 				}
-				sb.append("Queued by " + msg.getGuild().getUserByID(meta.getUserId()).getDisplayName(msg.getGuild()) + "\n");
+				sb.append("Queued by " + source.getQueuer().getDisplayName(msg.getGuild()) + "\n");
 				if(count == 10) {
 					em.withFooterText("Queue search limited to 10 results");
 					break;
@@ -153,34 +165,111 @@ public class Music implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		} else if(contents.startsWith("stop") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
-			m.getAudioPlayer().clear();
-			m.getMusicMeta().clear();
-			m.setSkipVotes(0);
-			m.getSkipVoters().clear();
-			m.setCurrentSong(null);
+			m.reset();
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Playlist cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
+		} else if(contents.startsWith("volume") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+			int input;
+			if(!Util.isInteger(Util.getCommandContents(contents)) 
+					|| (input = Integer.parseInt(Util.getCommandContents(contents))) > 100 || input < 0) {
+				em.withColor(Color.RED)
+				.withTitle("Error")
+				.withDesc("Please set volume between 0 and 100");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
+			em.withColor(Color.GREEN)
+			.withTitle("Success")
+			.withDesc("Set volume to " + contents);
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			g.getMusicManager().getAudioPlayer().setVolume((float) input / 100);
+			return;
+		/*} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
+			if(m.getOverflowQueueSize() > 0) {
+				Util.setTimeout(() -> m.shuffle(), 0, true);
+				em.withColor(Color.GREEN).withTitle("Success").withDesc("Shuffled your playlist");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}*/
 		} else if(Util.isInteger(contents)) {
 			int index = Integer.parseInt(contents);
-			if((index) > Guild.guildMap.get(msg.getGuild().getID())
-					.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
+			if((index) > g.getHistoricalSearches().getHistoricalMusic().size() || index < 1) {
 				MessageUtils.sendErrorEmbed(msg.getChannel(), "Invalid input",
 						"Giving a number will play music on a previous theme or youtube search. This # is too large");
 				return;
 			}
-			String[] historicalResult = Guild.guildMap.get(msg.getGuild().getID())
+			String[] historicalResult = g
 					.getHistoricalSearches().getHistoricalMusic().get(index);
-			Runnable r = new GetAudio(msg.getAuthor().getID(), historicalResult[0], historicalResult[1], msg.getChannel(), m);
-			new Thread(r).start();
-			return;
+			titleOverride = historicalResult[0];
+			contents = historicalResult[1];
 		}
-		Runnable r;
 		if(!msg.getAttachments().isEmpty()) {
 			contents = msg.getAttachments().get(0).getUrl();
-		} 
-		r = new GetAudio(msg.getAuthor().getID(), "", contents, msg.getChannel(), m);
-		new Thread(r).start();
+		}
+		MusicSource source;
+		try {
+			if(contents.contains("youtu.be") || contents.contains("youtube")) {
+				if(Util.extractYoutubePlaylistId(contents) != null 
+						&& !Util.extractYoutubePlaylistId(contents).isEmpty()) {
+					String title = YoutubePlaylist.queuePlaylist(new URL(contents), msg);
+					em.withColor(Color.GREEN)
+					.withTitle("Queued the Youtube playlist: " + title)
+					.withDesc(msg.getAuthor().getDisplayName(msg.getGuild()) + " queued a Youtube playlist\n"
+							+ contents)
+					.withFooterText("Place in queue: " + (g.getMusicManager().getQueueSize() + 1));
+					MessageUtils.sendMessage(msg.getChannel(), em.build());
+					return;
+				} else {
+					source = new Youtube(new URL(contents), msg);
+				}
+			} else if(contents.contains(".webm")) {
+				source = new Webm(new URL(contents), msg);
+			} else if(contents.endsWith(".mp3") || contents.endsWith(".flac")) {
+				source = new DirectLink(new URL(contents), msg);
+			} else if(contents.contains("soundcloud")) {
+				source = new Soundcloud(new URL(contents), msg);
+			} else {
+				em.withColor(Color.RED)
+				.withTitle("Error")
+				.withDesc("I currently do not support that type of link or attachment");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
+			em.withColor(Color.GREEN)
+			.withTitle("Queued" + ((source.getTitle() != null) ? " " + source.getTitle() : ""))
+			.withDesc(source.getQueuer().getDisplayName(msg.getGuild()) + " queued a track")
+			.withFooterText("Place in queue: " + (g.getMusicManager().getQueueSize() + 1));
+			if(titleOverride != null)
+				source.setTitle(titleOverride);
+			if(!Bot.getInstance().getBot().getVoiceChannelByID(g.getSpecialChannels().getVoice()).isConnected()) {
+				try {
+					Bot.getInstance().getBot().getVoiceChannelByID(g.getSpecialChannels().getVoice()).join();
+				} catch (MissingPermissionsException e) {
+					e.printStackTrace();
+				}
+			}
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			g.getMusicManager().addMusicSource(source);
+			return;
+		} catch (MalformedURLException e) {
+			em.withColor(Color.RED)
+			.withTitle("Error")
+			.withDesc("Bad URL");
+		} catch (FileTooLargeException e) {
+			em.withColor(Color.RED)
+			.withTitle("Error")
+			.withDesc("File size too large. Please keep sizes under 25 megabytes");
+		} catch (IOException e) {
+			em.withColor(Color.RED)
+			.withTitle("Error")
+			.withDesc("Error occured queueing your file");
+			e.printStackTrace();
+		} catch (NoAPIKeyException e) {
+			em.withColor(Color.RED)
+			.withTitle("Error")
+			.withDesc("Bot not setup with correct API keys to use this service");
+		}
+		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
-
 }

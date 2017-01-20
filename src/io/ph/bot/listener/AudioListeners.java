@@ -2,14 +2,11 @@ package io.ph.bot.listener;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import io.ph.bot.Bot;
+import io.ph.bot.audio.MusicSource;
 import io.ph.bot.model.Guild;
 import io.ph.bot.model.Guild.GuildMusic;
-import io.ph.bot.model.Guild.MusicMeta;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
@@ -29,26 +26,21 @@ public class AudioListeners {
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
 		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		MusicMeta m = g.getMusicManager().pollMetaData();
-		if(g.getSpecialChannels().getMusic().equals(""))
-			return;
-		EmbedBuilder em = new EmbedBuilder();
-		em.withTitle("New track: " + m.getTrackName());
-		StringBuilder sb = new StringBuilder();
-		sb.append("<@" + m.getUserId() + ">, your song is now playing");
-		if(m.getUrl() != null)
-			sb.append("\n" + m.getUrl());
-		em.withDesc(sb.toString());
-		em.withColor(Color.CYAN);
-		MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
-
-		if(g.getMusicManager().getAudioPlayer().getPlaylistSize() < 2 && g.getMusicManager().getAudioSize() > 0) {
-			try {
-				g.getMusicManager().getAudioPlayer().queue(g.getMusicManager().pollGetAudio().getPreparedFile());
-			} catch (IOException | UnsupportedAudioFileException e1) {
-				e1.printStackTrace();
-			}
+		/*if(g.getMusicManager().getCurrentSong() == null)
+			g.getMusicManager().setCurrentSong(g.getMusicManager().getOverflowQueue().peek());*/
+		MusicSource source = g.getMusicManager().pollSource();
+		if(!g.getSpecialChannels().getMusic().equals("")) {
+			EmbedBuilder em = new EmbedBuilder();
+			em.withTitle("New track" + ((source != null && source.getTitle() != null) ? ": " + source.getTitle() : ""));
+			StringBuilder sb = new StringBuilder();
+			sb.append("<@" + source.getQueuer().getID() + ">, your song is now playing");
+			if(source.getUrl() != null)
+				sb.append("\n" + source.getUrl());
+			em.withDesc(sb.toString());
+			em.withColor(Color.CYAN);
+			MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
 		}
+		g.getMusicManager().queueNext();
 	}
 	@EventSubscriber
 	public void onTrackFinishEvent(TrackFinishEvent e) {
@@ -65,19 +57,33 @@ public class AudioListeners {
 		}
 		handleFinishedTrack(e.getPlayer().getGuild());
 	}
-	
+
 	private static void handleFinishedTrack(IGuild guild) {
 		Guild g = Guild.guildMap.get(guild.getID());
-		if(g.getMusicManager().getMusicMeta().size() == 0)
+		IVoiceChannel ch;
+		if(g.getMusicManager().getOverflowQueue().size() == 0) {
 			g.getMusicManager().setCurrentSong(null);
-		IVoiceChannel channel = guild.getVoiceChannelByID(g.getSpecialChannels().getVoice());
-		if(channel.getConnectedUsers().size() == 1) {
+			if(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()) != null) {
+				EmbedBuilder em = new EmbedBuilder()
+						.withTitle("Empty queue")
+						.withDesc("Looks like your queue is all dried up!")
+						.withColor(Color.MAGENTA);
+				MessageUtils.sendMessage(Bot.getInstance().getBot().getChannelByID(g.getSpecialChannels().getMusic()), em.build());
+				if((ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+						.filter(v -> v.getGuild().getID().equals(guild.getID()))
+						.findAny().orElse(null)) != null) {
+					ch.leave();
+				}
+			}
+		}
+		
+		if((ch = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+				.filter(v -> v.getGuild().getID().equals(guild.getID()))
+				.findAny().orElse(null)) != null && ch.getConnectedUsers().size() == 1) {
 			GuildMusic m = g.getMusicManager();
-			m.getAudioPlayer().clear();
-			m.getMusicMeta().clear();
-			m.setSkipVotes(0);
-			m.getSkipVoters().clear();
-			m.setCurrentSong(null);
+			m.reset();
+			//g.initMusicManager(guild);
+			ch.leave();
 		}
 	}
 }

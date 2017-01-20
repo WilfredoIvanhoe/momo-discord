@@ -77,7 +77,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.austinv11</groupId>
-			<artifactId>Discord4j</artifactId>
+      <artifactId>Discord4j</artifactId>
 			<version>55627ae</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j-stream -->

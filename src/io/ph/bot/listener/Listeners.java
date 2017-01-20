@@ -12,9 +12,6 @@ import io.ph.bot.Bot;
 import io.ph.bot.State;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
-import io.ph.bot.events.UserBanEvent;
-import io.ph.bot.events.UserMutedEvent;
-import io.ph.bot.events.UserUnmutedEvent;
 import io.ph.bot.feed.TwitterEventListener;
 import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
@@ -34,13 +31,8 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.impl.events.guild.member.NickNameChangeEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
-import sx.blah.discord.handle.impl.events.guild.member.UserPardonEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleDeleteEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.VoiceChannelDeleteEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.EmbedBuilder;
@@ -50,7 +42,7 @@ import sx.blah.discord.util.RateLimitException;
 public class Listeners {
 	@EventSubscriber
 	public void onReadyEvent(ReadyEvent e) {
-		LoggerFactory.getLogger(Listeners.class).info("Connecting to voice channels...");
+		/*LoggerFactory.getLogger(Listeners.class).info("Connecting to voice channels...");
 		int connectedVoice = 0;
 		for(IGuild guild : Bot.getInstance().getBot().getGuilds()) {
 			Guild g = Guild.guildMap.get(guild.getID());
@@ -68,10 +60,10 @@ public class Listeners {
 					e1.printStackTrace();
 				}
 			}
-		}
+		}*/
 		JobScheduler.initializeEventSchedule();
 		State.changeBotAvatar(new File("resources/avatar/" + Bot.getInstance().getAvatar()));
-		LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
+		//LoggerFactory.getLogger(Listeners.class).info("Connected to {} music channels", connectedVoice);
 		TwitterEventListener.initTwitter();
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
@@ -241,32 +233,6 @@ public class Listeners {
 	}
 
 	@EventSubscriber
-	public void onUserBanEvent(UserBanEvent e) {
-		Guild g = Guild.guildMap.get(e.getGuild().getID());
-		if(!g.getSpecialChannels().getLog().equals("")) {
-			EmbedBuilder em = new EmbedBuilder().withAuthorIcon(e.getUser().getAvatarURL())
-					.withAuthorName(e.getUser().getName() + " has been banned by " + e.getBanner().getName())
-					.withColor(Color.RED).withTimestamp(System.currentTimeMillis());
-			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
-		}
-	}
-
-	@EventSubscriber
-	public void onUserPardonEvent(UserPardonEvent e) {
-		Guild g = Guild.guildMap.get(e.getGuild().getID());
-		if(!g.getSpecialChannels().getLog().equals("")) {
-			try {
-				EmbedBuilder em = new EmbedBuilder().withTitle(e.getUser().getName() + " has been unbanned")
-						.withColor(Color.GREEN).withTimestamp(System.currentTimeMillis());
-				MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
-			} catch(NullPointerException e1) {
-				// Throws a NPE when the bot pardons, but still lets the message go through. Weird, D4j bug?
-			}
-		}
-	}
-
-
-	@EventSubscriber
 	public void onChannelCreateEvent(ChannelCreateEvent e) {
 		Guild g = Guild.guildMap.get(e.getChannel().getGuild().getID());
 		if(!g.getMutedRoleId().equals("")) {
@@ -278,16 +244,6 @@ public class Listeners {
 						Permissions.getDeniedPermissionsForNumber(0), Permissions.getAllowedPermissionsForNumber(2048));
 			} catch (Exception e1) {
 			} 
-		}
-	}
-
-	@EventSubscriber
-	public void onVoiceChannelDeleteEvent(VoiceChannelDeleteEvent e) {
-		Guild g = Guild.guildMap.get(e.getVoiceChannel().getGuild().getID());
-		if(e.getVoiceChannel().getID().equals(g.getSpecialChannels().getVoice())) {
-			g.getSpecialChannels().setVoice("");
-			LoggerFactory.getLogger(Listeners.class).info("Guild {} deleted their music voice channel.",
-					e.getVoiceChannel().getGuild().getID());
 		}
 	}
 
@@ -339,59 +295,5 @@ public class Listeners {
 				}
 			}
 		}
-	}
-
-	@EventSubscriber
-	public void onUserMutedEvent(UserMutedEvent e) {
-		Guild g = Guild.guildMap.get(e.getGuild().getID());
-		if(!g.getSpecialChannels().getLog().equals("")) {
-			EmbedBuilder em = new EmbedBuilder().withAuthorIcon(e.getUser().getAvatarURL())
-					.withAuthorName(e.getUser().getName() + " has been muted by " + e.getMuter().getName())
-					.withColor(Color.RED).withTimestamp(System.currentTimeMillis());
-			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
-		}
-	}
-
-	@EventSubscriber
-	public void onUserUnmutedEvent(UserUnmutedEvent e) {
-		Guild g = Guild.guildMap.get(e.getGuild().getID());
-		if(!g.getSpecialChannels().getLog().equals("")) {
-			EmbedBuilder em = new EmbedBuilder().withAuthorIcon(e.getUser().getAvatarURL())
-					.withAuthorName(e.getUser().getName() + " has been unmuted")
-					.withColor(Color.GREEN).withTimestamp(System.currentTimeMillis());
-			MessageUtils.sendMessage(e.getGuild().getChannelByID(g.getSpecialChannels().getLog()), em.build());
-		}
-	}
-
-	@EventSubscriber
-	public void onUserVoiceChannelLeaveEvent(UserVoiceChannelLeaveEvent e) {
-		if(e.getUser().equals(Bot.getInstance().getBot().getOurUser())) {
-			try {
-				if(Bot.getInstance().getBot().getVoiceChannelByID(e.getVoiceChannel().getID()) != null) {
-					Bot.getInstance().getBot().getVoiceChannelByID(e.getVoiceChannel().getID()).join();
-					LoggerFactory.getLogger(Listeners.class).warn("Auto rejoined voice channel {} in {}",
-							e.getVoiceChannel().getName(), e.getVoiceChannel().getGuild().getName());
-				}
-			} catch (MissingPermissionsException e1) { }
-		}
-		/*if(e.getChannel().getID().equals(Guild.guildMap.get(e.getChannel().getGuild().getID()).getSpecialChannels().getVoice())
-				&& e.getChannel().getConnectedUsers().size() == 1) {
-			Util.setTimeout(() -> killMusic(e.getChannel()), 15000, true);
-		}*/
-	}
-
-	/*@EventSubscriber
-	public void onUserVoiceChannelMoveEvent(UserVoiceChannelMoveEvent e) {
-		if(e.getOldChannel().getID().equals(Guild.guildMap.get(e.getOldChannel().getGuild().getID()).getSpecialChannels().getVoice())
-				&& e.getOldChannel().getConnectedUsers().size() == 1) {
-			Util.setTimeout(() -> killMusic(e.getOldChannel()), 15000, true);
-		}
-	}*/
-
-	static void killMusic(IVoiceChannel v) {
-		if(v.getConnectedUsers().size() > 1) {
-			return;
-		}
-		// Code to kill
 	}
 }

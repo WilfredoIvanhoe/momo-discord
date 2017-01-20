@@ -3,12 +3,14 @@ package io.ph.bot.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,8 @@ import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 
 import io.ph.bot.Bot;
-import io.ph.bot.audio.GetAudio;
+import io.ph.bot.audio.MusicSource;
+import io.ph.bot.audio.sources.Youtube;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.exception.BadCommandNameException;
@@ -33,6 +36,9 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.audio.AudioPlayer;
 
 public class Guild {
+	// How many songs to have buffered at one time per guild
+	private static final int MUSIC_QUEUE_SIZE = 3;
+
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
 	
 	private Map<String, Integer> userTimerMap = ExpiringMap.builder()
@@ -257,8 +263,7 @@ public class Guild {
 	public Map<String, Integer> getUserTimerMap() {
 		return userTimerMap;
 	}
-
-
+ 
 	public HistoricalSearches getHistoricalSearches() {
 		return historicalSearches;
 	}
@@ -330,6 +335,7 @@ public class Guild {
 	public void initMusicManager(IGuild guild) {
 		this.musicManager = new GuildMusic(guild);
 	}
+
 	public class ServerConfiguration {
 		private String commandPrefix;
 		private int messagesPerFifteen;
@@ -531,19 +537,21 @@ public class Guild {
 
 	public class GuildMusic {
 		private AudioPlayer audioPlayer;
-		private int trueQueueSize;
 		private int skipVotes;
-		private MusicMeta currentSong;
+		private MusicSource currentSong;
 
-		private ArrayList<String> skipVoters = new ArrayList<String>();
-		private LinkedList<MusicMeta> musicMeta = new LinkedList<MusicMeta>();
-		private LinkedList<GetAudio> overflowQueue = new LinkedList<GetAudio>();
+		private Set<String> skipVoters;
+		private LinkedList<MusicSource> overflowQueue;
+		
+		private int index;
 
 		public GuildMusic(IGuild guild) {
 			this.audioPlayer = new AudioPlayer(guild);
 			this.audioPlayer.setVolume(0.5f);
-			this.trueQueueSize = 0;
 			this.skipVotes = 0;
+			this.skipVoters = new HashSet<String>();
+			this.overflowQueue = new LinkedList<MusicSource>();
+			this.index = 0;
 		}
 
 		public AudioPlayer getAudioPlayer() {
@@ -551,44 +559,81 @@ public class Guild {
 		}
 
 		/**
-		 * The special method. If the audioPlayer queue size (the true, memory queue) is < 2,
-		 * then automatically queue this meta. Else, it will be "polled" by the TrackStopEvent
+		 * The special method. Queue a MusicSource, which will then be buffered if the current
+		 * audio playlist size is less than designated MUSIC_QUEUE_SIZE
 		 * @param userId User who queued
 		 * @param trackName Name of track
 		 * @param url URL if applicable
+		 * @throws UnsupportedAudioFileException 
+		 * @throws IOException 
 		 */
-		public void queueMusicMeta(String userId, String trackName, String url, String songLength, GetAudio get) {
-			musicMeta.add(new MusicMeta(userId, trackName, url, songLength, get));
-			if(this.audioPlayer.getPlaylistSize() < 2) {
-				try {
-					audioPlayer.queue(get.getPreparedFile());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (UnsupportedAudioFileException e) {
-					e.printStackTrace();
-				}
-			} else {
-				overflowQueue.add(get);
+		public void addMusicSource(MusicSource source) {
+			overflowQueue.add(source);
+			if(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
+				queueNext();
 			}
-			trueQueueSize++;
-			this.currentSong = this.getMusicMeta().get(0);
+		}
+		
+		/**
+		 * Move a song from the overflowqueue to the AudioPlayer queue
+		 */
+		public synchronized void queueNext() {
+			if(overflowQueue.isEmpty() || index >= overflowQueue.size())
+				return;
+			try {
+				MusicSource source;
+				if((source = overflowQueue.get(index)).isQueued()) {
+					return;
+				}
+				index++;
+				source.setQueued(true);
+				if(source instanceof Youtube) {
+					((Youtube) source).processVideo();
+				}
+				audioPlayer.queue(source.getSource());
+			} catch (IOException | UnsupportedAudioFileException e) {
+				e.printStackTrace();
+				overflowQueue.pop();
+				index--;
+			}
+		}
+		
+		/**
+		 * non-functional
+		 * TODO: make it functional
+		 */
+		public void shuffle() {
+			this.audioPlayer.clear();
+			Collections.shuffle(this.overflowQueue);
+			this.index = 0;
+			while(this.audioPlayer.getPlaylistSize() < MUSIC_QUEUE_SIZE) {
+				queueNext();
+			}
+		}
+		
+		public MusicSource pollSource() {
+			index--;
+			return (this.currentSong = overflowQueue.poll());
 		}
 
-		public MusicMeta pollMetaData() {
-			trueQueueSize--;
-			this.currentSong = musicMeta.peek();
-			return musicMeta.poll();
+		public LinkedList<MusicSource> getOverflowQueue() {
+			return overflowQueue;
 		}
 
-		public GetAudio pollGetAudio() {
-			return overflowQueue.poll();
-		}
-
-		public int getAudioSize() {
+		public int getOverflowQueueSize() {
 			return overflowQueue.size();
 		}
+
 		public int getQueueSize() {
-			return trueQueueSize;
+			return overflowQueue.size();
+		}
+		
+		/**
+		 * Use this to test for no music at all
+		 * @return True if empty (and nothing currently playing), false if not
+		 */
+		public boolean emptyQueue() {
+			return overflowQueue.size() + this.audioPlayer.getPlaylistSize() == 0;
 		}
 
 		public int getSkipVotes() {
@@ -599,75 +644,24 @@ public class Guild {
 			this.skipVotes = skipVotes;
 		}
 
-		public ArrayList<String> getSkipVoters() {
+		public Set<String> getSkipVoters() {
 			return skipVoters;
 		}
 
-		public LinkedList<MusicMeta> getMusicMeta() {
-			return musicMeta;
-		}
-
-		public void setCurrentSong(MusicMeta m) {
+		public void setCurrentSong(MusicSource m) {
 			this.currentSong = m;
 		}
 
-		public MusicMeta getCurrentSong() {
+		public MusicSource getCurrentSong() {
 			return this.currentSong;
 		}
-
-		/*public String getSongLength() {
-			return songLength;
-		}
-
-		public void setSongLength(String songLength) {
-			this.songLength = songLength;
-		}*/
-
-	}
-
-	public class MusicMeta {
-		private String userId;
-		private String trackName;
-		private String url;
-		private GetAudio audioSrcInterface;
-		private String songLength;
-
-		public MusicMeta(String userId, String trackName, String url, String songLength, GetAudio get) {
-			this.userId = userId;
-			this.trackName = trackName;
-			this.url = url;
-			this.songLength = songLength;
-			this.audioSrcInterface = get;
-		}
-		public String getUserId() {
-			return userId == null ? "" : userId;
-		}
-		public void setUserId(String userId) {
-			this.userId = userId;
-		}
-		public String getTrackName() {
-			return trackName == null ? "" : trackName;
-		}
-		public void setTrackName(String trackName) {
-			this.trackName = trackName;
-		}
-		public String getUrl() {
-			return url;
-		}
-		public void setUrl(String url) {
-			this.url = url;
-		}
-		public GetAudio getAudioSrcInterface() {
-			return audioSrcInterface;
-		}
-		public void setAudioSrcInterface(GetAudio audioSrcInterface) {
-			this.audioSrcInterface = audioSrcInterface;
-		}
-		public String getSongLength() {
-			return songLength;
-		}
-		public void setSongLength(String songLength) {
-			this.songLength = songLength;
+		public void reset() {
+			this.setCurrentSong(null);
+			this.setSkipVotes(0);
+			this.overflowQueue.clear();
+			this.skipVoters.clear();
+			this.audioPlayer.clear();
+			this.index = 0;
 		}
 	}
 }
