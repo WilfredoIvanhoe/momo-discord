@@ -167,7 +167,7 @@ public class Listeners {
 			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "Hi, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
 					+ "If you want a list of commands, use `$commandlist`. If you want some tutorials on my features, "
-					+ "do `$howto`");
+					+ "do `$howto` - I suggest doing `$howto setup` immediately. For easy, one time configuration, do `$configure`");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}
 	}
