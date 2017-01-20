@@ -182,6 +182,7 @@ public class Music implements Command {
 			em.withColor(Color.GREEN)
 			.withTitle("Success")
 			.withDesc("Set volume to " + contents);
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			g.getMusicManager().getAudioPlayer().setVolume((float) input / 100);
 			return;
 		/*} else if(contents.startsWith("shuffle") && m.getOverflowQueue().size() > 0) {
