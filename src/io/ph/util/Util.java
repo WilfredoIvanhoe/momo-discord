@@ -565,7 +565,6 @@ public class Util {
 	 * @return min:sec
 	 */
 	public static String getMp3Duration(File file) throws UnsupportedAudioFileException, IOException {
-		System.out.println(file.getAbsolutePath());
 		AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
 		if (fileFormat instanceof TAudioFileFormat) {
 			Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();

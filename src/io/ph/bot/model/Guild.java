@@ -548,16 +548,13 @@ public class Guild {
 			try {
 				MusicSource source;
 				if((source = overflowQueue.get(index)).isQueued()) {
-					System.out.println("Already queued");
 					return;
 				}
 				index++;
-				System.out.println("Incremented index: " + index);
 				source.setQueued(true);
 				if(source instanceof Youtube) {
 					((Youtube) source).processVideo();
 				}
-				System.out.println("Getting source: " + source.getSource().getName());
 				audioPlayer.queue(source.getSource());
 			} catch (IOException | UnsupportedAudioFileException e) {
 				e.printStackTrace();
@@ -571,8 +568,6 @@ public class Guild {
 		 * TODO: make it functional
 		 */
 		public void shuffle() {
-			System.out.println(this.audioPlayer.getPlaylistSize());
-			System.out.println(this.overflowQueue.size());
 			this.audioPlayer.clear();
 			Collections.shuffle(this.overflowQueue);
 			this.index = 0;
@@ -583,7 +578,6 @@ public class Guild {
 		
 		public MusicSource pollSource() {
 			index--;
-			System.out.println("New index: " +  index);
 			return (this.currentSong = overflowQueue.poll());
 		}
 

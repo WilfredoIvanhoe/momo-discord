@@ -23,7 +23,6 @@ import sx.blah.discord.handle.obj.IMessage;
 public class YoutubePlaylist {
 
 	public static String queuePlaylist(URL url, IMessage msg) throws IOException, NoAPIKeyException, FileTooLargeException {
-		System.out.println("Queueing a playlist: " + Util.extractYoutubePlaylistId(url.toString()));
 		YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
 			@Override
 			public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
@@ -37,17 +36,14 @@ public class YoutubePlaylist {
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
 		List<PlaylistItem> list = search.execute().getItems();
 		if(list.isEmpty()) {
-			System.out.println("Couldn't find playlist for ID: " + playlistId);
 			throw new MalformedURLException();
 		}
 		for(PlaylistItem p : list) {
-			System.out.println("Iterating for video: " + p.getSnippet().getTitle() + " | " + p.getContentDetails().getVideoId());
 			try {
 				MusicSource source = 
 						new Youtube(new URL(String.format("https://youtube.com/watch?v=%s", p.getContentDetails().getVideoId())), msg);
 				g.getMusicManager().addMusicSource(source);
 			} catch(FileTooLargeException e) {
-				System.out.println("File is too large");
 				continue;
 			}
 		}

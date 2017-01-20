@@ -34,7 +34,6 @@ public class Youtube extends MusicSource {
 		}).setApplicationName("momo discord bot").build();
 		YouTube.Videos.List search = youtube.videos().list("snippet,contentDetails")
 				.setKey(Bot.getInstance().getApiKeys().get("youtube")).setId(Util.extractYoutubeId(super.getUrl().toString()));
-		System.out.println("Youtube#downloadLocally at ID " + Util.extractYoutubeId(super.getUrl().toString()));
 		Video v;
 		try {
 			v = search.execute().getItems().get(0);
@@ -51,14 +50,6 @@ public class Youtube extends MusicSource {
 	public synchronized void processVideo() {
 		String command = "youtube-dl --external-downloader ffmpeg -o resources/tempdownloads/"
 				+ super.getFileSeed() + ".mp4 -f mp4 --extract-audio --audio-format mp3 " + super.getUrl();
-		/*try {
-			File copied = new File(super.getSource().getCanonicalPath() + ".mp3");
-			super.getSource().delete();
-			super.setSource(copied);
-			System.out.println("Set source to: " + copied.getName() + " for object address: " + this.toString());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}*/
 		Process p = null;
 		try {
 			p = Runtime.getRuntime().exec(command);
