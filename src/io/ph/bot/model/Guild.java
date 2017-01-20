@@ -40,6 +40,11 @@ public class Guild {
 	private static final int MUSIC_QUEUE_SIZE = 3;
 
 	public static HashMap<String, Guild> guildMap = new HashMap<String, Guild>();
+	
+	private Map<String, Integer> userTimerMap = ExpiringMap.builder()
+			.expiration(15, TimeUnit.SECONDS)
+			.expirationPolicy(ExpirationPolicy.CREATED)
+			.build();
 	private PropertiesConfiguration config;
 	private SpecialChannels specialChannels;
 	private HashMap<String, String> optIn = new HashMap<String, String>();
@@ -95,10 +100,13 @@ public class Guild {
 		}
 		String welcomeMessage = Arrays.toString(config.getStringArray("NewUserWelcomeMessage"));
 		welcomeMessage = welcomeMessage.substring(1, welcomeMessage.length() - 1);
-		this.guildConfig = new ServerConfiguration(config.getString("ServerCommandPrefix"), config.getInt("MessagesPerFifteenSeconds"),
+		this.guildConfig = new ServerConfiguration(config.getString("ServerCommandPrefix"), 
+				config.getInt("MessagesPerFifteenSeconds"),
 				config.getInt("CommandCooldown"), 
 				welcomeMessage,
-				config.getBoolean("FirstTime"));
+				config.getBoolean("LimitToOneRole", false),
+				config.getBoolean("FirstTime"),
+				config.getBoolean("DisableInvites", false));
 		String[] joinableRolesP = config.getStringArray("JoinableRoles");
 		for(String s : joinableRolesP) {
 			if(s.equals(""))
@@ -117,6 +125,7 @@ public class Guild {
 		Guild.guildMap.put(g.getID(), this);
 		Bot.getInstance().getLogger().info("Guild {} initialized - {}", g.getID(), g.getName());
 	}
+
 
 	/**
 	 * Disable a command on this guild
@@ -251,6 +260,10 @@ public class Guild {
 		}
 	}
 
+	public Map<String, Integer> getUserTimerMap() {
+		return userTimerMap;
+	}
+ 
 	public HistoricalSearches getHistoricalSearches() {
 		return historicalSearches;
 	}
@@ -328,15 +341,19 @@ public class Guild {
 		private int messagesPerFifteen;
 		private int commandCooldown;
 		private String welcomeMessage;
+		private boolean limitToOneRole;
 		private boolean firstTime;
+		private boolean disableInvites;
 
 		ServerConfiguration(String commandPrefix, int messagesPerFifteen, int commandCooldown,
-				String welcomeMessage, boolean firstTime) {
+				String welcomeMessage, boolean limitToOneRole, boolean firstTime, boolean disableInvites) {
 			this.commandPrefix = commandPrefix;
 			this.messagesPerFifteen = messagesPerFifteen;
 			this.commandCooldown = commandCooldown;
 			this.welcomeMessage = welcomeMessage;
+			this.limitToOneRole = limitToOneRole;
 			this.firstTime = firstTime;
+			this.disableInvites = disableInvites;
 		}
 
 		@Override
@@ -380,6 +397,24 @@ public class Guild {
 		public void setFirstTime(boolean firstTime) {
 			this.firstTime = firstTime;
 			config.setProperty("FirstTime", firstTime);
+		}
+
+		public boolean isLimitToOneRole() {
+			return limitToOneRole;
+		}
+
+		public void setLimitToOneRole(boolean limitToOneRole) {
+			this.limitToOneRole = limitToOneRole;
+			config.setProperty("LimitToOneRole", limitToOneRole);
+		}
+
+		public boolean isDisableInvites() {
+			return disableInvites;
+		}
+
+		public void setDisableInvites(boolean disableInvites) {
+			this.disableInvites = disableInvites;
+			config.setProperty("DisableInvites", disableInvites);
 		}
 	}
 

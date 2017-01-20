@@ -15,6 +15,7 @@ import io.ph.bot.commands.CommandHandler;
 import io.ph.bot.feed.TwitterEventListener;
 import io.ph.bot.jobs.WebSyncJob;
 import io.ph.bot.model.Guild;
+import io.ph.bot.model.Permission;
 import io.ph.bot.procedural.ProceduralListener;
 import io.ph.bot.scheduler.JobScheduler;
 import io.ph.util.MessageUtils;
@@ -66,7 +67,7 @@ public class Listeners {
 		TwitterEventListener.initTwitter();
 		Bot.getInstance().getLogger().info("Bot is now online");
 	}
-	
+
 	@EventSubscriber
 	public void onRoleDeleteEvent(RoleDeleteEvent e) {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());
@@ -93,16 +94,38 @@ public class Listeners {
 				em.appendField("Aliases", 
 						Arrays.toString(aliases).substring(1, Arrays.toString(aliases).length() - 1) + "\n", true);
 			}
-			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false).
-			appendField("Example", c.getDefaultCommand() + " " + c.getExample(), false);
-			em.appendField("Example", c.getDefaultCommand() + " " + c.getExample().replaceAll("\n", "\n" + c.getDefaultCommand() + " "), false);
+			em.appendField("Permissions", c.getPermission().toString(), true).appendField("Description", c.getDescription(), false)
+			.appendField("Example", c.getDefaultCommand() + " " + c.getExample().replaceAll("\n", "\n" + c.getDefaultCommand() + " "), false);
 			MessageUtils.sendPrivateMessage(e.getMessage().getAuthor(), em.build());
 			return;
 		}
 		Guild g = Guild.guildMap.get(e.getMessage().getGuild().getID());
+		if(g.getGuildConfig().isDisableInvites() 
+				&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)) {
+			if(e.getMessage().getContent().toLowerCase().contains("discord.gg/")) {
+				e.getMessage().delete();
+			}
+		}
 		if(e.getMessage().getContent().startsWith(g.getGuildConfig().getCommandPrefix())) {
 			CommandHandler.processCommand(e.getMessage());
 			return;
+		}
+		if(g.getGuildConfig().getMessagesPerFifteen() > 0
+				&& !Util.userHasPermission(e.getAuthor(), e.getGuild(), Permission.KICK)) {
+			Integer counter;
+			if((counter = g.getUserTimerMap().get(e.getAuthor().getID())) == null) {
+				counter = 0;
+			}
+			if(++counter > g.getGuildConfig().getMessagesPerFifteen()) {
+				e.getMessage().delete();
+				EmbedBuilder em = new EmbedBuilder();
+				em.withColor(Color.RED)
+				.withTitle("Error")
+				.withDesc("Whoa, slow down there! You're sending too many messages");
+				MessageUtils.sendPrivateMessage(e.getAuthor(), em.build());
+			} else {
+				g.getUserTimerMap().put(e.getAuthor().getID(), counter);
+			}
 		}
 		try {
 			if(g.getFeatureStatus("reactions")) {
@@ -141,9 +164,10 @@ public class Listeners {
 		Guild g = new Guild(e.getGuild());
 
 		if(g.getGuildConfig().isFirstTime()) {
-			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "'allo, I'm Momo! You are my "
+			MessageUtils.sendMessage(e.getGuild().getChannels().get(0), "Hi, I'm Momo! You are my "
 					+ Util.ordinal(Bot.getInstance().getBot().getGuilds().size()) + " server.\n"
-					+ "Command prefix: $ | Try $info");
+					+ "If you want a list of commands, use `$commandlist`. If you want some tutorials on my features, "
+					+ "do `$howto`");
 			Guild.guildMap.get(e.getGuild().getID()).getGuildConfig().setFirstTime(false);
 		}
 	}
@@ -152,8 +176,8 @@ public class Listeners {
 	public void onGuildLeaveEvent(GuildLeaveEvent e) {
 		try {
 			FileUtils.deleteDirectory(new File("resources/guilds/" + e.getGuild().getID() + "/"));
-			Bot.getInstance().getLogger().info("Guild has left: {}", e.getGuild().getName());
 			Guild.guildMap.remove(e.getGuild().getID());
+			Bot.getInstance().getLogger().info("Guild has left: {}", e.getGuild().getName());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -272,5 +296,4 @@ public class Listeners {
 			}
 		}
 	}
-	
 }

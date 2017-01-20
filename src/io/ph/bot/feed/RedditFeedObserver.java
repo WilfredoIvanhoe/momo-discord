@@ -104,7 +104,7 @@ public class RedditFeedObserver implements Serializable {
 									.addConverterFactory(GsonConverterFactory.create())
 									.build();
 							ImgurAPI imgur = retrofit.create(ImgurAPI.class);
-							Pattern p = Pattern.compile("(?:https?:\\/\\/(?:m.)?imgur\\.com\\/(?:[a|gallery]+\\/)?)(.*?)(?:[#\\/].*|$)");
+							Pattern p = Pattern.compile("(?:https?:\\/\\/(?:m.)?imgur\\.com\\/(?:[a|gallery]+\\/)?)(.*?)(?:[#\\/].*|$|\\?)");
 							Matcher m = p.matcher(post.getUrl());
 							if(m.find()) {
 								if(post.getUrl().contains("/a/") || post.getUrl().contains("/gallery/")) {

@@ -78,6 +78,8 @@ public class Launcher {
 					+ "You won't be able to use the theme command!");
 		}
 		new File("resources/tempdownloads").mkdirs();
+		new File("resources/feeds").mkdirs();
+		new File("resources/cache").mkdirs();
 	}
 
 }

@@ -1,4 +1,4 @@
-package io.ph.bot.commands.general;
+package io.ph.bot.commands.moderation;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "unregistertwitch",
 		aliases = {},
-		permission = Permission.NONE,
+		permission = Permission.KICK,
 		description = "Unregister a username from Twitch.tv notifications",
 		example = "TSM_TheOddOne"
 		)

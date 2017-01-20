@@ -1,6 +1,8 @@
 package io.ph.bot.commands.general;
 
 import java.awt.Color;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
@@ -46,6 +48,21 @@ public class JoinRole implements Command {
 					em.withColor(Color.CYAN).withTitle("Hmm...").withDesc("You're already in this role!");
 					MessageUtils.sendMessage(msg.getChannel(), em.build());
 					return;
+				}
+				if(Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().isLimitToOneRole()) {
+					Set<String> userRoles = msg.getAuthor().getRolesForGuild(msg.getGuild())
+							.stream()
+							.map(IRole::getID)
+							.collect(Collectors.toSet());
+					if(userRoles.stream()
+							.filter(s -> Guild.guildMap.get(msg.getGuild().getID()).getJoinableRoles().contains(s))
+							.count() > 0) {
+						em.withTitle("Error")
+						.withColor(Color.RED)
+						.withDesc("You cannot join more than one role!");
+						MessageUtils.sendMessage(msg.getChannel(), em.build());
+						return;
+					}
 				}
 				try {
 					msg.getAuthor().addRole(r);

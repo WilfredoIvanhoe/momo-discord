@@ -1,4 +1,4 @@
-package io.ph.bot.commands.general;
+package io.ph.bot.commands.moderation;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -26,9 +26,8 @@ import sx.blah.discord.util.EmbedBuilder;
 @CommandData (
 		defaultSyntax = "twitch",
 		aliases = {"registertwitch"},
-		permission = Permission.NONE,
-		description = "Register a Twitch channel for notifications, if the Twitch announcement channel is setup\n"
-				+ "Protip: If users are spamming users, disable the command so it is only usable by moderators+",
+		permission = Permission.KICK,
+		description = "Register a Twitch channel for notifications, if the Twitch announcement channel is setup",
 				example = "TSM_TheOddOne"
 		)
 public class RegisterTwitch implements Command {
