@@ -31,6 +31,7 @@ public class Soundcloud extends MusicSource {
 		if(jo.getInt("duration", Integer.MAX_VALUE) > (15 * 60 * 1000)) {
 			throw new FileTooLargeException(super.getUrl());
 		}
+		super.setTitle(jo.getString("title", ""));
 		int id = jo.getInt("id", 1);
 		URL download = new URL("https://api.soundcloud.com/tracks/" 
 				+ id + "/stream?client_id=" 
