@@ -40,8 +40,8 @@ public class PokemonSearch implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder();
-		String contents = Util.getCommandContents(msg);
-		if(contents.split(" ")[0].equalsIgnoreCase("mega")) {
+		String contents = Util.getCommandContents(msg).toLowerCase();
+		if(contents.split(" ")[0].equals("mega")) {
 			contents = Util.getCommandContents(contents);
 			contents += "-mega";
 		}
