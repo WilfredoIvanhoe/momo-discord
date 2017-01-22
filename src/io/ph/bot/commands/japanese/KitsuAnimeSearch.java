@@ -78,8 +78,8 @@ public class KitsuAnimeSearch implements Command {
 				aired.append(" -\n" + anime.getData().get(0).getAttributes().getEndDate());
 			if(aired.length() > 0)
 				em.appendField("Airing Dates", aired.toString(), true);
-			if(anime.getData().get(0).getAttributes().getSynopsis().length() > 500)
-				anime.getData().get(0).getAttributes().setSynopsis(anime.getData().get(0).getAttributes().getSynopsis().substring(0, 300) + "...");
+			if(anime.getData().get(0).getAttributes().getSynopsis().length() > 800)
+				anime.getData().get(0).getAttributes().setSynopsis(anime.getData().get(0).getAttributes().getSynopsis().substring(0, 700) + "...");
 			em.appendField("Synopsis", anime.getData().get(0).getAttributes().getSynopsis(), false);
 			em.withFooterText("information from kitsu.io");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());

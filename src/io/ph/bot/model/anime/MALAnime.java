@@ -37,7 +37,6 @@ public class MALAnime {
 		this.malId = jo.getInt("id", 0);
 		this.malLink = "https://myanimelist.net/anime/" + this.malId;
 
-		this.synopsis = Jsoup.parse(jo.getString("synopsis", "")).text();
 		this.synopsis = Jsoup.parse(jo.getString("synopsis", "")).text()
 				.replaceAll("\\[[^]]+\\]", "");
 		this.imageLink = jo.getString("image", "");
