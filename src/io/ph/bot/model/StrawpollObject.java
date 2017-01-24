@@ -21,7 +21,7 @@ public class StrawpollObject {
 	private int[] votes;
 
 	//They claim to support HTTPS but they don't. Wew
-	private static String baseApiUrl = "http://strawpoll.me/api/v2/polls";
+	private static String baseApiUrl = "http://www.strawpoll.me/api/v2/polls";
 
 	public StrawpollObject(String title, boolean multiVote, String[] options, int[] votes) {
 		this.title = title;
@@ -57,8 +57,6 @@ public class StrawpollObject {
 		conn.setDoOutput(true);
 		conn.setRequestProperty("Content-Type", "application/json");
 		conn.setRequestProperty("Content-Length", jo.toString().length() + "");
-		conn.setRequestProperty("User-Agent",
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 		conn.getOutputStream().write(jo.toString().getBytes("UTF-8"));
 		BufferedReader rd = new BufferedReader(
 				new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
