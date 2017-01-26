@@ -1,16 +1,20 @@
 # Momo, your new Discord bot
 [![license](https://img.shields.io/github/license/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/blob/master/LICENSE) [![Dependencies](https://app.updateimpact.com/badge/809606116261629952/Momo%20Discord%20Bot.svg?config=test)](https://app.updateimpact.com/latest/809606116261629952/Momo%20Discord%20Bot) [![Dependency Status](https://www.versioneye.com/user/projects/58677499e78d7d00471b7787/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58677499e78d7d00471b7787) [![GitHub release](https://img.shields.io/github/release/paul-io/momo-discord.svg)](https://github.com/paul-io/momo-discord/releases) [![join the Momo discord server](https://img.shields.io/badge/discord-join%20now-74a2ed.svg)](https://discord.gg/uM3pyW8) 
 
-Join the discord server linked above to get support, see upcoming features, or to test the bot! Also, check out the website for a command list & bot status [here](http://momobot.io)
+Join the discord server linked above to get support, see upcoming features, or to test the bot! Also, check out the website for a command list & bot status [here](https://momobot.io)
 
 **Momo** is a simple-to-use Discord bot based off of [Discord4J](https://github.com/austinv11/Discord4J).  From sending Twitch.tv notifications to playing music, and from pulling anime theme songs off of [Themes.moe](https://themes.moe) to temporarily muting troublemakers, Momo can do a lot for your server.
 
+
 ## Adding Momo to your server
-Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want it to join. When she joins, go ahead and run `$info`. It's as easy as that!
+Visit [this link](https://discordapp.com/oauth2/authorize?client_id=259137993351102464&scope=bot&permissions=268435518) and select which server you want it to join. The bot will give you a bit of an intro message letting you know everything is a-ok. It's as easy as that!
 #### What commands are available?
-Send the command `$help` or visit the website at [this link](http://momobot.io/public/commands.html). If you need more information on specific commands, you can try `$help command-name` or just PM the bot the command name.
+Send the command `$help` or visit the website at [this link](https://momobot.io/commands.html). If you need more information on specific commands, you can try `$help command-name` or just PM the bot the command name.
+###Web dashboard
+Introduced in update 1.2, Momo features a [web dashboard](https://momobot.io/dash) to configure various aspects of the bot, such as welcome prefix, enabled commands, and Twitter/Reddit feeds. You don't have to be the server owner, either - configuration starts from moderators with the `kick` permission. Everything that can be done through the dashboard can also be done through commands.
 ### Features? Gimme some info!
 * Reddit, Twitter, & Twitch.tv feeds - Get updates directly to your channel of choice with image/preview configuration
+* Web dashboard. Configure your server settings from the ease of your browser from the [dashboard](https://momobot.io/dash)
 * Role management: Set roles as *joinable* and allow users to join/leave at their whim
 * Play music in a music channel. Can play off direct Youtube searches with `$youtube`
 * Bring up character for various video games: FFXIV, WoW *(LoL & osu! coming soon)*
