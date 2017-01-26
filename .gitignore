@@ -33,3 +33,5 @@ dependency-reduced-pom.xml
 /clean_resources/
 # temporary #
 /web2/
+/ignore/
+keystore.jks
