@@ -15,18 +15,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.apache.tika.Tika;
-import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonValue;
@@ -38,6 +33,7 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.RateLimitException;
@@ -280,6 +276,15 @@ public class Util {
 	 */
 	public static JsonValue jsonFromUrl(String url) throws IOException {
 		return Json.parse(stringFromUrl(url));
+	}
+	
+	/**
+	 * Return if bot is connected to given voice channel
+	 * @param voice Voice channel to check
+	 * @return True if connected, false if not
+	 */
+	public static boolean connectedToChannel(IVoiceChannel voice) {
+		return Bot.getInstance().getBot().getConnectedVoiceChannels().contains(voice);
 	}
 
 	/**
@@ -560,53 +565,15 @@ public class Util {
 		}
 		return nowLDT.atZone(ZoneId.systemDefault()).toInstant();
 	}
-	/**
-	 * Alternative to AudioPlayer#getTotalTrackTime formatted in min:sec
-	 * @param file file to check (mp3)
-	 * @throws UnsupportedAudioFileException bad file type
-	 * @throws IOException file not found
-	 * @return min:sec
-	 */
-	public static String getMp3Duration(File file) throws UnsupportedAudioFileException, IOException {
-		AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-		if (fileFormat instanceof TAudioFileFormat) {
-			Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
-			String key = "duration";
-			Long microseconds = (Long) properties.get(key);
-			int milli = (int) (microseconds / 1000);
-			int sec = (milli / 1000) % 60;
-			int min = (milli / 1000) / 60;
-			if((sec+"").length() == 1)
-				return min+":0"+sec;
-			return min+":"+sec;
-		} else {
-			throw new UnsupportedAudioFileException();
-		}
-	}
-
-	public static long getMp3DurationMillis(File file) {
-		try {
-			AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-			if (fileFormat instanceof TAudioFileFormat) {
-				Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
-				String key = "duration";
-				Long microseconds = (Long) properties.get(key);
-				return (microseconds / 1000);
-			}
-		} catch(UnsupportedAudioFileException | IOException e) {
-			return 60 * 15 * 1000;
-		}
-		return 60 * 15 * 1000;
-	}
 
 	/**
 	 * Convert milliseconds to mm:ss format
-	 * @param milli int of milliseconds (not expecting Long values)
+	 * @param milli long of milliseconds (not expecting Long values)
 	 * @return min:sec
 	 */
-	public static String formatTime(int milli) {
-		int sec = (milli / 1000) % 60;
-		int min = (milli / 1000) / 60;
+	public static String formatTime(long milli) {
+		long sec = (milli / 1000) % 60;
+		long min = (milli / 1000) / 60;
 		if((sec+"").length() == 1)
 			return min+":0"+sec;
 		return min+":"+sec;

@@ -1,33 +1,17 @@
 package io.ph.bot.listener;
 
-import java.awt.Color;
-import java.io.File;
-
-import io.ph.bot.Bot;
-import io.ph.bot.audio.MusicSource;
-import io.ph.bot.model.Guild;
-import io.ph.bot.model.Guild.GuildMusic;
-import io.ph.util.MessageUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IVoiceChannel;
-import sx.blah.discord.util.EmbedBuilder;
-import sx.blah.discord.util.audio.events.TrackFinishEvent;
-import sx.blah.discord.util.audio.events.TrackSkipEvent;
-import sx.blah.discord.util.audio.events.TrackStartEvent;
-
 /**
  * Event listeners related to the audio functionality of Momo
  * @author Paul
  *
  */
 public class AudioListeners {
-
+/*
 	@EventSubscriber
 	public void onTrackStartEvent(TrackStartEvent e) {
 		Guild g = Guild.guildMap.get(e.getPlayer().getGuild().getID());
-		/*if(g.getMusicManager().getCurrentSong() == null)
-			g.getMusicManager().setCurrentSong(g.getMusicManager().getOverflowQueue().peek());*/
+		if(g.getMusicManager().getCurrentSong() == null)
+			g.getMusicManager().setCurrentSong(g.getMusicManager().getOverflowQueue().peek());
 		MusicSource source = g.getMusicManager().pollSource();
 		if(!g.getSpecialChannels().getMusic().equals("")) {
 			EmbedBuilder em = new EmbedBuilder();
@@ -85,5 +69,5 @@ public class AudioListeners {
 			//g.initMusicManager(guild);
 			ch.leave();
 		}
-	}
+	}*/
 }
