@@ -55,16 +55,12 @@ public class GuildTrackManager extends AudioEventAdapter {
 	 * Next track if queue isn't empty, stop if not
 	 */
 	public void skipTrack() {
-		if(queue.isEmpty()) {
-			player.stopTrack();
-		} else {
-			nextTrack();
-		}
+		player.stopTrack();
 	}
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext && !queue.isEmpty()) {
+		if (endReason.mayStartNext || !queue.isEmpty()) {
 			nextTrack();
 		} else {
 			IChannel ch;
@@ -112,6 +108,14 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	public BlockingQueue<TrackDetails> getQueue() {
 		return this.queue;
+	}
+	
+	/**
+	 * Get the true queue size
+	 * @return Current song + rest of queue
+	 */
+	public int getQueueSize() {
+		return this.queue.size() + (currentSong == null ? 0 : 1);
 	}
 
 	public boolean isEmpty() {

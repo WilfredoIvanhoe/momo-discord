@@ -45,7 +45,7 @@ public class GuildMusicManager {
 						titleOverride
 						+ " was queued by " + user.getDisplayName(channel.getGuild()))
 				.withFooterText("Place in queue: " + AudioManager.getGuildManager(channel.getGuild())
-					.getTrackManager().getQueue().size());
+					.getTrackManager().getQueueSize());
 				MessageUtils.sendMessage(channel, em.build());
 				play(channel.getGuild(), track, trackUrl, titleOverride, user);
 			}
@@ -62,7 +62,7 @@ public class GuildMusicManager {
 				.withDesc("Playlist *" + playlist.getName() + "* queued by " + user.getDisplayName(channel.getGuild()))
 				.withFooterText(String.format("Playlist size: %d | Queue size: %d",
 						playlist.getTracks().size(),
-						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueue().size()));
+						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueueSize()));
 				MessageUtils.sendMessage(channel, em.build());
 				playlist.getTracks().stream()
 					.forEach(t -> play(channel.getGuild(), t, trackUrl, titleOverride, user));
