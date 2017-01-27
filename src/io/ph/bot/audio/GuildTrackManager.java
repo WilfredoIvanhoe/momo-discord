@@ -36,7 +36,10 @@ public class GuildTrackManager extends AudioEventAdapter {
 	 * @param track The track to play or add to queue.
 	 */
 	public void queue(TrackDetails track) {
-		if (!player.startTrack(track.getTrack(), true)) {
+		if(this.player.getPlayingTrack() == null) {
+			this.currentSong = track;
+			player.startTrack(track.getTrack(), false);
+		} else {
 			queue.offer(track);
 		}
 	}
@@ -61,9 +64,9 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext) {
+		if (endReason.mayStartNext && !queue.isEmpty()) {
 			nextTrack();
-		} else if(endReason.equals(AudioTrackEndReason.STOPPED)) {
+		} else {
 			IChannel ch;
 			if((ch = Bot.getInstance().getBot()
 					.getChannelByID(Guild.guildMap.get(this.currentSong.getGuildId())
@@ -85,7 +88,9 @@ public class GuildTrackManager extends AudioEventAdapter {
 				.getChannelByID(Guild.guildMap.get(this.guildId)
 						.getSpecialChannels().getMusic())) != null) {
 			EmbedBuilder em = new EmbedBuilder();
-			em.withTitle("New track: " + track.getInfo().title)
+			em.withTitle("New track: " + this.getCurrentSong().getTitle() == null ? 
+					track.getInfo().title :
+						this.getCurrentSong().getTitle())
 			.withColor(Color.MAGENTA);
 			if(currentSong != null)
 				em.withDesc(String.format("<@%s>, your song is now playing\n"
@@ -101,8 +106,8 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-		// Audio track has been unable to provide us any audio, might want to just start a new track
-		nextTrack();
+		if(!queue.isEmpty())
+			nextTrack();
 	}
 
 	public BlockingQueue<TrackDetails> getQueue() {

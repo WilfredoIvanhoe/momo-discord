@@ -120,8 +120,11 @@ public class Music implements Command {
 			}
 			AudioTrack t;
 			em.withTitle("Current track");
-			em.appendField("Name", (t = m.getAudioPlayer().getPlayingTrack()).getInfo().title, true);
-			em.appendField("Progress", Util.formatTime(t.getPosition()) + "/" + Util.formatTime(t.getDuration()), true);
+			em.appendField("Name", m.getTrackManager().getCurrentSong().getTitle() == null ? 
+						m.getAudioPlayer().getPlayingTrack().getInfo().title :
+						m.getTrackManager().getCurrentSong().getTitle(), true);
+			em.appendField("Progress", Util.formatTime(m.getAudioPlayer().getPlayingTrack().getPosition())
+					+ "/" + Util.formatTime(m.getAudioPlayer().getPlayingTrack().getDuration()), true);
 			em.appendField("Source", m.getTrackManager().getCurrentSong().getUrl(), false);
 			em.withColor(Color.CYAN);
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -133,7 +136,6 @@ public class Music implements Command {
 				return;
 			}
 			em.withTitle("Coming up");
-			// TODO: This
 			em.withColor(Color.CYAN);
 			int index = 0;
 			for(TrackDetails t : AudioManager.getGuildManager(msg.getGuild()).getTrackManager().getQueue()) {
@@ -143,7 +145,9 @@ public class Music implements Command {
 				}
 				em.appendDesc(String.format("%d) **%s** - %s\n", 
 						index,
-						t.getTrack().getInfo().title,
+						m.getTrackManager().getCurrentSong().getTitle() == null ? 
+								t.getTrack().getInfo().title :
+								m.getTrackManager().getCurrentSong().getTitle(),
 						Util.formatTime(t.getTrack().getDuration())));
 			}
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -188,7 +192,7 @@ public class Music implements Command {
 		if(!Util.connectedToChannel((v = Bot.getInstance().getBot()
 				.getVoiceChannelByID(g.getSpecialChannels().getVoice()))) && v != null)
 			v.join();
-		GuildMusicManager.loadAndPlay(msg.getChannel(), contents, msg.getAuthor());
+		GuildMusicManager.loadAndPlay(msg.getChannel(), contents, titleOverride, msg.getAuthor());
 		//MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 }

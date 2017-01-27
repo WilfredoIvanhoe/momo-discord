@@ -9,9 +9,11 @@ public class TrackDetails {
 	private IUser queuer;
 	private AudioTrack track;
 	private String guildId;
+	private String title;
 
-	public TrackDetails(String url, IUser queuer, AudioTrack track, String guildId) {
+	public TrackDetails(String url, String title, IUser queuer, AudioTrack track, String guildId) {
 		this.url = url;
+		this.title = title;
 		this.queuer = queuer;
 		this.track = track;
 		this.guildId = guildId;
@@ -47,6 +49,10 @@ public class TrackDetails {
 	@Override
 	public String toString() {
 		return "TrackDetails [url=" + url + ", queuer=" + queuer + ", track=" + track + ", guildId=" + guildId + "]";
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 }

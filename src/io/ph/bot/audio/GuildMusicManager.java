@@ -32,7 +32,7 @@ public class GuildMusicManager {
 		this.skipVoters = new HashSet<String>();
 	}
 
-	public static void loadAndPlay(final IChannel channel, final String trackUrl, final IUser user) {
+	public static void loadAndPlay(final IChannel channel, final String trackUrl, final String titleOverride, final IUser user) {
 		GuildMusicManager musicManager = AudioManager.getGuildManager(channel.getGuild());
 		AudioManager.getMasterManager().loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 			EmbedBuilder em = new EmbedBuilder();
@@ -40,12 +40,14 @@ public class GuildMusicManager {
 			public void trackLoaded(AudioTrack track) {
 				em.withTitle("Music queued")
 				.withColor(Color.GREEN)
-				.withDesc(track.getInfo().title
+				.withDesc(titleOverride == null ? 
+						track.getInfo().title :
+						titleOverride
 						+ " was queued by " + user.getDisplayName(channel.getGuild()))
 				.withFooterText("Place in queue: " + AudioManager.getGuildManager(channel.getGuild())
 					.getTrackManager().getQueue().size());
 				MessageUtils.sendMessage(channel, em.build());
-				play(channel.getGuild(), track, trackUrl, user);
+				play(channel.getGuild(), track, trackUrl, titleOverride, user);
 			}
 
 			@Override
@@ -63,7 +65,7 @@ public class GuildMusicManager {
 						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueue().size()));
 				MessageUtils.sendMessage(channel, em.build());
 				playlist.getTracks().stream()
-					.forEach(t -> play(channel.getGuild(), t, trackUrl, user));
+					.forEach(t -> play(channel.getGuild(), t, trackUrl, titleOverride, user));
 			}
 
 			@Override
@@ -75,16 +77,17 @@ public class GuildMusicManager {
 			}
 
 			@Override
-			public void loadFailed(FriendlyException exception) {
+			public void loadFailed(FriendlyException e) {
 				em.withTitle("Error loading")
 				.withColor(Color.RED)
-				.withDesc("Error playing: " + exception.getMessage());
+				.withDesc("Error playing: " + e.getMessage());
+				e.printStackTrace();
 				MessageUtils.sendMessage(channel, em.build());
 			}
 		});
 	}
-	private static void play(IGuild guild, AudioTrack track, String trackUrl, IUser user) {
-		TrackDetails details = new TrackDetails(trackUrl, user, track, guild.getID());
+	private static void play(IGuild guild, AudioTrack track, String trackUrl, String titleOverride, IUser user) {
+		TrackDetails details = new TrackDetails(trackUrl, titleOverride, user, track, guild.getID());
 		AudioManager.getGuildManager(guild).trackManager.queue(details);
 	}
 	
