@@ -14,9 +14,9 @@ Send the command `$help` or visit the website at [this link](https://momobot.io/
 Introduced in update 1.2, Momo features a [web dashboard](https://momobot.io/dash) to configure various aspects of the bot, such as welcome prefix, enabled commands, and Twitter/Reddit feeds. You don't have to be the server owner, either - configuration starts from moderators with the `kick` permission. Everything that can be done through the dashboard can also be done through commands.
 ### Features? Gimme some info!
 * Reddit, Twitter, & Twitch.tv feeds - Get updates directly to your channel of choice with image/preview configuration
+* Play music in a music channel. Can play off direct Youtube searches with `$youtube`
 * Web dashboard. Configure your server settings from the ease of your browser from the [dashboard](https://momobot.io/dash)
 * Role management: Set roles as *joinable* and allow users to join/leave at their whim
-* Play music in a music channel. Can play off direct Youtube searches with `$youtube`
 * Bring up character for various video games: FFXIV, WoW *(LoL & osu! coming soon)*
 * Commands to ban, kick, and prune messages
 * Create a strawpoll from discord & directly link it to your users
@@ -31,11 +31,6 @@ Introduced in update 1.2, Momo features a [web dashboard](https://momobot.io/das
 * If you want to host your own instance of the bot, feel free to take a look at the Releases tab and download the package. Fill out the configuration in the `resources/Bot.properties` file, then run `java -jar momo-x.x.x.jar` where `x.x.x` is the current version. 
 * To obtain a bot token from Discord, head on over to the [Discord Developers](https://discordapp.com/developers/applications/me) page. From there, you can create an Application, then convert it to a Bot account. Then, click to show the bot token, which you can copy and paste into `Bot.properties`
 * Hosting Momo for yourself nets you some benefits. Music functionality, though dependent on your internet speeds, will be better for single servers than a larger cluster. You can also change its username, avatar, and game status to whatever you see fit!
-
-Certain functions need a little more help.
-
-* Playing music off of YouTube requires [youtube-dl](https://github.com/rg3/youtube-dl/) - follow the installation instructions there for your system, and put it in your PATH. You will also need [ffmpeg](https://ffmpeg.org/download.html).
-* Playing Themes.moe music (notably, the .webm format) requires [ffmpeg](https://ffmpeg.org/download.html) - download it and place load it up in your PATH
 
 ---
 
