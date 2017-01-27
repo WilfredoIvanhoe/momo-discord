@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.ph.bot.Bot;
 import io.ph.bot.audio.AudioManager;
 import io.ph.bot.audio.GuildMusicManager;
+import io.ph.bot.audio.TrackDetails;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
 import io.ph.bot.model.Guild;
@@ -37,7 +38,7 @@ import sx.blah.discord.util.MissingPermissionsException;
 public class Music implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
-		EmbedBuilder em = new EmbedBuilder();
+		final EmbedBuilder em = new EmbedBuilder();
 		String contents = Util.getCommandContents(msg);
 		String titleOverride = null;
 		Guild g = Guild.guildMap.get(msg.getGuild().getID());
@@ -60,13 +61,14 @@ public class Music implements Command {
 		}
 		if(contents.equals("") && msg.getAttachments().isEmpty()) {
 			String prefix = Util.getPrefixForGuildId(msg.getGuild().getID());
-			em = MessageUtils.commandErrorMessage(msg, "music", "[Youtube|Soundcloud|" + prefix + "theme-result|" + prefix + "youtube-result]", 
+			EmbedBuilder embed = MessageUtils.commandErrorMessage(msg, "music", "[Youtube|Soundcloud|" 
+								+ prefix + "theme-result|" + prefix + "youtube-result]", 
 					"*[Youtube|Soundcloud|"	+ prefix + "theme-result-#]* - URL of song to play. "
 							+ "In the case of a theme or youtube command result, its number in the list",
 							"`" + prefix + "music now` shows current song",
 							"`" + prefix + "music next` shows queued songs",
 							"`" + prefix + "music skip` casts a vote to skip the song");
-			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			MessageUtils.sendMessage(msg.getChannel(), embed.build());
 			return;
 		}
 		GuildMusicManager m = g.getMusicManager();
@@ -92,7 +94,6 @@ public class Music implements Command {
 			if(++currentVotes >= maxVotes || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 				m.setSkipVotes(0);
 				m.getSkipVoters().clear();
-				// TODO: skip
 				if(currentVotes >= maxVotes)
 					em.withColor(Color.GREEN)
 					.withTitle("Success")
@@ -101,7 +102,7 @@ public class Music implements Command {
 					em.withColor(Color.GREEN)
 					.withTitle("Force skip")
 					.withDesc("Force skipped by " + msg.getAuthor().getDisplayName(msg.getGuild()));
-				m.getTrackManager().nextTrack();
+				m.getTrackManager().skipTrack();
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			} else {
@@ -119,10 +120,9 @@ public class Music implements Command {
 			}
 			AudioTrack t;
 			em.withTitle("Current track");
-			//TODO: now details
 			em.appendField("Name", (t = m.getAudioPlayer().getPlayingTrack()).getInfo().title, true);
 			em.appendField("Progress", Util.formatTime(t.getPosition()) + "/" + Util.formatTime(t.getDuration()), true);
-			em.appendField("Source", AudioManager.getUrl(t), false);
+			em.appendField("Source", m.getTrackManager().getCurrentSong().getUrl(), false);
 			em.withColor(Color.CYAN);
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
@@ -134,7 +134,18 @@ public class Music implements Command {
 			}
 			em.withTitle("Coming up");
 			// TODO: This
-			em.withColor(Color.CYAN).withDesc("Do this");
+			em.withColor(Color.CYAN);
+			int index = 0;
+			for(TrackDetails t : AudioManager.getGuildManager(msg.getGuild()).getTrackManager().getQueue()) {
+				if(index++ >= 10) {
+					em.withFooterText("Limited to 10 results");
+					break;
+				}
+				em.appendDesc(String.format("%d) **%s** - %s\n", 
+						index,
+						t.getTrack().getInfo().title,
+						Util.formatTime(t.getTrack().getDuration())));
+			}
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		} else if(contents.startsWith("stop") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
@@ -175,9 +186,9 @@ public class Music implements Command {
 		}
 		IVoiceChannel v;
 		if(!Util.connectedToChannel((v = Bot.getInstance().getBot()
-				.getVoiceChannelByID(g.getSpecialChannels().getVoice()))))
+				.getVoiceChannelByID(g.getSpecialChannels().getVoice()))) && v != null)
 			v.join();
-		GuildMusicManager.loadAndPlay(msg.getChannel(), contents);
+		GuildMusicManager.loadAndPlay(msg.getChannel(), contents, msg.getAuthor());
 		//MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 }

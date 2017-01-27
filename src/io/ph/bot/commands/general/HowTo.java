@@ -108,8 +108,8 @@ public class HowTo implements Command {
 		em.withTitle("Music usage")
 		.withDesc("This is a quick tutorial on how to use my music features")
 		.appendField("Supported sources", "I currently support the following sources: "
-				+ "YouTube videos & playlists, direct mp3 links, attachments sent through discord, "
-				+ ".webm files (such as the music on Themes.moe)", false)
+				+ "YouTube videos & playlists, direct links, attachments sent through discord, "
+				+ ".webm files (such as the music on Themes.moe), Soundcloud, Bandcamp, and more!", false)
 		.appendField("Playing music", String.format("Playing music is easy. "
 				+ "Use the `%smusic` command with your URL directly afterwards. "
 				+ "This will automatically add it to the queue, and, after a short processing period, will play in "
@@ -119,7 +119,8 @@ public class HowTo implements Command {
 				+ "`%<smusic skip` adds a vote to skip the song\n"
 				+ "`%<smusic now` shows the current song and timestamp\n"
 				+ "`%<smusic next` shows the current queue\n"
-				+ "`%<smusic stop` allows moderators to kill the queue", 
+				+ "`%<smusic stop` allows moderators to kill the queue\n"
+				+ "`%<smusic volume #` allows moderators to change the volume", 
 				prefix), false);
 	}
 	private void setupMessage(String prefix) {

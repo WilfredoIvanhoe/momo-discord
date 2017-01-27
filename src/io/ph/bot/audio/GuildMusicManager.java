@@ -14,6 +14,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class GuildMusicManager {
@@ -31,7 +32,7 @@ public class GuildMusicManager {
 		this.skipVoters = new HashSet<String>();
 	}
 
-	public static void loadAndPlay(final IChannel channel, final String trackUrl) {
+	public static void loadAndPlay(final IChannel channel, final String trackUrl, final IUser user) {
 		GuildMusicManager musicManager = AudioManager.getGuildManager(channel.getGuild());
 		AudioManager.getMasterManager().loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 			EmbedBuilder em = new EmbedBuilder();
@@ -40,10 +41,11 @@ public class GuildMusicManager {
 				em.withTitle("Music queued")
 				.withColor(Color.GREEN)
 				.withDesc(track.getInfo().title
-						+ " was queued by empty")
-				.withFooterText("Place in queue: todo");
+						+ " was queued by " + user.getDisplayName(channel.getGuild()))
+				.withFooterText("Place in queue: " + AudioManager.getGuildManager(channel.getGuild())
+					.getTrackManager().getQueue().size());
 				MessageUtils.sendMessage(channel, em.build());
-				play(channel.getGuild(), track);
+				play(channel.getGuild(), track, trackUrl, user);
 			}
 
 			@Override
@@ -55,11 +57,13 @@ public class GuildMusicManager {
 				}
 				em.withTitle("Playlist queued")
 				.withColor(Color.GREEN)
-				.withDesc("Playlist *" + playlist.getName() + "* queued")
-				.withFooterText("Todo this");
+				.withDesc("Playlist *" + playlist.getName() + "* queued by " + user.getDisplayName(channel.getGuild()))
+				.withFooterText(String.format("Playlist size: %d | Queue size: %d",
+						playlist.getTracks().size(),
+						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueue().size()));
 				MessageUtils.sendMessage(channel, em.build());
-
-				play(channel.getGuild(), firstTrack);
+				playlist.getTracks().stream()
+					.forEach(t -> play(channel.getGuild(), t, trackUrl, user));
 			}
 
 			@Override
@@ -79,10 +83,9 @@ public class GuildMusicManager {
 			}
 		});
 	}
-	private static void play(IGuild guild, AudioTrack track) {
-		/*Bot.getInstance().getBot()
-			.getVoiceChannelByID(Guild.guildMap.get(guild.getID()).getSpecialChannels().getVoice()).join();*/
-		AudioManager.getGuildManager(guild).trackManager.queue(track);
+	private static void play(IGuild guild, AudioTrack track, String trackUrl, IUser user) {
+		TrackDetails details = new TrackDetails(trackUrl, user, track, guild.getID());
+		AudioManager.getGuildManager(guild).trackManager.queue(details);
 	}
 	
 	public GuildTrackManager getTrackManager() {
@@ -108,13 +111,10 @@ public class GuildMusicManager {
 	public void reset() {
 		this.skipVoters.clear();
 		this.skipVotes = 0;
-		//TODO: Clear it all
+		this.getTrackManager().getQueue().clear();
+		this.audioPlayer.stopTrack();
 	}
-	
-	public boolean emptyQueue() {
-		//TODO: do this
-		return false;
-	}
+
 	/**
 	 * @return Wrapper around AudioPlayer to use it as an AudioSendHandler.
 	 */

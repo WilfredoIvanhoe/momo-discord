@@ -17,7 +17,8 @@ import sx.blah.discord.util.EmbedBuilder;
 
 public class GuildTrackManager extends AudioEventAdapter {
 	private final AudioPlayer player;
-	private final BlockingQueue<AudioTrack> queue;
+	private final BlockingQueue<TrackDetails> queue;
+	private TrackDetails currentSong;
 	private String guildId;
 
 	/**
@@ -34,8 +35,8 @@ public class GuildTrackManager extends AudioEventAdapter {
 	 *
 	 * @param track The track to play or add to queue.
 	 */
-	public void queue(AudioTrack track) {
-		if (!player.startTrack(track, true)) {
+	public void queue(TrackDetails track) {
+		if (!player.startTrack(track.getTrack(), true)) {
 			queue.offer(track);
 		}
 	}
@@ -44,15 +45,36 @@ public class GuildTrackManager extends AudioEventAdapter {
 	 * Start the next track, stopping the current one if it is playing.
 	 */
 	public void nextTrack() {
-		player.startTrack(queue.poll(), false);
+		player.startTrack((currentSong = queue.poll()).getTrack(), false);
+	}
+
+	/**
+	 * Next track if queue isn't empty, stop if not
+	 */
+	public void skipTrack() {
+		if(queue.isEmpty()) {
+			player.stopTrack();
+		} else {
+			nextTrack();
+		}
 	}
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) {
 			nextTrack();
-		} else {
-			//TODO: Send message to channel saying dry queue
+		} else if(endReason.equals(AudioTrackEndReason.STOPPED)) {
+			IChannel ch;
+			if((ch = Bot.getInstance().getBot()
+					.getChannelByID(Guild.guildMap.get(this.currentSong.getGuildId())
+							.getSpecialChannels().getMusic())) != null) {
+				EmbedBuilder em = new EmbedBuilder();
+				em.withTitle("Queue finished!")
+				.withColor(Color.MAGENTA)
+				.withDesc("Your queue is all dried up");
+				MessageUtils.sendMessage(ch, em.build());
+			}
+			currentSong = null;
 		}
 	}
 
@@ -63,12 +85,12 @@ public class GuildTrackManager extends AudioEventAdapter {
 				.getChannelByID(Guild.guildMap.get(this.guildId)
 						.getSpecialChannels().getMusic())) != null) {
 			EmbedBuilder em = new EmbedBuilder();
-			em.withTitle("New track")
-			.withColor(Color.MAGENTA)
-			.withDesc(track.getInfo().title + " by " + track.getInfo().author);
-			System.out.println(track.getIdentifier() + " | " + track.getDuration() + " | " + track.getPosition());
+			em.withTitle("New track: " + track.getInfo().title)
+			.withColor(Color.MAGENTA);
+			if(currentSong != null)
+				em.withDesc(String.format("<@%s>, your song is now playing\n"
+						+ "%s", this.currentSong.getQueuer().getID(), this.currentSong.getUrl()));
 			MessageUtils.sendMessage(ch, em.build());
-			System.out.println("Track has started: " + track.getInfo().title);
 		}
 	}
 
@@ -81,5 +103,17 @@ public class GuildTrackManager extends AudioEventAdapter {
 	public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
 		// Audio track has been unable to provide us any audio, might want to just start a new track
 		nextTrack();
+	}
+
+	public BlockingQueue<TrackDetails> getQueue() {
+		return this.queue;
+	}
+
+	public boolean isEmpty() {
+		return this.currentSong == null && this.queue.isEmpty();
+	}
+
+	public TrackDetails getCurrentSong() {
+		return currentSong;
 	}
 }
