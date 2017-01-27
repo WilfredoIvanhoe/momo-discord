@@ -48,8 +48,9 @@ public class SetupMusic implements Command {
 			g.initMusicManager(msg.getGuild());
 			em.withColor(Color.GREEN);
 			em.withTitle("Success");
-			em.withDesc("Setup your music channel. I suggest doing " + g.getGuildConfig().getCommandPrefix() + "musicchannel to setup a "
-					+ "music announcement channel");
+			em.withDesc("I setup your music channel. I suggest doing " + g.getGuildConfig().getCommandPrefix() + "howto music to get a "
+					+ "quick rundown on how to use my features\n"
+					+ "You might notice I'm not always in the voice channel, but don't worry! Start a song, and I'll be right there");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 		} catch (DiscordException e) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Discord error: " + e.getMessage());
