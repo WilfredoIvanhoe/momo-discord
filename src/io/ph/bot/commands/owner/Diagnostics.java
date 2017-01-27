@@ -15,6 +15,9 @@ import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
 import io.ph.bot.feed.RedditEventListener;
 import io.ph.bot.feed.RedditFeedObserver;
+import io.ph.bot.feed.TwitterEventListener;
+import io.ph.bot.feed.TwitterFeedObserver;
+import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
@@ -52,6 +55,8 @@ public class Diagnostics implements Command {
 		em.appendField("CPU usage", getCpuLoad() + "%", true);
 		em.appendField("Threads", Thread.activeCount() + "", true);
 		em.appendField("Subreddit Feed Count", getSubredditFeedCount() + "", true);
+		em.appendField("Twitter Feed Count", getTwitterFeedCount() + "", true);
+		em.appendField("Playing music", String.format("%d/%d", playingMusic(), Bot.getInstance().getBot().getGuilds().size()), true);
 		em.withColor(Color.CYAN);
 		em.withFooterText("Bot version: " + Bot.BOT_VERSION);
 		MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -63,7 +68,22 @@ public class Diagnostics implements Command {
 		}
 		return counter;
 	}
-	private double getCpuLoad() {
+	private static int getTwitterFeedCount() {
+		int counter = 0;
+		for(List<TwitterFeedObserver> list : TwitterEventListener.getFeed().values()) {
+			counter += list.size();
+		}
+		return counter;
+	}
+	private static int playingMusic() {
+		int counter = 0;
+		for(Guild g : Guild.guildMap.values()) {
+			if(g.getMusicManager().getTrackManager().getCurrentSong() != null)
+				counter++;
+		}
+		return counter;
+	}
+	private static double getCpuLoad() {
 		// http://stackoverflow.com/questions/18489273/how-to-get-percentage-of-cpu-usage-of-os-from-java
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
