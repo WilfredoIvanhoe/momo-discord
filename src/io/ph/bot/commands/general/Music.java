@@ -33,7 +33,8 @@ import sx.blah.discord.util.MissingPermissionsException;
 						+ "now\n"
 						+ "next\n"
 						+ "skip\n"
-						+ "volume"
+						+ "volume (requires kick+)\n"
+						+ "shuffle (requires kick+)"
 		)
 public class Music implements Command {
 	@Override
@@ -135,7 +136,7 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
-			em.withTitle("Coming up");
+			em.withTitle(String.format("Coming up - %d songs", m.getTrackManager().getQueueSize()));
 			em.withColor(Color.CYAN);
 			int index = 0;
 			for(TrackDetails t : AudioManager.getGuildManager(msg.getGuild()).getTrackManager().getQueue()) {
@@ -157,6 +158,11 @@ public class Music implements Command {
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Queue cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
+		} else if(contents.startsWith("shuffle") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+			m.shuffle();
+			em.withColor(Color.GREEN).withTitle("Music shuffled").withDesc("Wow, kerfluffle");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
 		} else if(contents.startsWith("volume") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 			int input;
 			if(!Util.isInteger(Util.getCommandContents(contents)) 
@@ -169,7 +175,7 @@ public class Music implements Command {
 			}
 			em.withColor(Color.GREEN)
 			.withTitle("Success")
-			.withDesc("Set volume to " + contents);
+			.withDesc("Set volume to " + input);
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			g.getMusicManager().getAudioPlayer().setVolume(input);
 			return;

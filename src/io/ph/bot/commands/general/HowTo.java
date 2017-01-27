@@ -115,12 +115,17 @@ public class HowTo implements Command {
 				+ "This will automatically add it to the queue, and, after a short processing period, will play in "
 				+ "the designated music voice channel", 
 				prefix), false)
+		.appendField("Integration", String.format("The `%smusic` command can be integrated with two built-in search functions\n"
+				+ "After you use the `%<stheme` and `%<syoutube` commands, you get a numbered list. You can then "
+				+ "use `%<smusic #` on the result to directly play music",
+				prefix), false)
 		.appendField("Options", String.format("I have various options you can use with the `%smusic` command.\n"
 				+ "`%<smusic skip` adds a vote to skip the song\n"
 				+ "`%<smusic now` shows the current song and timestamp\n"
 				+ "`%<smusic next` shows the current queue\n"
 				+ "`%<smusic stop` allows moderators to kill the queue\n"
-				+ "`%<smusic volume #` allows moderators to change the volume", 
+				+ "`%<smusic volume #` allows moderators to change the volume\n"
+				+ "`%<smusic shuffle` allows moderators to shuffle the queue", 
 				prefix), false);
 	}
 	private void setupMessage(String prefix) {

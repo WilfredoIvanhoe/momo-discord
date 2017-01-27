@@ -1,7 +1,10 @@
 package io.ph.bot.audio;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -62,7 +65,7 @@ public class GuildMusicManager {
 				.withDesc("Playlist *" + playlist.getName() + "* queued by " + user.getDisplayName(channel.getGuild()))
 				.withFooterText(String.format("Playlist size: %d | Queue size: %d",
 						playlist.getTracks().size(),
-						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueueSize()));
+						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueueSize() + playlist.getTracks().size()));
 				MessageUtils.sendMessage(channel, em.build());
 				playlist.getTracks().stream()
 					.forEach(t -> play(channel.getGuild(), t, trackUrl, titleOverride, user));
@@ -123,5 +126,15 @@ public class GuildMusicManager {
 	 */
 	public AudioProvider getAudioProvider() {
 		return new AudioProvider(this.audioPlayer);
+	}
+
+	/**
+	 * Shuffle the queue
+	 */
+	public void shuffle() {
+		List<TrackDetails> temp = new ArrayList<TrackDetails>();
+		this.trackManager.getQueue().drainTo(temp);
+		Collections.shuffle(temp);
+		temp.stream().forEach(t -> this.trackManager.getQueue().offer(t));
 	}
 }
