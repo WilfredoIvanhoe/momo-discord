@@ -14,6 +14,7 @@ import io.ph.bot.Bot;
 import io.ph.bot.exception.NoAPIKeyException;
 import io.ph.bot.feed.RedditEventListener;
 import io.ph.bot.jobs.ReminderJob;
+import io.ph.bot.jobs.StatusChangeJob;
 import io.ph.bot.jobs.TimedPunishJob;
 import io.ph.bot.jobs.TwitchStreamJob;
 import io.ph.bot.jobs.WebSyncJob;
@@ -87,6 +88,17 @@ public class JobScheduler {
 		}
 	}
 	
+	private static void statusChange() {
+		JobDetail job = JobBuilder.newJob(StatusChangeJob.class).withIdentity("statusChangeJob", "group1").build();
+		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("statusChangeJob", "group1")
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(70).repeatForever()).build();
+		try {
+			scheduler.scheduleJob(job, trigger);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void initializeEventSchedule() {
 		try {
 			Bot.getInstance().getApiKeys().get("twitch");
@@ -97,6 +109,7 @@ public class JobScheduler {
 		}
 		remindCheck();
 		punishCheck();
+		statusChange();
 		try {
 			Bot.getInstance().getApiKeys().get("dashboard");
 			webSync();
