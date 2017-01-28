@@ -28,6 +28,8 @@ public class Say implements Command {
 	public void executeCommand(IMessage msg) {
 		try {
 			msg.delete();
+			if(msg.getContent().toLowerCase().contains("everyone"))
+				return;
 			MessageUtils.sendMessage(msg.getChannel(), Util.getCommandContents(msg));
 		} catch (DiscordException | MissingPermissionsException | RateLimitException e) {
 			e.printStackTrace();
