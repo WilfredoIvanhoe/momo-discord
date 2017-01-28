@@ -60,7 +60,7 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext || !queue.isEmpty()) {
+		if (endReason.mayStartNext && !queue.isEmpty()) {
 			nextTrack();
 		} else {
 			IChannel ch;

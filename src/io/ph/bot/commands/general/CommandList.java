@@ -74,6 +74,11 @@ public class CommandList implements Command {
 			em.withColor(Color.CYAN);
 			em.withFooterText("PM me a command name to get more information");
 			MessageUtils.sendPrivateMessage(msg.getAuthor(), em.build());
+			em = new EmbedBuilder();
+			em.withTitle("Success")
+			.withColor(Color.GREEN)
+			.withDesc("Check your PMs!");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
 		}
 
 	}
