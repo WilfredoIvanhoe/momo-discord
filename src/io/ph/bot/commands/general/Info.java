@@ -1,12 +1,14 @@
 package io.ph.bot.commands.general;
 
+import java.awt.Color;
+
 import io.ph.bot.Bot;
 import io.ph.bot.commands.Command;
 import io.ph.bot.commands.CommandData;
-import io.ph.bot.model.Guild;
 import io.ph.bot.model.Permission;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.EmbedBuilder;
 /**
  * Information & intro
  * @author Paul
@@ -23,18 +25,21 @@ public class Info implements Command {
 
 	@Override
 	public void executeCommand(IMessage msg) {
-		String toSend = String.format("Hi! I'm %s, a pretty comprehensive open-source Discord bot.\n"
-				+ "If you want to take a look at my inner workings, "
-				+ "feel free to go to my repository at <http://momobot.io/github>\n"
-				+ "If you want help or support, join my Discord server here: http://momobot.io/join and look for Kagumi\n"
-				+ "If you just want to get started, try %ssetup and %shelp\n"
-				+ "Full command list: <http://momobot.io/public/commands.html>\n"
-				+ "I am currently running version %s",
-				Bot.getInstance().getBot().getOurUser().getDisplayName(msg.getGuild()),
-				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix(),
-				Guild.guildMap.get(msg.getGuild().getID()).getGuildConfig().getCommandPrefix(),
-				Bot.BOT_VERSION);
-		MessageUtils.sendMessage(msg.getChannel(), toSend);
+		EmbedBuilder em = new EmbedBuilder();
+		em.withTitle("Hi, I'm " + Bot.getInstance().getBot().getOurUser().getDisplayName(msg.getGuild()))
+		.ignoreNullEmptyFields()
+		.withColor(Color.MAGENTA)
+		.appendField("Repository", "<https://momobot.io/github>", true)
+		.appendField("Help server", "<https://momobot.io/join>", true)
+		.appendField("Invite link", Bot.getInstance().getBotInviteLink(), true)
+		.appendField("Command list", "<https://momobot.io/commands.html>", true)
+		.withDesc("I can do a lot of things! Too many to list here, though. Feel free to take a look "
+				+ "through the links below, though, to get a quick rundown of my features")
+		.withThumbnail(Bot.getInstance().getBot().getOurUser().getAvatarURL())
+		.withFooterText(String.format("Version %s | Made with <3 by %s", 
+				Bot.BOT_VERSION,
+				"Kagumi"));
+		MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 
 }

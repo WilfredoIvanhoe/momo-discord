@@ -123,9 +123,9 @@ public class HowTo implements Command {
 				+ "`%<smusic skip` adds a vote to skip the song\n"
 				+ "`%<smusic now` shows the current song and timestamp\n"
 				+ "`%<smusic next` shows the current queue\n"
-				+ "`%<smusic stop` allows moderators to kill the queue\n"
 				+ "`%<smusic volume #` allows moderators to change the volume\n"
-				+ "`%<smusic shuffle` allows moderators to shuffle the queue", 
+				+ "`%<smusic shuffle` allows moderators to shuffle the queue\n"
+				+ "`%<smusic stop` allows moderators to kill the queue",
 				prefix), false);
 	}
 	private void setupMessage(String prefix) {
@@ -135,10 +135,10 @@ public class HowTo implements Command {
 				+ "This role will have special permission overrides for every channel, preventing them from sending messages. "
 				+ "To do this, make sure you have the Manage Server role and do `%ssetup`", 
 				prefix), false)
-		.appendField("Basic configuration", String.format("Various features I provide can be configured in one go. "
-				+ "To do this, type in `%sconfigure`. The steps are self explanatory.",
+		.appendField("Basic configuration", String.format("I feature a web-dashboard you can use to configure me. "
+				+ "Access it at <https://momobot.io/dash> - it's self explanatory and very simple!",
 				prefix), false)
-		.appendField("Music", String.format("Last but not least is music. To set this up, do `%ssetupmusic`. "
+		.appendField("Music", String.format("Last, but not least, is music. To set this up, do `%ssetupmusic`. "
 				+ "Then, if you want music announcements for when a new song is playing, do `%<smusicchannel` in a "
 				+ "designated channel.", 
 				prefix), false);
@@ -146,7 +146,9 @@ public class HowTo implements Command {
 	private void defaultMessage(String prefix, IChannel channel) {
 		em.withTitle("How To options")
 		.withColor(Color.MAGENTA)
-		.withDesc(String.format("Do `%showto` with a topic afterwards, i.e. `%<showto setup`", prefix))
+		.withDesc(String.format("Do `%showto` with a topic afterwards, i.e. `%<showto setup`.\n"
+				+ "If you just want a list of commands, do `%<scommands`\n"
+				+ "More info, invite links, and the dashboard can be found at my website: <https://momobot.io>", prefix))
 		.appendField("Options", "setup, moderation, role management, live feeds, music", true);
 		MessageUtils.sendMessage(channel, em.build());
 	}
