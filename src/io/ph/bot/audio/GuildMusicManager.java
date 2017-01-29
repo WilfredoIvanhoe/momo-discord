@@ -71,10 +71,14 @@ public class GuildMusicManager {
 			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
 				AudioTrack firstTrack = playlist.getSelectedTrack();
-
+				
 				if (firstTrack == null) {
 					firstTrack = playlist.getTracks().get(0);
+				} else  {
+					trackLoaded(firstTrack);
+					return;
 				}
+				
 				em.withTitle("Playlist queued")
 				.withColor(Color.GREEN)
 				.withDesc("Playlist *" + playlist.getName() + "* queued by " + user.getDisplayName(channel.getGuild()))
