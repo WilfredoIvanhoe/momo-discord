@@ -34,7 +34,8 @@ import sx.blah.discord.util.MissingPermissionsException;
 						+ "next\n"
 						+ "skip\n"
 						+ "volume (requires kick+)\n"
-						+ "shuffle (requires kick+)"
+						+ "shuffle (requires kick+)\n"
+						+ "stop (requires kick+)"
 		)
 public class Music implements Command {
 	@Override
