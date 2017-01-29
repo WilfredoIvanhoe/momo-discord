@@ -192,7 +192,7 @@ public class Music implements Command {
 			if(!Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
 				em.withTitle("Error")
 				.withColor(Color.RED)
-				.withDesc("You need the kick+ permission to stop the queue");
+				.withDesc("You need the kick+ permission change the volume");
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
