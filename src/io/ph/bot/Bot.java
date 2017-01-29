@@ -26,7 +26,7 @@ import sx.blah.discord.util.MessageList.EfficiencyLevel;
  * Fill out the properties file (Bot.properties) to setup
  */
 public class Bot {
-	public static final String BOT_VERSION = "v1.2.2";
+	public static final String BOT_VERSION = "v1.2.3";
 	
 	private static final Bot instance;
 	private static IDiscordClient bot;
