@@ -27,11 +27,12 @@ import sx.blah.discord.util.MessageList.EfficiencyLevel;
  */
 public class Bot {
 	public static final String BOT_VERSION = "v1.2.2";
+	
 	private static final Bot instance;
 	private static IDiscordClient bot;
 	private final Logger logger = LoggerFactory.getLogger(Bot.class);
 
-	private String secret, username, botOwnerId, avatar;
+	private String secret, username, botOwnerId, avatar, botInviteLink;
 	private APIKeys apiKeys = new APIKeys();
 
 	private boolean debug = false;
@@ -79,7 +80,7 @@ public class Bot {
 			secret = config.getString("BotToken");
 			avatar = config.getString("Avatar");
 			botOwnerId = config.getString("BotOwnerId");
-
+			botInviteLink = config.getString("InviteLink");
 			Configuration subset = config.subset("apikey");
 			Iterator<String> iter = subset.getKeys();
 			while(iter.hasNext()) {
@@ -119,6 +120,10 @@ public class Bot {
 
 	public String getBotOwnerId() {
 		return botOwnerId;
+	}
+
+	public String getBotInviteLink() {
+		return botInviteLink;
 	}
 
 	public HashMap<String, Object> getCache() {
