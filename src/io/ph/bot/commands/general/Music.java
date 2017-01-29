@@ -84,7 +84,15 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
-			IVoiceChannel voice = msg.getGuild().getVoiceChannelByID(g.getSpecialChannels().getVoice());
+			IVoiceChannel voice = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+					.filter(vc -> vc.getGuild().getID().equals(msg.getGuild().getID())).findFirst().get();
+			if(voice == null)
+				voice = msg.getGuild().getVoiceChannelByID(g.getSpecialChannels().getVoice());
+			if(!voice.getConnectedUsers().contains(msg.getAuthor())) {
+				em.withColor(Color.RED).withTitle("Error").withDesc("You can't vote if you aren't listening!");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 			int current = voice.getConnectedUsers().size();
 			int currentVotes = m.getSkipVotes();
 			if(current <= 0)
@@ -136,7 +144,9 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			}
-			em.withTitle(String.format("Coming up - %d songs", m.getTrackManager().getQueueSize()));
+			em.withTitle(String.format("Coming up - %d songs | %s total",
+					m.getTrackManager().getQueue().size(),
+					Util.formatTime(m.getTrackManager().getDurationOfQueue())));
 			em.withColor(Color.CYAN);
 			int index = 0;
 			for(TrackDetails t : AudioManager.getGuildManager(msg.getGuild()).getTrackManager().getQueue()) {
@@ -153,17 +163,38 @@ public class Music implements Command {
 			}
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
-		} else if(contents.startsWith("stop") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+		} else if(contents.startsWith("stop")) {
+			if(!Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+				em.withTitle("Error")
+				.withColor(Color.RED)
+				.withDesc("You need the kick+ permission to stop the queue");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 			m.reset();
 			em.withColor(Color.GREEN).withTitle("Music stopped").withDesc("Queue cleared");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
-		} else if(contents.startsWith("shuffle") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+		} else if(contents.startsWith("shuffle")) {
+			if(!Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+				em.withTitle("Error")
+				.withColor(Color.RED)
+				.withDesc("You need the kick+ permission to shuffle the queue");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 			m.shuffle();
 			em.withColor(Color.GREEN).withTitle("Music shuffled").withDesc("Wow, kerfluffle");
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
-		} else if(contents.startsWith("volume") && Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+		} else if(contents.startsWith("volume")) {
+			if(!Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
+				em.withTitle("Error")
+				.withColor(Color.RED)
+				.withDesc("You need the kick+ permission to stop the queue");
+				MessageUtils.sendMessage(msg.getChannel(), em.build());
+				return;
+			}
 			int input;
 			if(!Util.isInteger(Util.getCommandContents(contents)) 
 					|| (input = Integer.parseInt(Util.getCommandContents(contents))) > 100 || input < 0) {
@@ -199,6 +230,5 @@ public class Music implements Command {
 				.getVoiceChannelByID(g.getSpecialChannels().getVoice()))) && v != null)
 			v.join();
 		GuildMusicManager.loadAndPlay(msg.getChannel(), contents, titleOverride, msg.getAuthor());
-		//MessageUtils.sendMessage(msg.getChannel(), em.build());
 	}
 }

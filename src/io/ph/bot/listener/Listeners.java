@@ -28,7 +28,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.ChannelCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelDeleteEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.events.guild.member.NickNameChangeEvent;
+import sx.blah.discord.handle.impl.events.guild.member.NicknameChangedEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleDeleteEvent;
@@ -106,6 +106,9 @@ public class Listeners {
 				e.getMessage().delete();
 			}
 		}
+		// Command handling below this
+		if(e.getAuthor().isBot())
+			return;
 		if(e.getMessage().getContent().startsWith(g.getGuildConfig().getCommandPrefix())) {
 			CommandHandler.processCommand(e.getMessage());
 			return;
@@ -213,7 +216,7 @@ public class Listeners {
 	}
 
 	@EventSubscriber
-	public void onNicknameChangeListener(NickNameChangeEvent e) {
+	public void onNicknameChangeListener(NicknameChangedEvent e) {
 		Guild g = Guild.guildMap.get(e.getGuild().getID());
 		EmbedBuilder em = new EmbedBuilder().withAuthorIcon(e.getUser().getAvatarURL())
 				.withColor(Color.CYAN).withTimestamp(System.currentTimeMillis());

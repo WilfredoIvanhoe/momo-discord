@@ -13,6 +13,7 @@ import io.ph.bot.Bot;
 import io.ph.bot.model.Guild;
 import io.ph.util.MessageUtils;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class GuildTrackManager extends AudioEventAdapter {
@@ -60,7 +61,18 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext && !queue.isEmpty()) {
+		if (endReason.mayStartNext || !queue.isEmpty()) {
+			IVoiceChannel musicChannel = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+					.filter(vc -> vc.getGuild().getID().equals(this.currentSong.getGuildId()))
+					.findFirst().get();
+			// Should never be null but...
+			if(musicChannel != null) {
+				if(musicChannel.getConnectedUsers().size() == 1) {
+					musicChannel.leave();
+					AudioManager.getGuildManager(Bot.getInstance().getBot().getGuildByID(this.currentSong.getGuildId())).reset();
+					return;
+				}
+			}
 			nextTrack();
 		} else {
 			IChannel ch;
@@ -73,6 +85,9 @@ public class GuildTrackManager extends AudioEventAdapter {
 				.withDesc("Your queue is all dried up");
 				MessageUtils.sendMessage(ch, em.build());
 			}
+			Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
+			.filter(vc -> vc.getGuild().getID().equals(this.currentSong.getGuildId()))
+			.findFirst().get().leave();
 			currentSong = null;
 		}
 	}
@@ -89,8 +104,10 @@ public class GuildTrackManager extends AudioEventAdapter {
 						this.getCurrentSong().getTitle())
 			.withColor(Color.MAGENTA);
 			if(currentSong != null)
-				em.withDesc(String.format("<@%s>, your song is now playing\n"
-						+ "%s", this.currentSong.getQueuer().getID(), this.currentSong.getUrl()));
+				em.withDesc(String.format("<@%s>, **%s** is now playing\n"
+						+ "%s", this.currentSong.getQueuer().getID(),
+						this.getCurrentSong().getTitle() == null ? track.getInfo().title : this.getCurrentSong().getTitle(),
+						this.currentSong.getUrl()));
 			MessageUtils.sendMessage(ch, em.build());
 		}
 	}
@@ -108,6 +125,14 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	public BlockingQueue<TrackDetails> getQueue() {
 		return this.queue;
+	}
+	
+	/**
+	 * Returns the duration of the queue
+	 * @return Duration of queue
+	 */
+	public long getDurationOfQueue() {
+		return this.queue.stream().mapToLong(t -> t.getTrack().getDuration()).sum();
 	}
 	
 	/**

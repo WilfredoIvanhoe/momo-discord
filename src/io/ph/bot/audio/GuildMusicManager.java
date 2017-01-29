@@ -15,6 +15,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import io.ph.util.MessageUtils;
+import io.ph.util.Util;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
@@ -23,6 +24,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class GuildMusicManager {
 	private AudioPlayer audioPlayer;
 	private GuildTrackManager trackManager;
+	private AudioProvider audioProvider;
 
 	private int skipVotes;
 	private Set<String> skipVoters;
@@ -33,6 +35,7 @@ public class GuildMusicManager {
 		this.audioPlayer.addListener(trackManager);
 		this.skipVotes = 0;
 		this.skipVoters = new HashSet<String>();
+		this.audioProvider = new AudioProvider(this.audioPlayer);
 	}
 
 	public static void loadAndPlay(final IChannel channel, final String trackUrl, final String titleOverride, final IUser user) {
@@ -41,14 +44,26 @@ public class GuildMusicManager {
 			EmbedBuilder em = new EmbedBuilder();
 			@Override
 			public void trackLoaded(AudioTrack track) {
+				if(track.getDuration() / 1000 > (15 * 60)) {
+					em.withTitle("Error")
+					.withColor(Color.RED)
+					.withDesc("Song duration too long. Please keep it under 15 minutes");
+					MessageUtils.sendMessage(channel, em.build());
+					return;
+				}
 				em.withTitle("Music queued")
 				.withColor(Color.GREEN)
-				.withDesc(titleOverride == null ? 
-						track.getInfo().title :
-						titleOverride
-						+ " was queued by " + user.getDisplayName(channel.getGuild()))
-				.withFooterText("Place in queue: " + AudioManager.getGuildManager(channel.getGuild())
-					.getTrackManager().getQueueSize());
+				.withDesc(String.format("%s was queued by %s",  
+						titleOverride == null ? track.getInfo().title : titleOverride,
+								user.getDisplayName(channel.getGuild())))
+				.withFooterText(String.format("Place in queue: %d | Time until play: %s",
+						AudioManager.getGuildManager(channel.getGuild())
+						.getTrackManager().getQueueSize(),
+						Util.formatTime(AudioManager.getGuildManager(channel.getGuild())
+								.getTrackManager().getDurationOfQueue() + 
+								(musicManager.getAudioPlayer().getPlayingTrack() == null 
+								? 0 : (musicManager.getAudioPlayer().getPlayingTrack().getDuration()
+										- musicManager.getAudioPlayer().getPlayingTrack().getPosition())))));
 				MessageUtils.sendMessage(channel, em.build());
 				play(channel.getGuild(), track, trackUrl, titleOverride, user);
 			}
@@ -68,14 +83,17 @@ public class GuildMusicManager {
 						AudioManager.getGuildManager(channel.getGuild()).getTrackManager().getQueueSize() + playlist.getTracks().size()));
 				MessageUtils.sendMessage(channel, em.build());
 				playlist.getTracks().stream()
-					.forEach(t -> play(channel.getGuild(), t, trackUrl, titleOverride, user));
+				.forEach(t -> {
+					if(t.getDuration() / 1000 < (15 * 60))
+						play(channel.getGuild(), t, trackUrl, titleOverride, user);
+				});
 			}
 
 			@Override
 			public void noMatches() {
 				em.withTitle("Error")
 				.withColor(Color.RED)
-				.withDesc("Error queueing your track");
+				.withDesc("Error queueing your track - not found");
 				MessageUtils.sendMessage(channel, em.build());
 			}
 
@@ -83,7 +101,7 @@ public class GuildMusicManager {
 			public void loadFailed(FriendlyException e) {
 				em.withTitle("Error loading")
 				.withColor(Color.RED)
-				.withDesc("Error playing: " + e.getMessage());
+				.withDesc("Error loading and playing: " + e.getMessage());
 				e.printStackTrace();
 				MessageUtils.sendMessage(channel, em.build());
 			}
@@ -93,7 +111,7 @@ public class GuildMusicManager {
 		TrackDetails details = new TrackDetails(trackUrl, titleOverride, user, track, guild.getID());
 		AudioManager.getGuildManager(guild).trackManager.queue(details);
 	}
-	
+
 	public GuildTrackManager getTrackManager() {
 		return this.trackManager;
 	}
@@ -113,7 +131,7 @@ public class GuildMusicManager {
 	public Set<String> getSkipVoters() {
 		return skipVoters;
 	}
-	
+
 	public void reset() {
 		this.skipVoters.clear();
 		this.skipVotes = 0;
@@ -125,7 +143,7 @@ public class GuildMusicManager {
 	 * @return Wrapper around AudioPlayer to use it as an AudioSendHandler.
 	 */
 	public AudioProvider getAudioProvider() {
-		return new AudioProvider(this.audioPlayer);
+		return this.audioProvider;
 	}
 
 	/**
