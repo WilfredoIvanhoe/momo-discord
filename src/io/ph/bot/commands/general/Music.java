@@ -157,9 +157,9 @@ public class Music implements Command {
 				}
 				em.appendDesc(String.format("%d) **%s** - %s\n", 
 						index,
-						m.getTrackManager().getCurrentSong().getTitle() == null ? 
+						t.getTitle() == null ? 
 								t.getTrack().getInfo().title :
-								m.getTrackManager().getCurrentSong().getTitle(),
+								t.getTitle(),
 						Util.formatTime(t.getTrack().getDuration())));
 			}
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
