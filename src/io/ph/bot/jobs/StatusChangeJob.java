@@ -30,7 +30,7 @@ public class StatusChangeJob implements Job {
 	public static void commenceUpdateCountdown(int minutes) {
 		statuses = new String[minutes + 1];
 		for(int i = minutes; i > 0; i--) {
-			statuses[(minutes - i)] = "Restart in " + i;
+			statuses[(minutes - i)] = "Restart in " + i + " minutes";
 		}
 		statuses[statuses.length - 1] = "Restart now!";
 		index = 0;

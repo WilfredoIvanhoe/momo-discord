@@ -91,7 +91,7 @@ public class JobScheduler {
 	private static void statusChange() {
 		JobDetail job = JobBuilder.newJob(StatusChangeJob.class).withIdentity("statusChangeJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("statusChangeJob", "group1")
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(70).repeatForever()).build();
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(60).repeatForever()).build();
 		try {
 			scheduler.scheduleJob(job, trigger);
 		} catch (SchedulerException e) {
