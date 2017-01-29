@@ -140,6 +140,7 @@ public class GuildMusicManager {
 		this.skipVoters.clear();
 		this.skipVotes = 0;
 		this.getTrackManager().getQueue().clear();
+		this.getTrackManager().clearCurrentSong();
 		this.audioPlayer.stopTrack();
 	}
 

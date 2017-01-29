@@ -150,4 +150,8 @@ public class GuildTrackManager extends AudioEventAdapter {
 	public TrackDetails getCurrentSong() {
 		return currentSong;
 	}
+	
+	public void clearCurrentSong() {
+		this.currentSong = null;
+	}
 }
