@@ -35,6 +35,13 @@ public class Unban implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
+		if(Util.getCommandContents(msg).isEmpty()) {
+			em.withTitle("Error")
+			.withColor(Color.RED)
+			.withDesc("No target specified");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
 		String content = Util.getCommandContents(msg);
 		try {
 			IUser target = Util.resolveBannedUserFromString(content, msg.getGuild());

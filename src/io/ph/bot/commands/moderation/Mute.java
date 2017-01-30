@@ -48,7 +48,13 @@ public class Mute implements Command {
 			MessageUtils.sendMessage(msg.getChannel(), em.build());
 			return;
 		}
-
+		if(Util.getCommandContents(msg).isEmpty()) {
+			em.withTitle("Error")
+			.withColor(Color.RED)
+			.withDesc("No target specified");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
 		String t = Util.getCommandContents(msg);
 		if(t.equals("") || (Util.getParam(msg).equalsIgnoreCase("temp") && t.split(" ").length < 3)) {
 			em = MessageUtils.commandErrorMessage(msg, "mute", "[temp] [#w#d#h#m] username", 

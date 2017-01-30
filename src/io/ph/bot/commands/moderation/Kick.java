@@ -31,6 +31,13 @@ public class Kick implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
+		if(Util.getCommandContents(msg).isEmpty()) {
+			em.withTitle("Error")
+			.withColor(Color.RED)
+			.withDesc("No target specified");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
 		try {
 			IUser target = Util.resolveUserFromMessage(msg);
 			if(target == null) {

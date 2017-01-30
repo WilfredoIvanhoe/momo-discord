@@ -39,6 +39,13 @@ public class Unmute implements Command {
 	@Override
 	public void executeCommand(IMessage msg) {
 		EmbedBuilder em = new EmbedBuilder().withTimestamp(System.currentTimeMillis());
+		if(Util.getCommandContents(msg).isEmpty()) {
+			em.withTitle("Error")
+			.withColor(Color.RED)
+			.withDesc("No target specified");
+			MessageUtils.sendMessage(msg.getChannel(), em.build());
+			return;
+		}
 		String content = Util.getCommandContents(msg);
 		if(Guild.guildMap.get(msg.getGuild().getID()).getMutedRoleId().equals("")) {
 			em.withColor(Color.RED).withTitle("Error").withDesc("Looks like this server doesn't have a designated muted role.\n"
