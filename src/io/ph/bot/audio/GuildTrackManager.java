@@ -61,7 +61,7 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext || !queue.isEmpty()) {
+		if (!queue.isEmpty()) {
 			IVoiceChannel musicChannel = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
 					.filter(vc -> vc.getGuild().getID().equals(this.currentSong.getGuildId()))
 					.findFirst().get();
@@ -76,7 +76,7 @@ public class GuildTrackManager extends AudioEventAdapter {
 			nextTrack();
 		} else {
 			IChannel ch;
-			if((ch = Bot.getInstance().getBot()
+			if(this.currentSong != null && (ch = Bot.getInstance().getBot()
 					.getChannelByID(Guild.guildMap.get(this.currentSong.getGuildId())
 							.getSpecialChannels().getMusic())) != null) {
 				EmbedBuilder em = new EmbedBuilder();

@@ -32,7 +32,7 @@ import sx.blah.discord.util.MissingPermissionsException;
 				example = "https://youtu.be/dQw4w9WgXcQ\n"
 						+ "now\n"
 						+ "next\n"
-						+ "skip\n"
+						+ "skip (kick+ force skips)\n"
 						+ "volume (requires kick+)\n"
 						+ "shuffle (requires kick+)\n"
 						+ "stop (requires kick+)"
