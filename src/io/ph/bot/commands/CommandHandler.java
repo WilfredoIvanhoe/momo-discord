@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,9 +36,9 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class CommandHandler {
 
-	private static HashMap<String, Command> commandMap = new HashMap<String, Command>();
+	private static Map<String, Command> commandMap = new HashMap<String, Command>();
 
-	public static HashMap<String, String> aliasToDefaultMap = new HashMap<String, String>();
+	public static Map<String, String> aliasToDefaultMap = new HashMap<String, String>();
 
 	public static void initCommands() {
 		Reflections reflections = new Reflections("io.ph.bot.commands");    

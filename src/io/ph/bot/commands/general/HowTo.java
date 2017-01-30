@@ -106,7 +106,9 @@ public class HowTo implements Command {
 	
 	private void setupMusic(String prefix) {
 		em.withTitle("Music usage")
-		.withDesc("This is a quick tutorial on how to use my music features")
+		.withDesc(String.format("This is a quick tutorial on how to use my music features. "
+				+ "To play music, you need to have setup the music voice channel. "
+				+ "If you haven't yet, do `%ssetupmusic`", prefix))
 		.appendField("Supported sources", "I currently support the following sources: "
 				+ "YouTube videos & playlists, direct links, attachments sent through discord, "
 				+ ".webm files (such as the music on Themes.moe), Soundcloud, Bandcamp, and more!", false)
