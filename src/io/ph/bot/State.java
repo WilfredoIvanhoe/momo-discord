@@ -2,15 +2,13 @@ package io.ph.bot;
 
 import java.io.File;
 
-import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.Image;
 import sx.blah.discord.util.RateLimitException;
 
 public class State {
 	public static void changeBotStatus(String status) {	
-		Status st = Status.game(status);
-		Bot.getInstance().getBot().changeStatus(st);
+		Bot.getInstance().getBot().online(status);
 	}
 	public static void changeBotUsername(String newUser) {
 		try {
