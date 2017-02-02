@@ -29,6 +29,8 @@ public class GuildMusicManager {
 	private int skipVotes;
 	private Set<String> skipVoters;
 
+	public static int maxLengthInMinutes;
+	
 	public GuildMusicManager(AudioPlayerManager manager, String guildId) {
 		this.audioPlayer = manager.createPlayer();
 		this.trackManager = new GuildTrackManager(audioPlayer, guildId);
@@ -44,10 +46,11 @@ public class GuildMusicManager {
 			EmbedBuilder em = new EmbedBuilder();
 			@Override
 			public void trackLoaded(AudioTrack track) {
-				if(track.getDuration() / 1000 > (15 * 60)) {
+				if(track.getDuration() / 1000 > (maxLengthInMinutes * 60)) {
 					em.withTitle("Error")
 					.withColor(Color.RED)
-					.withDesc("Song duration too long. Please keep it under 15 minutes");
+					.withDesc(String.format("Song duration too long. Please keep it under %d minutes",
+							maxLengthInMinutes));
 					MessageUtils.sendMessage(channel, em.build());
 					return;
 				}
@@ -88,7 +91,7 @@ public class GuildMusicManager {
 				MessageUtils.sendMessage(channel, em.build());
 				playlist.getTracks().stream()
 				.forEach(t -> {
-					if(t.getDuration() / 1000 < (15 * 60))
+					if(t.getDuration() / 1000 < (maxLengthInMinutes * 60))
 						play(channel.getGuild(), t, trackUrl, titleOverride, user);
 				});
 			}

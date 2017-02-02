@@ -7,13 +7,7 @@ import org.quartz.JobExecutionException;
 import io.ph.bot.State;
 
 public class StatusChangeJob implements Job {
-	private static String[] statuses = {
-			"www.momobot.io",
-			"$help | $info",
-			"Persona 6",
-			"Final Fantasy XVI",
-			"dead"
-	};
+	public static String[] statuses;
 	private static int index = 0;
 
 	@Override

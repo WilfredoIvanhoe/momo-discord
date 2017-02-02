@@ -8,7 +8,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.ph.bot.audio.GuildMusicManager;
 import io.ph.bot.exception.NoAPIKeyException;
+import io.ph.bot.jobs.StatusChangeJob;
 import io.ph.bot.listener.AudioListeners;
 import io.ph.bot.listener.Listeners;
 import io.ph.bot.listener.ModLogListeners;
@@ -81,6 +83,10 @@ public class Bot {
 			avatar = config.getString("Avatar");
 			botOwnerId = config.getString("BotOwnerId");
 			botInviteLink = config.getString("InviteLink");
+			
+			GuildMusicManager.maxLengthInMinutes = config.getInt("MaxSongLength", 15);
+			
+			StatusChangeJob.statuses = config.getStringArray("StatusRotation");
 			Configuration subset = config.subset("apikey");
 			Iterator<String> iter = subset.getKeys();
 			while(iter.hasNext()) {
@@ -156,4 +162,5 @@ public class Bot {
 			this.keys.put(key, val);
 		}
 	}
+
 }

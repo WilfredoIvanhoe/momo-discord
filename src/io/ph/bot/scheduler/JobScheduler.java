@@ -89,6 +89,9 @@ public class JobScheduler {
 	}
 	
 	private static void statusChange() {
+		if(StatusChangeJob.statuses == null || StatusChangeJob.statuses.length == 0)
+			return;
+
 		JobDetail job = JobBuilder.newJob(StatusChangeJob.class).withIdentity("statusChangeJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("statusChangeJob", "group1")
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(60).repeatForever()).build();
