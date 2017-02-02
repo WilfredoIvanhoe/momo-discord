@@ -2,6 +2,7 @@ package io.ph.bot.model.games;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -84,15 +85,25 @@ public class FFXIVCharacter {
 		String world = StringUtils.capitalize(server.toLowerCase());
 		String url = String.format("http://na.finalfantasyxiv.com/lodestone/character/?q=%s+%s&worldname=%s&classjob=&race_tribe=&order=", 
 				firstName, lastName, world);
+		final String first = StringUtils.capitalize(firstName.toLowerCase());
+		final String last = StringUtils.capitalize(lastName.toLowerCase());
 		try {
 			Document doc = Jsoup.parse(new URL(url), 10000);
 			Elements eles = doc.getElementsByClass("player_name_area");
 			if(eles.size() == 0) {
 				return null;
 			}
-			Element e = eles.get(0).select("a").first();
-			String charUrl = "http://na.finalfantasyxiv.com"+e.attr("href");
+			
+			Element character = eles.stream()
+					.filter(e -> e.select("a").first().text().equals(first + " " + last))
+					.findFirst()
+					.get().select("a").first();
+
+			String charUrl = "http://na.finalfantasyxiv.com" + character.attr("href");
 			return charUrl;
+		} catch(NoSuchElementException e) {
+			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
