@@ -72,6 +72,8 @@ public class ThemeSearch implements Runnable, Command {
 			for(Theme t : historical.get(given)) {
 				sb.append("**" + (++i) + ") " + t.getType() + "** <" + t.getLink() + ">  \"" + t.getSongTitle() +  "\"\n");
 				title = t.getAnimeTitle();
+				Guild.guildMap.get(msg.getGuild().getID())
+					.getHistoricalSearches().addHistoricalMusic(i, new String[] {t.getSongTitle(), t.getLink()});
 			}
 			em.withTitle(title);
 			em.withDesc(sb.toString());
