@@ -66,6 +66,8 @@ public class Util {
 	 * @return User if found, null if not found
 	 */
 	public static IUser resolveUserFromMessage(String toCheck, IGuild guild) {
+		if(toCheck.isEmpty())
+			return null;
 		for(IUser u : guild.getUsers()) {
 			if(u.getNicknameForGuild(guild).isPresent()) {
 				if(u.getNicknameForGuild(guild).get().toLowerCase().startsWith(toCheck.toLowerCase())) {
