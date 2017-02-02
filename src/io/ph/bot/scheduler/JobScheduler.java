@@ -20,19 +20,19 @@ import io.ph.bot.jobs.TwitchStreamJob;
 import io.ph.bot.jobs.WebSyncJob;
 
 public class JobScheduler {
-	
+
 	public static Scheduler scheduler;
-	
+
 	public static void initializeScheduler() {
 		try {
 			scheduler = new StdSchedulerFactory("resources/config/quartz.properties").getScheduler();
 			scheduler.start();
-			
+
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void twitchStreamCheck() {
 		JobDetail job = JobBuilder.newJob(TwitchStreamJob.class).withIdentity("twitchJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("twitchJob", "group1")
@@ -43,7 +43,7 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void remindCheck() {
 		JobDetail job = JobBuilder.newJob(ReminderJob.class).withIdentity("reminderJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("reminderJob", "group1")
@@ -54,7 +54,7 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void punishCheck() {
 		JobDetail job = JobBuilder.newJob(TimedPunishJob.class).withIdentity("punishJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("punishJob", "group1")
@@ -65,7 +65,7 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void webSync() {
 		JobDetail job = JobBuilder.newJob(WebSyncJob.class).withIdentity("messageCountsJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("messageCountsJob", "group1")
@@ -76,7 +76,7 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void redditFeed() {
 		JobDetail job = JobBuilder.newJob(RedditEventListener.class).withIdentity("redditFeedJob", "group1").build();
 		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("redditFeedJob", "group1")
@@ -87,9 +87,10 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void statusChange() {
-		if(StatusChangeJob.statuses == null || StatusChangeJob.statuses.length == 0)
+		if(StatusChangeJob.statuses == null || StatusChangeJob.statuses.length == 0
+				|| StatusChangeJob.statuses[0].isEmpty())
 			return;
 
 		JobDetail job = JobBuilder.newJob(StatusChangeJob.class).withIdentity("statusChangeJob", "group1").build();
@@ -101,7 +102,7 @@ public class JobScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void initializeEventSchedule() {
 		try {
 			Bot.getInstance().getApiKeys().get("twitch");

@@ -29,7 +29,7 @@ import sx.blah.discord.util.MessageList.EfficiencyLevel;
  */
 public class Bot {
 	public static final String BOT_VERSION = "v1.2.3";
-	
+
 	private static final Bot instance;
 	private static IDiscordClient bot;
 	private final Logger logger = LoggerFactory.getLogger(Bot.class);
@@ -83,9 +83,13 @@ public class Bot {
 			avatar = config.getString("Avatar");
 			botOwnerId = config.getString("BotOwnerId");
 			botInviteLink = config.getString("InviteLink");
-			
-			GuildMusicManager.maxLengthInMinutes = config.getInt("MaxSongLength", 15);
-			
+
+			try {
+				GuildMusicManager.maxLengthInMinutes = config.getInt("MaxSongLength");
+			} catch(Exception e) {
+				GuildMusicManager.maxLengthInMinutes = 15;
+			}
+
 			StatusChangeJob.statuses = config.getStringArray("StatusRotation");
 			Configuration subset = config.subset("apikey");
 			Iterator<String> iter = subset.getKeys();
