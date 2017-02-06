@@ -26,7 +26,6 @@ public class GuildMusicManager {
 	private GuildTrackManager trackManager;
 	private AudioProvider audioProvider;
 
-	private int skipVotes;
 	private Set<String> skipVoters;
 
 	public static int maxLengthInMinutes;
@@ -35,7 +34,6 @@ public class GuildMusicManager {
 		this.audioPlayer = manager.createPlayer();
 		this.trackManager = new GuildTrackManager(audioPlayer, guildId);
 		this.audioPlayer.addListener(trackManager);
-		this.skipVotes = 0;
 		this.skipVoters = new HashSet<String>();
 		this.audioProvider = new AudioProvider(this.audioPlayer);
 	}
@@ -128,11 +126,7 @@ public class GuildMusicManager {
 	}
 
 	public int getSkipVotes() {
-		return skipVotes;
-	}
-
-	public void setSkipVotes(int skipVotes) {
-		this.skipVotes = skipVotes;
+		return skipVoters.size();
 	}
 
 	public Set<String> getSkipVoters() {
@@ -141,7 +135,6 @@ public class GuildMusicManager {
 
 	public void reset() {
 		this.skipVoters.clear();
-		this.skipVotes = 0;
 		this.getTrackManager().getQueue().clear();
 		this.getTrackManager().clearCurrentSong();
 		this.audioPlayer.stopTrack();

@@ -61,6 +61,7 @@ public class GuildTrackManager extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+		AudioManager.getGuildManager(Bot.getInstance().getBot().getGuildByID(this.currentSong.getGuildId())).getSkipVoters().clear();
 		if (!queue.isEmpty()) {
 			IVoiceChannel musicChannel = Bot.getInstance().getBot().getConnectedVoiceChannels().stream()
 					.filter(vc -> vc.getGuild().getID().equals(this.currentSong.getGuildId()))

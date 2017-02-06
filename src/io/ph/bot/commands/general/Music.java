@@ -102,7 +102,6 @@ public class Music implements Command {
 			if(maxVotes > 5)
 				maxVotes = 5;
 			if(++currentVotes >= maxVotes || Util.userHasPermission(msg.getAuthor(), msg.getGuild(), Permission.KICK)) {
-				m.setSkipVotes(0);
 				m.getSkipVoters().clear();
 				if(currentVotes >= maxVotes)
 					em.withColor(Color.GREEN)
@@ -116,7 +115,6 @@ public class Music implements Command {
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
 				return;
 			} else {
-				m.setSkipVotes(currentVotes);
 				m.getSkipVoters().add(msg.getAuthor().getID());
 				em.withColor(Color.GREEN).withTitle("Voted to skip").withDesc("Votes needed to pass: " + currentVotes + "/" + maxVotes);
 				MessageUtils.sendMessage(msg.getChannel(), em.build());
@@ -227,7 +225,10 @@ public class Music implements Command {
 			contents = msg.getAttachments().get(0).getUrl();
 		}
 		IVoiceChannel v;
-		if(!Util.connectedToChannel((v = Bot.getInstance().getBot()
+		if(!Bot.getInstance().getBot()
+				.getConnectedVoiceChannels().stream()
+				.filter(ch -> ch.getGuild().equals(msg.getGuild())).findAny().isPresent()
+				&& !Util.connectedToChannel((v = Bot.getInstance().getBot()
 				.getVoiceChannelByID(g.getSpecialChannels().getVoice()))) && v != null)
 			v.join();
 		GuildMusicManager.loadAndPlay(msg.getChannel(), contents, titleOverride, msg.getAuthor());
